@@ -21,7 +21,7 @@ data "terraform_remote_state" "infra" {
 }
 
 locals {
-  artifacts_bucket     = data.terraform_remote_state.backend.outputs.artifacts_bucket
-  codebuild_role_arn   = data.terraform_remote_state.infra.outputs.codebuild_role_arn
-  pipeline_role_arn    = data.terraform_remote_state.infra.outputs.pipeline_role_arn
+  artifacts_bucket   = data.terraform_remote_state.backend.outputs.artifacts_bucket
+  codebuild_role_arn = data.terraform_remote_state.infra.outputs.codebuild_role_arn
+  pipeline_role_arn  = data.terraform_remote_state.infra.outputs.pipeline_role_arn
 }

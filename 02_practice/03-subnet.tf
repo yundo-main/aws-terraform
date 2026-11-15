@@ -9,9 +9,9 @@
 # Public Subnet — ap-northeast-2a
 resource "aws_subnet" "terraform_pub_subnet_2a" {
   vpc_id                  = aws_vpc.terraform_vpc.id # 어느 VPC 안에 만들지
-  cidr_block              = "10.200.1.0/24"        # VPC 대역(10.200.0.0/16) 안의 /24
-  availability_zone       = "ap-northeast-2a"      # 서브넷은 반드시 1개 AZ에 소속
-  map_public_ip_on_launch = true                   # 이 서브넷의 인스턴스에 공인 IP 자동 부여
+  cidr_block              = "10.200.1.0/24"          # VPC 대역(10.200.0.0/16) 안의 /24
+  availability_zone       = "ap-northeast-2a"        # 서브넷은 반드시 1개 AZ에 소속
+  map_public_ip_on_launch = true                     # 이 서브넷의 인스턴스에 공인 IP 자동 부여
 
   tags = {
     Name = "terraform-pub-subnet-2a"

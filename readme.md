@@ -17,17 +17,17 @@ aws-tf/
 ├── 01_terraform/          # 단계 1 — Terraform 개념·Provider
 │   ├── index.html         # 단계 포털
 │   ├── readme.md
-│   ├── 01_provider.tf     # provider 예제
-│   ├── 02_vpc.tf          # VPC 1개 실습
-│   ├── 03_outputs.tf      # 출력 예제
+│   ├── 01-provider.tf     # provider 예제
+│   ├── 02-vpc.tf          # VPC 1개 실습
+│   ├── 03-outputs.tf      # 출력 예제
 │   └── slides/            # SVG 슬라이드 12장 (s01~s12)
 ├── 02_practice/           # 단계 2 — AWS 실습 (네트워크+컴퓨트)
 │   ├── index.html         # 단계 포털
 │   ├── readme.md
-│   ├── 01_provider.tf     # provider·버전 고정
+│   ├── 01-provider.tf     # provider·버전 고정
 │   ├── 02~06 *.tf         # 네트워크 (VPC·서브넷·IGW·NGW·라우팅)
 │   ├── 07~09 *.tf         # 컴퓨트 (SG·EC2·RDS)
-│   ├── outputs.tf         # 전체 출력 — 단일 state
+│   ├── 10-outputs.tf      # 전체 출력 — 단일 state
 │   ├── check.sh           # 전체 리소스 확인 → report.html
 │   └── slides/            # 실행 방법 SVG 17장 (s01~s17)
 ├── 03_real/               # 단계 3 — 실전 표준 레이아웃

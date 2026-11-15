@@ -43,10 +43,10 @@ terraform destroy   # 전체 삭제
 02_practice/
 ├── readme.md
 ├── check.sh              # 전체 리소스 점검 → report.html
-├── 01_provider.tf        # provider·버전 고정
-├── 02_vpc.tf ~ 06        # 네트워크 계층
+├── 01-provider.tf        # provider·버전 고정
+├── 02-vpc.tf ~ 06        # 네트워크 계층
 ├── 07-sg ~ 09-rds.tf     # 컴퓨트 계층
-├── outputs.tf            # 전체 출력
+├── 10-outputs.tf       # 전체 출력
 └── slides/               # 실행 방법 슬라이드 17장
 ```
 

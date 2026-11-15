@@ -65,7 +65,7 @@ terraform plan -var-file="dev.tfvars"   # 환경별 tfvars 파일 사용
 
 ## 단계 간 연결
 
-02의 원본 파일들이 `origin/`에 보존되어 있습니다. `diff -u origin/02_vpc.tf main.tf` 같은 비교로 변수화 과정을 학습할 수 있습니다.
+02의 원본 파일들이 `origin/`에 보존되어 있습니다. `diff -u origin/02-vpc.tf main.tf` 같은 비교로 변수화 과정을 학습할 수 있습니다.
 
 ## 산출물
 

@@ -198,7 +198,7 @@ cd ../step1_backend && terraform destroy     # tfstate 버킷은 prevent_destroy
 ├── slides/                        # 파이프라인 구조 슬라이드 12장
 ├── app/                           # 샘플 앱 — step3이 배포하는 대상
 ├── step1_backend/                 # 저장소 계층 + readme.md (단계별 실습)
-│   ├── 02_state.tf                # tfstate 버킷·lock 테이블·artifact 버킷
+│   ├── 02-state.tf                # tfstate 버킷·lock 테이블·artifact 버킷
 │   └── outputs.tf                 # step2·3가 읽는 값
 ├── step2_infra_pipeline/          # 인프라 파이프라인 + readme.md
 │   ├── 00-remote-state.tf         # → step1 참조

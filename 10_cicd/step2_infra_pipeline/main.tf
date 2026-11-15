@@ -125,8 +125,8 @@ data "aws_iam_policy_document" "pipeline" {
     resources = [local.artifacts_bucket_arn, "${local.artifacts_bucket_arn}/*"]
   }
   statement { # CodeCommit 소스 읽기 — 두 리포 모두 허용
-    actions   = ["codecommit:GetBranch", "codecommit:GetCommit", "codecommit:GetRepository",
-                 "codecommit:UploadArchive", "codecommit:GetUploadArchiveStatus", "codecommit:CancelUploadArchive"]
+    actions = ["codecommit:GetBranch", "codecommit:GetCommit", "codecommit:GetRepository",
+    "codecommit:UploadArchive", "codecommit:GetUploadArchiveStatus", "codecommit:CancelUploadArchive"]
     resources = [aws_codecommit_repository.src.arn]
   }
   statement { # CodeBuild 실행·조회 — step2·step3 모든 프로젝트

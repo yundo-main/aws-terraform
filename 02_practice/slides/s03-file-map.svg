@@ -12,8 +12,8 @@
     <rect x="60" y="196" width="440" height="18" fill="#eef1f4"/>
     <text x="88" y="199" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">03_aws/</text>
     <g font-size="17" fill="#122033">
-      <text x="88" y="252" xml:space="preserve" style="white-space:pre">01_provider.tf</text>
-      <text x="88" y="292" xml:space="preserve" style="white-space:pre">02_vpc.tf</text>
+      <text x="88" y="252" xml:space="preserve" style="white-space:pre">01-provider.tf</text>
+      <text x="88" y="292" xml:space="preserve" style="white-space:pre">02-vpc.tf</text>
       <text x="88" y="332" xml:space="preserve" style="white-space:pre">03-subnet.tf</text>
       <text x="88" y="372" xml:space="preserve" style="white-space:pre">04-igw.tf</text>
       <text x="88" y="412" xml:space="preserve" style="white-space:pre">05-ngw.tf</text>
