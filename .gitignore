@@ -18,8 +18,9 @@ crash.log
 .idea/
 .vscode/
 
-# 에이전트용 파일: 학생에게 공개되는 저장소라 제외
+# 에이전트용 파일: 학생에게 공개되는 저장소에서 제외 
 .agents/
+100_teacher
 
 # 생성물 (check.sh 산출)
 report.html
