@@ -14,7 +14,7 @@
 - versions.tf — terraform/provider 버전 고정
 - providers.tf — 리전 변수 참조 + default_tags 공통 태그
 - variables.tf — 네트워크·EC2·RDS 값 전부 변수화
-- main.tf — 02 전체 리소스 (VPC→서브넷→IGW/NGW→라우팅→SG→EC2→RDS)
+- main.tf — 02 전체 리소스 (섹션 주석이 02의 파일 번호와 1:1 대응)
 - outputs.tf — vpc_id·서브넷·배스천 IP·RDS 엔드포인트
 - origin/ — 변수화 전 원본 (01~09 .tf, diff 비교용)
 
@@ -47,8 +47,8 @@ terraform plan -var-file="dev.tfvars"   # 환경별 tfvars 파일 사용
 ├── versions.tf       # terraform >= 1.6, aws ~> 5.0
 ├── providers.tf      # provider "aws" (var.aws_region) + default_tags
 ├── variables.tf      # 입력 변수 — 리전·CIDR·EC2·RDS 전체
-├── main.tf           # 리소스 선언 — 02와 동일 리소스, 변수 참조
-├── slides/           # 이론 슬라이드 8장 (s01~s08)
+├── main.tf           # 02 전체 리소스 — var 참조로 변수화 (섹션 = 02 파일명)
+├── slides/           # 이론 슬라이드 9장 (s01~s09)
 ├── outputs.tf        # vpc_id·서브넷·배스천 IP·RDS 엔드포인트
 └── origin/           # 02 원본 .tf 9개 — 비교용 보관
 ```

@@ -54,9 +54,11 @@ terraform destroy    # 전체 삭제
 aws-tf/
 ├── index.html          # 루트 포털 (이 파일에서 각 단계로 이동)
 ├── 00_intro/           # 개요 슬라이드 8장 + 통합 용어집
-├── 01_terraform/       # 이론 슬라이드 11장 + provider/VPC 예제
-├── 02_practice/        # step1~4 실습 .tf + 슬라이드 20장 + check.sh
-├── 03_real/            # 실전 표준 레이아웃 + 슬라이드 8장 + origin/ 비교본
+├── 01_terraform/       # 이론 슬라이드 12장 + provider/VPC 예제
+├── 02_practice/        # 네트워크+컴퓨트 실습 .tf + 슬라이드 17장 + check.sh
+├── 03_real/            # 실전 표준 레이아웃 + 슬라이드 9장 + origin/ 비교본
+├── 04_https/           # ACM+HTTPS 확장 — remote_state로 03 참조
+├── 10_cicd/            # AWS 네이티브 CI/CD — step1~3 분리 state
 └── .agents/            # 강사용 템플릿·생성기·로그 (학생 배포 제외)
 ```
 

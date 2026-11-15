@@ -95,23 +95,23 @@ footer{color:var(--muted);font-size:.78rem;text-align:center;margin-top:1.6rem}
 <a class="brand" href="#top">📘 02_practice</a>
 <a href="#tab-overview">개요</a><a href="#tab-slides">슬라이드</a><a href="#tab-practice">실습</a><a href="#tab-help">도움말</a>
 </nav>
-<div class="stepidx"><span class="lbl">단계</span><a href="../index.html">⌂</a><a href="../00_intro/index.html">0</a><a href="../01_terraform/index.html">1</a><a href="../02_practice/index.html" class="cur">2</a><a href="../03_real/index.html">3</a></div>
+<div class="stepidx"><span class="lbl">단계</span><a href="../index.html">⌂</a><a href="../00_intro/index.html">0</a><a href="../01_terraform/index.html">1</a><a href="../02_practice/index.html" class="cur">2</a><a href="../03_real/index.html">3</a><a href="../04_https/index.html">4</a></div>
 <div class="hero" id="top">
 <div class="eyebrow">STEP 02 · AWS · HANDS-ON</div>
 <h1>Terraform 실습 — AWS 인프라 구축</h1>
 <p class="sub"></p>
 <div class="steps">
-<span>step1_network: VPC·서브넷·IGW·NGW·라우팅 + outputs</span><span>step2_compute: SG·EC2·RDS (remote_state로 step1 참조)</span><span>step3_eks: EKS·노드그룹·ECR</span><span>step4_alb: Route53·ACM·ALB (작성 예정)</span><span>destroy는 역순: step4 → step3 → step2 → step1</span>
+<span>01: provider·버전 고정</span><span>02~06: 네트워크 (VPC·서브넷·IGW·NGW·라우팅)</span><span>07~09: 컴퓨트 (SG·EC2 배스천·RDS)</span><span>destroy는 apply의 역순으로 자동 계산됨</span>
 </div>
 </div>
 <section class="ltab on" id="tab-overview">
 <div class="ltitle">개요 — STEP 02 학습 내용</div>
-<h3>이론적 배경</h3><p>State 분리(State decomposition)는 계층별 라이프사이클이 다를 때 쓰는 정식 패턴입니다. 네트워크는 오래 유지하고 컴퓨트는 자주 바꾸는 구조에서, 각 단계가 독립 state를 가지면 한 단계의 변경이 다른 단계를 건드리지 않습니다. <code>terraform_remote_state</code> 데이터 소스가 상위 단계의 outputs를 읽어 연결 고리를 만듭니다.</p>
-<h3>학습 목표</h3><ul><li>단계별 독립 state로 인프라를 층별로 구축할 수 있다</li><li><code>terraform_remote_state</code>로 하위 단계 출력을 참조할 수 있다</li><li>apply 중 발생하는 실제 오류(키페어·버전·고아 리소스)를 진단·해결할 수 있다</li><li>AWS CLI로 생성 결과를 검증할 수 있다</li></ul>
-<h3>핵심 내용</h3><ul><li>step1_network: VPC·서브넷·IGW·NGW·라우팅 + outputs</li><li>step2_compute: SG·EC2·RDS (remote_state로 step1 참조)</li><li>step3_eks: EKS·노드그룹·ECR</li><li>step4_alb: Route53·ACM·ALB (작성 예정)</li><li>destroy는 역순: step4 → step3 → step2 → step1</li></ul>
-<h3>산출물 · 완료 기준</h3><ul><li>4단계로 나뉜 state 기반 인프라</li><li>check.sh로 생성한 결과 리포트</li></ul><ul><li>[ ] 각 단계가 독립 state를 갖는 이유를 설명할 수 있다</li><li>[ ] remote_state 참조 구조를 이해한다</li><li>[ ] apply 오류 시 state와 AWS 실제 상태를 대조해 진단할 수 있다</li><li>[ ] destroy 역순 규칙을 안다</li></ul>
+<h3>이론적 배경</h3><p>단일 state에서는 모든 리소스가 하나의 의존 그래프가 됩니다 — <code>aws_subnet</code>의 <code>vpc_id = aws_vpc.x.id</code> 같은 직접 참조가 연결 고리를 만들고, Terraform이 생성 순서를 자동으로 계산합니다. 계층별 state 분리(remote_state)는 10_cicd에서 다룹니다.</p>
+<h3>학습 목표</h3><ul><li>단계별 독립 state로 인프라를 층별로 구축할 수 있다</li><li>같은 state 안에서 리소스가 서로를 직접 참조하는 의존 그래프를 읽을 수 있다</li><li>apply 중 발생하는 실제 오류(키페어·버전·고아 리소스)를 진단·해결할 수 있다</li><li>AWS CLI로 생성 결과를 검증할 수 있다</li></ul>
+<h3>핵심 내용</h3><ul><li>01: provider·버전 고정</li><li>02~06: 네트워크 (VPC·서브넷·IGW·NGW·라우팅)</li><li>07~09: 컴퓨트 (SG·EC2 배스천·RDS)</li><li>destroy는 apply의 역순으로 자동 계산됨</li></ul>
+<h3>산출물 · 완료 기준</h3><ul><li>4단계로 나뉜 state 기반 인프라</li><li>check.sh로 생성한 결과 리포트</li></ul><ul><li>[ ] 각 단계가 독립 state를 갖는 이유를 설명할 수 있다</li><li>[ ] 리소스 간 직접 참조(<code>aws_vpc.x.id</code>)로 의존 그래프가 만들어지는 걸 이해한다</li><li>[ ] apply 오류 시 state와 AWS 실제 상태를 대조해 진단할 수 있다</li><li>[ ] destroy 역순 규칙을 안다</li></ul>
 <h3>프로젝트 구조</h3>
-<div class="dtree"><div class="dtn">02_practice/</div><div class="dtl"><a href="01_provider.tf">01_provider.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="check.sh">check.sh</a> <span class="dt-note">— 리소스 확인 → HTML 리포트 스크립트</span></div><div class="dtl">index.html <span class="dt-note">— 포털 페이지</span></div><div class="dtl">readme.md <span class="dt-note">— 단계 학습 문서</span></div><div class="dtl">report.html <span class="dt-note">— check.sh 생성 리포트</span></div><div class="dtl">terraform.tfstate <span class="dt-note">— Terraform 상태 파일</span></div><details class="dt" open><summary>slides/</summary><div class="dt-kids"><div class="dtl">readme.md <span class="dt-note">— 단계 학습 문서</span></div><div class="dtl">s01-title.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s02-prereq.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s03-file-map.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s04-steps.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s05-step1.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s06-step1-arch.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s07-step2.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s08-step2-arch.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s09-step3.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s10-step3-arch.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s11-step4.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s12-step4-arch.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s13-init.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s14-plan.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s15-apply.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s16-verify.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s17-destroy.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s18-validate-errors.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s19-review-questions.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s20-review-answers.svg <span class="dt-note">— 슬라이드 SVG</span></div></div></details><details class="dt" open><summary>step1_network/</summary><div class="dt-kids"><div class="dtl"><a href="step1_network/01_provider.tf">01_provider.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step1_network/02_vpc.tf">02_vpc.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step1_network/03-subnet.tf">03-subnet.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step1_network/04-igw.tf">04-igw.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step1_network/05-ngw.tf">05-ngw.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step1_network/06-routing-table.tf">06-routing-table.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step1_network/check.sh">check.sh</a> <span class="dt-note">— 리소스 확인 → HTML 리포트 스크립트</span></div><div class="dtl"><a href="step1_network/outputs.tf">outputs.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl">terraform.tfstate <span class="dt-note">— Terraform 상태 파일</span></div><div class="dtl">terraform.tfstate.backup <span class="dt-note">— state 백업</span></div></div></details><details class="dt" open><summary>step2_compute/</summary><div class="dt-kids"><div class="dtl"><a href="step2_compute/00-remote-state.tf">00-remote-state.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step2_compute/01_provider.tf">01_provider.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step2_compute/07-sg-ec2-rds.tf">07-sg-ec2-rds.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step2_compute/08-ec2.tf">08-ec2.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step2_compute/09-rds.tf">09-rds.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step2_compute/check.sh">check.sh</a> <span class="dt-note">— 리소스 확인 → HTML 리포트 스크립트</span></div><div class="dtl">terraform.tfstate <span class="dt-note">— Terraform 상태 파일</span></div></div></details><details class="dt" open><summary>step3_eks/</summary><div class="dt-kids"><div class="dtl"><a href="step3_eks/00-remote-state.tf">00-remote-state.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step3_eks/01_provider.tf">01_provider.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step3_eks/11-sg-eks.tf">11-sg-eks.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step3_eks/12-eks.tf">12-eks.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step3_eks/13-eks-node-group.tf">13-eks-node-group.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step3_eks/14-ecr.tf">14-ecr.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step3_eks/check.sh">check.sh</a> <span class="dt-note">— 리소스 확인 → HTML 리포트 스크립트</span></div></div></details><details class="dt" open><summary>step4_alb/</summary><div class="dt-kids"><div class="dtl"><a href="step4_alb/01_provider.tf">01_provider.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step4_alb/21-route53.tf">21-route53.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step4_alb/22-sg-alb.tf">22-sg-alb.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step4_alb/23-acm.tf">23-acm.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step4_alb/24-alb.tf">24-alb.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="step4_alb/check.sh">check.sh</a> <span class="dt-note">— 리소스 확인 → HTML 리포트 스크립트</span></div></div></details></div>
+<div class="dtree"><div class="dtn">02_practice/</div><div class="dtl"><a href="01_provider.tf">01_provider.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="02_vpc.tf">02_vpc.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="03-subnet.tf">03-subnet.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="04-igw.tf">04-igw.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="05-ngw.tf">05-ngw.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="06-routing-table.tf">06-routing-table.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="07-sg-ec2-rds.tf">07-sg-ec2-rds.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="08-ec2.tf">08-ec2.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="09-rds.tf">09-rds.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="check.sh">check.sh</a> <span class="dt-note">— 리소스 확인 → HTML 리포트 스크립트</span></div><div class="dtl">index.html <span class="dt-note">— 포털 페이지</span></div><div class="dtl"><a href="outputs.tf">outputs.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl">readme.md <span class="dt-note">— 단계 학습 문서</span></div><div class="dtl">report.html <span class="dt-note">— check.sh 생성 리포트</span></div><div class="dtl">terraform.tfstate <span class="dt-note">— Terraform 상태 파일</span></div><details class="dt" open><summary>slides/</summary><div class="dt-kids"><div class="dtl">readme.md <span class="dt-note">— 단계 학습 문서</span></div><div class="dtl">s01-title.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s02-prereq.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s03-file-map.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s04-steps.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s05-step1.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s06-step1-arch.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s07-step2.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s08-step2-arch.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s09-init.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s10-plan.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s11-apply.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s12-verify.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s13-destroy.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s14-validate-errors.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s15-drift.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s16-review-questions.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s17-review-answers.svg <span class="dt-note">— 슬라이드 SVG</span></div></div></details></div>
 <h3>소스코드 설명</h3><table><tr><th>파일</th><th>역할·내용</th></tr><tr><td><code>step1_network</code></td><td>1단계 — VPC·서브넷·IGW·NGW·라우팅 + outputs (독립 state)</td></tr><tr><td><code>step2_compute</code></td><td>2단계 — SG·EC2·RDS, remote_state로 step1 참조</td></tr><tr><td><code>step3_eks</code></td><td>3단계 — EKS 클러스터·노드그룹·ECR, remote_state로 step1 참조</td></tr><tr><td><code>step4_alb</code></td><td>4단계 — Route53·ALB·ACM (작성 예정)</td></tr><tr><td><code>check.sh</code></td><td>전체 리소스를 AWS CLI로 조회해 report.html 생성</td></tr></table>
 <p class="sub" style="margin-top:.8rem">단계 간 연결: `03_real`은 이 실습을 모듈·변수 구조로 리팩터링한 버전입니다 — `origin/`에 이 단계 원본이 보관되어 비교할 수 있습니다.</p>
 
@@ -126,47 +126,27 @@ footer{color:var(--muted);font-size:.78rem;text-align:center;margin-top:1.6rem}
 <div class="dgi"><div class="dgi-head"><span class="dgi-t">s06-step1-arch · s06 step1 arch</span><span class="badge">SVG</span></div><img src="slides/s06-step1-arch.svg" alt="s06 step1 arch" loading="lazy"></div>
 <div class="dgi"><div class="dgi-head"><span class="dgi-t">s07-step2 · s07 step2</span><span class="badge">SVG</span></div><img src="slides/s07-step2.svg" alt="s07 step2" loading="lazy"></div>
 <div class="dgi"><div class="dgi-head"><span class="dgi-t">s08-step2-arch · s08 step2 arch</span><span class="badge">SVG</span></div><img src="slides/s08-step2-arch.svg" alt="s08 step2 arch" loading="lazy"></div>
-<div class="dgi"><div class="dgi-head"><span class="dgi-t">s09-step3 · s09 step3</span><span class="badge">SVG</span></div><img src="slides/s09-step3.svg" alt="s09 step3" loading="lazy"></div>
-<div class="dgi"><div class="dgi-head"><span class="dgi-t">s10-step3-arch · s10 step3 arch</span><span class="badge">SVG</span></div><img src="slides/s10-step3-arch.svg" alt="s10 step3 arch" loading="lazy"></div>
-<div class="dgi"><div class="dgi-head"><span class="dgi-t">s11-step4 · s11 step4</span><span class="badge">SVG</span></div><img src="slides/s11-step4.svg" alt="s11 step4" loading="lazy"></div>
-<div class="dgi"><div class="dgi-head"><span class="dgi-t">s12-step4-arch · s12 step4 arch</span><span class="badge">SVG</span></div><img src="slides/s12-step4-arch.svg" alt="s12 step4 arch" loading="lazy"></div>
-<div class="dgi"><div class="dgi-head"><span class="dgi-t">s13-init · s13 init</span><span class="badge">SVG</span></div><img src="slides/s13-init.svg" alt="s13 init" loading="lazy"></div>
-<div class="dgi"><div class="dgi-head"><span class="dgi-t">s14-plan · s14 plan</span><span class="badge">SVG</span></div><img src="slides/s14-plan.svg" alt="s14 plan" loading="lazy"></div>
-<div class="dgi"><div class="dgi-head"><span class="dgi-t">s15-apply · s15 apply</span><span class="badge">SVG</span></div><img src="slides/s15-apply.svg" alt="s15 apply" loading="lazy"></div>
-<div class="dgi"><div class="dgi-head"><span class="dgi-t">s16-verify · s16 verify</span><span class="badge">SVG</span></div><img src="slides/s16-verify.svg" alt="s16 verify" loading="lazy"></div>
-<div class="dgi"><div class="dgi-head"><span class="dgi-t">s17-destroy · s17 destroy</span><span class="badge">SVG</span></div><img src="slides/s17-destroy.svg" alt="s17 destroy" loading="lazy"></div>
-<div class="dgi"><div class="dgi-head"><span class="dgi-t">s18-validate-errors · s18 validate errors</span><span class="badge">SVG</span></div><img src="slides/s18-validate-errors.svg" alt="s18 validate errors" loading="lazy"></div>
-<div class="dgi"><div class="dgi-head"><span class="dgi-t">s19-review-questions · s19 review questions</span><span class="badge">SVG</span></div><img src="slides/s19-review-questions.svg" alt="s19 review questions" loading="lazy"></div>
-<div class="dgi"><div class="dgi-head"><span class="dgi-t">s20-review-answers · s20 review answers</span><span class="badge">SVG</span></div><img src="slides/s20-review-answers.svg" alt="s20 review answers" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s09-init · s09 init</span><span class="badge">SVG</span></div><img src="slides/s09-init.svg" alt="s09 init" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s10-plan · s10 plan</span><span class="badge">SVG</span></div><img src="slides/s10-plan.svg" alt="s10 plan" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s11-apply · s11 apply</span><span class="badge">SVG</span></div><img src="slides/s11-apply.svg" alt="s11 apply" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s12-verify · s12 verify</span><span class="badge">SVG</span></div><img src="slides/s12-verify.svg" alt="s12 verify" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s13-destroy · s13 destroy</span><span class="badge">SVG</span></div><img src="slides/s13-destroy.svg" alt="s13 destroy" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s14-validate-errors · s14 validate errors</span><span class="badge">SVG</span></div><img src="slides/s14-validate-errors.svg" alt="s14 validate errors" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s15-drift · s15 drift</span><span class="badge">SVG</span></div><img src="slides/s15-drift.svg" alt="s15 drift" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s16-review-questions · s16 review questions</span><span class="badge">SVG</span></div><img src="slides/s16-review-questions.svg" alt="s16 review questions" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s17-review-answers · s17 review answers</span><span class="badge">SVG</span></div><img src="slides/s17-review-answers.svg" alt="s17 review answers" loading="lazy"></div>
 </section>
 <section class="ltab" id="tab-practice" hidden>
 <div class="ltitle">실습 — STEP 02 실행</div>
 <p>아래 명령은 <b>터미널</b>에서 프로젝트 루트(<code>aws-tf/</code>) 기준으로 실행합니다.</p>
 <h3>실행 방법</h3>
 <p class="sub">복사 버튼으로 명령을 가져간 뒤 터미널에 붙여넣기 (⌘V) 하세요.</p>
-<div class="codebox"><pre><code>cd step1_network &amp;&amp; terraform init &amp;&amp; terraform apply</code></pre><button class="copybtn" id="copyCmd">복사</button></div>
+<div class="codebox"><pre><code>terraform init</code></pre><button class="copybtn" id="copyCmd">복사</button></div>
 <p class="sub" id="copyMsg" style="margin-top:.4rem"></p>
 
-<h3>실습 단계</h3><ol><li>step1에서 네트워크 생성 후 outputs 값 확인</li><li>step2 apply 시 remote_state가 step1 출력을 읽는지 plan으로 확인</li><li><code>./check.sh</code> 실행해 생성된 리소스가 HTML로 나오는지 확인</li><li>실습 후 반드시 역순 destroy (과금 방지)</li></ol>
-<h3>추가 명령</h3><div class="codebox"><pre><code>./check.sh   # 루트에서 실행하면 전체 리소스 조회 → report.html 생성</code></pre></div>
-<div class="codebox"><pre><code>terraform destroy   # 각 단계 디렉터리에서 역순 실행</code></pre></div>
-<div class="codebox"><pre><code>02_practice/
-├── readme.md
-├── check.sh              # 전체 리소스 점검 → report.html
-├── step1_network/        # VPC·서브넷·IGW·NGW·라우팅 + outputs.tf + check.sh
-├── step2_compute/        # SG·EC2·RDS + 00-remote-state.tf + check.sh
-├── step3_eks/            # EKS·노드그룹·ECR + 00-remote-state.tf + check.sh
-├── step4_alb/            # Route53·ACM·ALB (빈 파일 — 작성 예정) + check.sh
-└── slides/               # 실행 방법 슬라이드 11장</code></pre></div>
-<h3>소스 구조</h3>
-<div class="codebox"><pre><code>02_practice/
-├── readme.md
-├── check.sh              # 전체 리소스 점검 → report.html
-├── step1_network/        # VPC·서브넷·IGW·NGW·라우팅 + outputs.tf + check.sh
-├── step2_compute/        # SG·EC2·RDS + 00-remote-state.tf + check.sh
-├── step3_eks/            # EKS·노드그룹·ECR + 00-remote-state.tf + check.sh
-├── step4_alb/            # Route53·ACM·ALB (빈 파일 — 작성 예정) + check.sh
-└── slides/               # 실행 방법 슬라이드 11장</code></pre></div><h3>파일·디렉터리 역할</h3><table><tr><th>경로</th><th>역할</th></tr><tr><td><code>stepN/01_provider.tf</code></td><td>각 단계 독립 provider 설정</td></tr><tr><td><code>step1_network/outputs.tf</code></td><td>vpc_id·subnet_id 출력 — 상위 단계 연결 고리</td></tr><tr><td><code>stepN/00-remote-state.tf</code></td><td>step1 state 참조 + locals 래핑</td></tr><tr><td><code>check.sh</code></td><td>전체 리소스 점검 → HTML 리포트</td></tr><tr><td><code>stepN/check.sh</code></td><td>해당 단계 리소스만 검증 → HTML 리포트</td></tr><tr><td><code>terraform.tfstate</code></td><td>각 step 디렉터리에 독립 존재 — 절대 커밋 금지</td></tr></table><h3>파일 맵 — .tf ↔ 선언 리소스</h3><table><tr><th>파일</th><th>리소스 / 데이터 소스</th></tr><tr><td><code>01_provider.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr><tr><td><code>step1_network/01_provider.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr><tr><td><code>step1_network/02_vpc.tf</code></td><td><code>aws_vpc.terraform_vpc</code></td></tr><tr><td><code>step1_network/03-subnet.tf</code></td><td><code>aws_subnet.terraform_pub_subnet_2a<br>aws_subnet.terraform_pub_subnet_2c<br>aws_subnet.terraform_pri_subnet_2a<br>aws_subnet.terraform_pri_subnet_2c</code></td></tr><tr><td><code>step1_network/04-igw.tf</code></td><td><code>aws_internet_gateway.terraform_igw</code></td></tr><tr><td><code>step1_network/05-ngw.tf</code></td><td><code>aws_eip.terraform_eip<br>aws_nat_gateway.terraform_ngw</code></td></tr><tr><td><code>step1_network/06-routing-table.tf</code></td><td><code>aws_route_table.terraform_pub_rt<br>aws_route_table.terraform_pri_rt<br>aws_route.terraform_pub_rt<br>aws_route.terraform_pri_rt<br>aws_route_table_association.terraform_pub_rt_associate_2a<br>aws_route_table_association.terraform_pub_rt_associate_2c<br>aws_route_table_association.terraform_pri_rt_associate_2a<br>aws_route_table_association.terraform_pri_rt_associate_2c</code></td></tr><tr><td><code>step1_network/outputs.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr><tr><td><code>step3_eks/00-remote-state.tf</code></td><td><code>terraform_remote_state.network</code></td></tr><tr><td><code>step3_eks/01_provider.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr><tr><td><code>step3_eks/11-sg-eks.tf</code></td><td><code>aws_security_group.terraform_sg_alb<br>aws_security_group.terraform_sg_eks_node_group</code></td></tr><tr><td><code>step3_eks/12-eks.tf</code></td><td><code>aws_iam_role.terraform_eks_cluster_role<br>aws_iam_role_policy_attachment.terraform_eks_cluster_AmazonEKSClusterPolicy<br>aws_iam_role_policy_attachment.terraform_eks_cluster_AmazonEKSVPCResourceController<br>aws_eks_cluster.terraform_eks_cluster</code></td></tr><tr><td><code>step3_eks/13-eks-node-group.tf</code></td><td><code>aws_iam_role.terraform_eks_node_group_role<br>aws_iam_role_policy_attachment.AmazonEKS_CNI_Policy<br>aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly<br>aws_iam_role_policy_attachment.AmazonEKSWorkerNodePolicy<br>aws_eks_node_group.terraform_eks_node_group</code></td></tr><tr><td><code>step3_eks/14-ecr.tf</code></td><td><code>aws_ecr_repository.terraform_ecr</code></td></tr><tr><td><code>step2_compute/00-remote-state.tf</code></td><td><code>terraform_remote_state.network</code></td></tr><tr><td><code>step2_compute/01_provider.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr><tr><td><code>step2_compute/07-sg-ec2-rds.tf</code></td><td><code>aws_security_group.terraform_sg_bastion<br>aws_security_group.terraform_sg_rds</code></td></tr><tr><td><code>step2_compute/08-ec2.tf</code></td><td><code>aws_instance.terraform_pub_ec2_bastion_2a</code></td></tr><tr><td><code>step2_compute/09-rds.tf</code></td><td><code>aws_db_subnet_group.terraform_rds_subnet_group<br>aws_db_parameter_group.terraform_mariadb_parameter_group<br>aws_db_instance.terraform_mariadb_rds</code></td></tr><tr><td><code>step4_alb/01_provider.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr><tr><td><code>step4_alb/21-route53.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr><tr><td><code>step4_alb/22-sg-alb.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr><tr><td><code>step4_alb/23-acm.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr><tr><td><code>step4_alb/24-alb.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr></table>
+<h3>실습 단계</h3><ol><li>plan 출력에서 리소스 생성 순서(의존 그래프) 확인</li><li>apply 후 <code>terraform output</code>으로 접속 정보 확인</li><li>check.sh 리포트로 state ↔ AWS 실체 대조</li><li>실습 후 반드시 역순 destroy (과금 방지)</li></ol>
+
+<h3>소스 구조</h3><h3>파일·디렉터리 역할</h3><table><tr><th>경로</th><th>역할</th></tr></table><h3>파일 맵 — .tf ↔ 선언 리소스</h3><table><tr><th>파일</th><th>리소스 / 데이터 소스</th></tr><tr><td><code>01_provider.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr><tr><td><code>02_vpc.tf</code></td><td><code>aws_vpc.terraform_vpc</code></td></tr><tr><td><code>03-subnet.tf</code></td><td><code>aws_subnet.terraform_pub_subnet_2a<br>aws_subnet.terraform_pub_subnet_2c<br>aws_subnet.terraform_pri_subnet_2a<br>aws_subnet.terraform_pri_subnet_2c</code></td></tr><tr><td><code>04-igw.tf</code></td><td><code>aws_internet_gateway.terraform_igw</code></td></tr><tr><td><code>05-ngw.tf</code></td><td><code>aws_eip.terraform_eip<br>aws_nat_gateway.terraform_ngw</code></td></tr><tr><td><code>06-routing-table.tf</code></td><td><code>aws_route_table.terraform_pub_rt<br>aws_route_table.terraform_pri_rt<br>aws_route.terraform_pub_rt<br>aws_route.terraform_pri_rt<br>aws_route_table_association.terraform_pub_rt_associate_2a<br>aws_route_table_association.terraform_pub_rt_associate_2c<br>aws_route_table_association.terraform_pri_rt_associate_2a<br>aws_route_table_association.terraform_pri_rt_associate_2c</code></td></tr><tr><td><code>07-sg-ec2-rds.tf</code></td><td><code>aws_security_group.terraform_sg_bastion<br>aws_security_group.terraform_sg_rds</code></td></tr><tr><td><code>08-ec2.tf</code></td><td><code>aws_instance.terraform_pub_ec2_bastion_2a</code></td></tr><tr><td><code>09-rds.tf</code></td><td><code>aws_db_subnet_group.terraform_rds_subnet_group<br>aws_db_parameter_group.terraform_mariadb_parameter_group<br>aws_db_instance.terraform_mariadb_rds</code></td></tr><tr><td><code>outputs.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr></table>
 <p class="sub" style="margin-top:.8rem">※ 브라우저에서는 실행할 수 없습니다 — 명령을 복사해 터미널에 붙여넣으세요.</p>
 </section>
 <section class="ltab" id="tab-help" hidden>
@@ -217,118 +197,7 @@ terraform {
 provider &quot;aws&quot; {
   region = &quot;ap-northeast-2&quot; # Asia Pacific (Seoul)
 }
-</code></pre></div><div id="md-src1" hidden><pre><code>#!/usr/bin/env bash
-# 03_aws 실습 결과 확인 스크립트
-# terraform state + AWS CLI 조회 결과를 하나의 HTML 리포트로 생성한다.
-# 사용법: ./check.sh [출력파일]   (기본: report.html)
-set -u
-cd &quot;$(dirname &quot;$0&quot;)&quot;
-
-REGION=&quot;ap-northeast-2&quot;
-OUT=&quot;${1:-report.html}&quot;
-NOW=&quot;$(date &#x27;+%Y-%m-%d %H:%M:%S&#x27;)&quot;
-
-# 각 항목: &quot;제목|명령어 문자열&quot; — 실패해도 계속 진행
-run() {
-  local title=&quot;$1&quot;; shift
-  {
-    echo &quot;&lt;h2&gt;$title&lt;/h2&gt;&quot;
-    echo &quot;&lt;pre&gt;&quot;
-    &quot;$@&quot; 2&gt;&amp;1 | sed -e &#x27;s/&amp;/\&amp;amp;/g&#x27; -e &#x27;s/&lt;/\&amp;lt;/g&#x27; -e &#x27;s/&gt;/\&amp;gt;/g&#x27;
-    echo &quot;&lt;/pre&gt;&quot;
-  } &gt;&gt; &quot;$OUT.tmp&quot;
-}
-
-cat &gt; &quot;$OUT.tmp&quot; &lt;&lt;EOF
-&lt;!DOCTYPE html&gt;
-&lt;html lang=&quot;ko&quot;&gt;
-&lt;head&gt;
-&lt;meta charset=&quot;utf-8&quot;&gt;
-&lt;title&gt;03_aws 실습 결과 — $NOW&lt;/title&gt;
-&lt;style&gt;
-  body { font-family: -apple-system, &#x27;Apple SD Gothic Neo&#x27;, &#x27;Noto Sans KR&#x27;, sans-serif;
-         background: #f8fafc; color: #122033; margin: 0; }
-  .bar { height: 10px; background: #1769aa; }
-  main { max-width: 1100px; margin: 0 auto; padding: 32px 40px 60px; }
-  h1 { font-size: 28px; margin: 8px 0 4px; }
-  .sub { color: #516174; font-size: 14px; margin-bottom: 28px; }
-  h2 { font-size: 17px; color: #1769aa; border-bottom: 1px solid #c9d5e1;
-       padding-bottom: 6px; margin-top: 32px; }
-  pre { background: #fff; border: 1px solid #c9d5e1; border-radius: 8px;
-        padding: 14px 16px; font-family: ui-monospace, Menlo, &#x27;SF Mono&#x27;, monospace;
-        font-size: 12.5px; overflow-x: auto; white-space: pre; }
-  .warn { color: #b86e00; }
-&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;div class=&quot;bar&quot;&gt;&lt;/div&gt;
-&lt;main&gt;
-&lt;h1&gt;03_aws — Terraform 실습 결과&lt;/h1&gt;
-&lt;p class=&quot;sub&quot;&gt;생성 시각: $NOW · 리전: $REGION · 디렉터리: $(pwd)&lt;/p&gt;
-EOF
-
-# --- Terraform 쪽 ---
-run &quot;terraform state list&quot; terraform state list
-run &quot;terraform validate&quot; terraform validate
-
-# --- AWS CLI 쪽 ---
-run &quot;VPC&quot; aws ec2 describe-vpcs --region &quot;$REGION&quot; \
-  --query &#x27;Vpcs[*].[VpcId,CidrBlock,Tags[?Key==`Name`].Value|[0]]&#x27; --output table
-
-run &quot;Subnets&quot; aws ec2 describe-subnets --region &quot;$REGION&quot; \
-  --query &#x27;Subnets[*].[SubnetId,CidrBlock,AvailabilityZone,Tags[?Key==`Name`].Value|[0]]&#x27; --output table
-
-run &quot;Internet Gateway&quot; aws ec2 describe-internet-gateways --region &quot;$REGION&quot; \
-  --query &#x27;InternetGateways[*].[InternetGatewayId,Attachments[0].VpcId]&#x27; --output table
-
-run &quot;NAT Gateway&quot; aws ec2 describe-nat-gateways --region &quot;$REGION&quot; \
-  --filter &quot;Name=state,Values=available&quot; \
-  --query &#x27;NatGateways[*].[NatGatewayId,State,SubnetId]&#x27; --output table
-
-run &quot;Elastic IP&quot; aws ec2 describe-addresses --region &quot;$REGION&quot; \
-  --query &#x27;Addresses[*].[AllocationId,PublicIp]&#x27; --output table
-
-run &quot;Route Tables&quot; aws ec2 describe-route-tables --region &quot;$REGION&quot; \
-  --query &#x27;RouteTables[*].[RouteTableId,Routes[*].[DestinationCidrBlock,GatewayId,NatGatewayId]|[]]&#x27; --output table
-
-run &quot;Security Groups&quot; aws ec2 describe-security-groups --region &quot;$REGION&quot; \
-  --query &#x27;SecurityGroups[*].[GroupId,GroupName,Description]&#x27; --output table
-
-run &quot;EC2 (running)&quot; aws ec2 describe-instances --region &quot;$REGION&quot; \
-  --filters &quot;Name=instance-state-name,Values=running&quot; \
-  --query &#x27;Reservations[*].Instances[*].[InstanceId,InstanceType,PublicIpAddress,KeyName,Tags[?Key==`Name`].Value|[0]]&#x27; --output table
-
-run &quot;RDS&quot; aws rds describe-db-instances --region &quot;$REGION&quot; \
-  --query &#x27;DBInstances[*].[DBInstanceIdentifier,DBInstanceStatus,Engine,EngineVersion,Endpoint.Address]&#x27; --output table
-
-run &quot;Key Pairs&quot; aws ec2 describe-key-pairs --region &quot;$REGION&quot; \
-  --query &#x27;KeyPairs[*].[KeyName,CreateTime]&#x27; --output table
-
-echo &#x27;&lt;/main&gt;&lt;/body&gt;&lt;/html&gt;&#x27; &gt;&gt; &quot;$OUT.tmp&quot;
-mv &quot;$OUT.tmp&quot; &quot;$OUT&quot;
-echo &quot;생성 완료: $(pwd)/$OUT&quot;
-</code></pre></div><div id="md-src2" hidden><pre><code># ============================================================
-# 01_provider.tf — Terraform 코어·프로바이더 선언
-# - terraform 블록: 실행에 필요한 코어 버전과 프로바이더를 고정
-# - provider 블록: 실제 AWS 접속 설정 (리전)
-# 인증 정보는 코드에 적지 않고 ~/.aws 자격증명 또는 환경변수를 사용
-# ============================================================
-
-terraform {
-  required_version = &quot;&gt;= 1.0.0, &lt;2.0.0&quot; # Terraform 1.x 버전대만 허용
-
-  required_providers {
-    aws = {
-      source  = &quot;hashicorp/aws&quot; # 레지스트리 주소 (네임스페이스/이름)
-      version = &quot;~&gt; 5.0&quot;        # 5.x만 허용 — 6.0 메이저 변경 차단
-    }
-  }
-}
-
-provider &quot;aws&quot; {
-  region = &quot;ap-northeast-2&quot; # Asia Pacific (Seoul)
-}
-</code></pre></div><div id="md-src3" hidden><pre><code># ============================================================
+</code></pre></div><div id="md-src1" hidden><pre><code># ============================================================
 # 02_vpc.tf — VPC (Virtual Private Cloud)
 # 이 인프라 전체가 들어갈 논리적 네트워크 공간
 # ============================================================
@@ -342,21 +211,27 @@ resource &quot;aws_vpc&quot; &quot;terraform_vpc&quot; {
     &quot;Name&quot; = &quot;terraform-vpc&quot;
   }
 }
-</code></pre></div><div id="md-src4" hidden><pre><code># Public Subnet - ap-northeast-2a
+</code></pre></div><div id="md-src2" hidden><pre><code># ============================================================
+# 03-subnet.tf — 서브넷 (Subnet)
+# VPC의 IP 대역을 가용영역별로 나눈 구획.
+# - 퍼블릭: IGW로 직접 나가는 서브넷 (map_public_ip_on_launch = true)
+# - 프라이빗: 외부 직접 접근 불가, NGW 경유 아웃바운드만 가능
+# 배치 규칙: AZ당 pub 1개 + pri 1개 — 2개 AZ라 총 4개
+# ============================================================
+
+# Public Subnet — ap-northeast-2a
 resource &quot;aws_subnet&quot; &quot;terraform_pub_subnet_2a&quot; {
-  vpc_id                  = aws_vpc.terraform_vpc.id
-  cidr_block              = &quot;10.200.1.0/24&quot;
-  availability_zone       = &quot;ap-northeast-2a&quot;
-  map_public_ip_on_launch = true
+  vpc_id                  = aws_vpc.terraform_vpc.id # 어느 VPC 안에 만들지
+  cidr_block              = &quot;10.200.1.0/24&quot;        # VPC 대역(10.200.0.0/16) 안의 /24
+  availability_zone       = &quot;ap-northeast-2a&quot;      # 서브넷은 반드시 1개 AZ에 소속
+  map_public_ip_on_launch = true                   # 이 서브넷의 인스턴스에 공인 IP 자동 부여
 
   tags = {
-    Name                                          = &quot;terraform-pub-subnet-2a&quot;
-    &quot;kubernetes.io/role/elb&quot;                      = &quot;1&quot;
-    &quot;kubernetes.io/cluster/terraform-eks-cluster&quot; = &quot;shared&quot;
+    Name = &quot;terraform-pub-subnet-2a&quot;
   }
 }
 
-# Public Subnet - ap-northeast-2c
+# Public Subnet — ap-northeast-2c (다른 AZ — 장애 대비 이중화의 기본)
 resource &quot;aws_subnet&quot; &quot;terraform_pub_subnet_2c&quot; {
   vpc_id                  = aws_vpc.terraform_vpc.id
   cidr_block              = &quot;10.200.2.0/24&quot;
@@ -364,38 +239,33 @@ resource &quot;aws_subnet&quot; &quot;terraform_pub_subnet_2c&quot; {
   map_public_ip_on_launch = true
 
   tags = {
-    Name                                          = &quot;terraform-pub-subnet-2c&quot;
-    &quot;kubernetes.io/role/elb&quot;                      = &quot;1&quot;
-    &quot;kubernetes.io/cluster/terraform-eks-cluster&quot; = &quot;shared&quot;
+    Name = &quot;terraform-pub-subnet-2c&quot;
   }
 }
 
-# Private Subnet - ap-northeast-2a
+# Private Subnet — ap-northeast-2a
 resource &quot;aws_subnet&quot; &quot;terraform_pri_subnet_2a&quot; {
   vpc_id            = aws_vpc.terraform_vpc.id
-  cidr_block        = &quot;10.200.11.0/24&quot;
+  cidr_block        = &quot;10.200.11.0/24&quot; # pub과 겹치지 않는 대역으로 구분
   availability_zone = &quot;ap-northeast-2a&quot;
+  # map_public_ip_on_launch 생략 = false — 공인 IP가 없어 외부에서 직접 접근 불가
 
   tags = {
-    Name                                          = &quot;terraform-pri-subnet-2a&quot;
-    &quot;kubernetes.io/role/internal-elb&quot;             = &quot;1&quot;
-    &quot;kubernetes.io/cluster/terraform-eks-cluster&quot; = &quot;shared&quot;
+    Name = &quot;terraform-pri-subnet-2a&quot;
   }
 }
 
-# Private Subnet - ap-northeast-2c
+# Private Subnet — ap-northeast-2c
 resource &quot;aws_subnet&quot; &quot;terraform_pri_subnet_2c&quot; {
   vpc_id            = aws_vpc.terraform_vpc.id
   cidr_block        = &quot;10.200.12.0/24&quot;
   availability_zone = &quot;ap-northeast-2c&quot;
 
   tags = {
-    Name                                          = &quot;terraform-pri-subnet-2c&quot;
-    &quot;kubernetes.io/role/internal-elb&quot;             = &quot;1&quot;
-    &quot;kubernetes.io/cluster/terraform-eks-cluster&quot; = &quot;shared&quot;
+    Name = &quot;terraform-pri-subnet-2c&quot;
   }
 }
-</code></pre></div><div id="md-src5" hidden><pre><code># ============================================================
+</code></pre></div><div id="md-src3" hidden><pre><code># ============================================================
 # 04-igw.tf — 인터넷 게이트웨이 (IGW)
 # VPC와 인터넷 사이의 출입구.
 # 퍼블릭 서브넷이 외부와 통신하려면 IGW + 라우팅 테이블의 0.0.0.0/0 경로가 필요
@@ -408,7 +278,7 @@ resource &quot;aws_internet_gateway&quot; &quot;terraform_igw&quot; {
     Name = &quot;terraform-igw&quot; # AWS 태그 값은 하이픈 OK
   }
 }
-</code></pre></div><div id="md-src6" hidden><pre><code># ============================================================
+</code></pre></div><div id="md-src4" hidden><pre><code># ============================================================
 # 05-ngw.tf — NAT 게이트웨이 + EIP
 #
 # **NGW**
@@ -435,7 +305,7 @@ resource &quot;aws_nat_gateway&quot; &quot;terraform_ngw&quot; {
     &quot;Name&quot; = &quot;terraform-ngw&quot;
   }
 }
-</code></pre></div><div id="md-src7" hidden><pre><code># ============================================================
+</code></pre></div><div id="md-src5" hidden><pre><code># ============================================================
 # 06-routing-table.tf — 라우팅 테이블·라우팅·서브넷 연결
 #
 # 구조도:
@@ -506,364 +376,7 @@ resource &quot;aws_route_table_association&quot; &quot;terraform_pri_rt_associat
   subnet_id      = aws_subnet.terraform_pri_subnet_2c.id
   route_table_id = aws_route_table.terraform_pri_rt.id
 }
-</code></pre></div><div id="md-src8" hidden><pre><code>#!/usr/bin/env bash
-# step1 네트워크 결과 결과 확인 스크립트 — apply 직후 이 단계의 리소스만 검증
-# 사용법: ./check.sh [출력파일]   (기본: report.html)
-set -u
-cd &quot;$(dirname &quot;$0&quot;)&quot;
-REGION=&quot;ap-northeast-2&quot;
-OUT=&quot;${1:-report.html}&quot;
-NOW=&quot;$(date &#x27;+%Y-%m-%d %H:%M:%S&#x27;)&quot;
-run() { local title=&quot;$1&quot;; shift
-  { echo &quot;&lt;h2&gt;$title&lt;/h2&gt;&lt;pre&gt;&quot;; &quot;$@&quot; 2&gt;&amp;1 | sed -e &#x27;s/&amp;/\&amp;amp;/g&#x27; -e &#x27;s/&lt;/\&amp;lt;/g&#x27; -e &#x27;s/&gt;/\&amp;gt;/g&#x27;; echo &quot;&lt;/pre&gt;&quot;; } &gt;&gt; &quot;$OUT.tmp&quot;; }
-cat &gt; &quot;$OUT.tmp&quot; &lt;&lt;EOF
-&lt;!DOCTYPE html&gt;&lt;html lang=&quot;ko&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;title&gt;step1 결과 — $NOW&lt;/title&gt;
-&lt;style&gt;
-body{font-family:-apple-system,&#x27;Apple SD Gothic Neo&#x27;,&#x27;Noto Sans KR&#x27;,sans-serif;background:#f8fafc;color:#122033;margin:0}
-.bar{height:10px;background:#1769aa}main{max-width:1100px;margin:0 auto;padding:32px 40px 60px}
-h1{font-size:28px;margin:8px 0 4px}.sub{color:#516174;font-size:14px;margin-bottom:28px}
-h2{font-size:17px;color:#1769aa;border-bottom:1px solid #c9d5e1;padding-bottom:6px;margin-top:32px}
-pre{background:#fff;border:1px solid #c9d5e1;border-radius:8px;padding:14px 16px;font-family:ui-monospace,Menlo,&#x27;SF Mono&#x27;,monospace;font-size:12.5px;overflow-x:auto;white-space:pre}
-&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div class=&quot;bar&quot;&gt;&lt;/div&gt;&lt;main&gt;
-&lt;h1&gt;step1 — 네트워크 결과&lt;/h1&gt;&lt;p class=&quot;sub&quot;&gt;생성 시각: $NOW · 리전: $REGION · 디렉터리: $(pwd)&lt;/p&gt;
-EOF
-run &quot;terraform state list&quot; terraform state list
-run &quot;terraform output (VPC·서브넷 ID)&quot; terraform output
-run &quot;VPC&quot; aws ec2 describe-vpcs --region &quot;$REGION&quot; --query &#x27;Vpcs[*].[VpcId,CidrBlock,Tags[?Key==`Name`].Value|[0]]&#x27; --output table
-run &quot;Subnets&quot; aws ec2 describe-subnets --region &quot;$REGION&quot; --query &#x27;Subnets[*].[SubnetId,CidrBlock,AvailabilityZone,MapPublicIpOnLaunch,Tags[?Key==`Name`].Value|[0]]&#x27; --output table
-run &quot;Internet Gateway&quot; aws ec2 describe-internet-gateways --region &quot;$REGION&quot; --query &#x27;InternetGateways[*].[InternetGatewayId,Attachments[0].VpcId,Tags[?Key==`Name`].Value|[0]]&#x27; --output table
-run &quot;NAT Gateway + EIP&quot; aws ec2 describe-nat-gateways --region &quot;$REGION&quot; --filter &quot;Name=state,Values=available,pending&quot; --query &#x27;NatGateways[*].[NatGatewayId,State,SubnetId]&#x27; --output table
-run &quot;Elastic IP&quot; aws ec2 describe-addresses --region &quot;$REGION&quot; --query &#x27;Addresses[*].[AllocationId,PublicIp,NetworkBorderGroup]&#x27; --output table
-run &quot;Route Tables&quot; aws ec2 describe-route-tables --region &quot;$REGION&quot; --query &#x27;RouteTables[*].[RouteTableId,Tags[?Key==`Name`].Value|[0],Routes[*].[DestinationCidrBlock,GatewayId,NatGatewayId]]&#x27; --output table
-echo &quot;&lt;/main&gt;&lt;/body&gt;&lt;/html&gt;&quot; &gt;&gt; &quot;$OUT.tmp&quot;
-mv &quot;$OUT.tmp&quot; &quot;$OUT&quot;
-echo &quot;→ $OUT 생성 완료&quot;
-</code></pre></div><div id="md-src9" hidden><pre><code># ============================================================
-# outputs — 다음 단계(step2, step3)에서 remote_state로 참조한다
-# ============================================================
-
-output &quot;vpc_id&quot; {
-  value = aws_vpc.terraform_vpc.id
-}
-
-output &quot;pub_subnet_2a_id&quot; {
-  value = aws_subnet.terraform_pub_subnet_2a.id
-}
-
-output &quot;pub_subnet_2c_id&quot; {
-  value = aws_subnet.terraform_pub_subnet_2c.id
-}
-
-output &quot;pri_subnet_2a_id&quot; {
-  value = aws_subnet.terraform_pri_subnet_2a.id
-}
-
-output &quot;pri_subnet_2c_id&quot; {
-  value = aws_subnet.terraform_pri_subnet_2c.id
-}
-</code></pre></div><div id="md-src10" hidden><pre><code># ============================================================
-# step1_network의 state를 읽어온다
-# — 같은 리소스를 다시 만들지 않고 ID만 참조
-# ============================================================
-data &quot;terraform_remote_state&quot; &quot;network&quot; {
-  backend = &quot;local&quot;
-  config = {
-    path = &quot;../step1_network/terraform.tfstate&quot;
-  }
-}
-
-locals {
-  vpc_id           = data.terraform_remote_state.network.outputs.vpc_id
-  pub_subnet_2a_id = data.terraform_remote_state.network.outputs.pub_subnet_2a_id
-  pub_subnet_2c_id = data.terraform_remote_state.network.outputs.pub_subnet_2c_id
-  pri_subnet_2a_id = data.terraform_remote_state.network.outputs.pri_subnet_2a_id
-  pri_subnet_2c_id = data.terraform_remote_state.network.outputs.pri_subnet_2c_id
-}
-</code></pre></div><div id="md-src11" hidden><pre><code># ============================================================
-# 01_provider.tf — Terraform 코어·프로바이더 선언
-# - terraform 블록: 실행에 필요한 코어 버전과 프로바이더를 고정
-# - provider 블록: 실제 AWS 접속 설정 (리전)
-# 인증 정보는 코드에 적지 않고 ~/.aws 자격증명 또는 환경변수를 사용
-# ============================================================
-
-terraform {
-  required_version = &quot;&gt;= 1.0.0, &lt;2.0.0&quot; # Terraform 1.x 버전대만 허용
-
-  required_providers {
-    aws = {
-      source  = &quot;hashicorp/aws&quot; # 레지스트리 주소 (네임스페이스/이름)
-      version = &quot;~&gt; 5.0&quot;        # 5.x만 허용 — 6.0 메이저 변경 차단
-    }
-  }
-}
-
-provider &quot;aws&quot; {
-  region = &quot;ap-northeast-2&quot; # Asia Pacific (Seoul)
-}
-</code></pre></div><div id="md-src12" hidden><pre><code># ALB SG
-resource &quot;aws_security_group&quot; &quot;terraform_sg_alb&quot; {
-  name   = &quot;for ALB&quot;
-  vpc_id = local.vpc_id
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = &quot;tcp&quot;
-    cidr_blocks = [&quot;0.0.0.0/0&quot;]
-    description = &quot;for HTTP&quot;
-  }
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = &quot;tcp&quot;
-    cidr_blocks = [&quot;0.0.0.0/0&quot;]
-    description = &quot;for HTTPS&quot;
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = &quot;-1&quot;
-    cidr_blocks = [&quot;0.0.0.0/0&quot;]
-  }
-}
-
-# EKS SG
-resource &quot;aws_security_group&quot; &quot;terraform_sg_eks_node_group&quot; {
-  name   = &quot;for EKS-managed server&quot;
-  vpc_id = local.vpc_id
-
-  ingress {
-    from_port   = -1
-    to_port     = -1
-    protocol    = &quot;icmp&quot;
-    cidr_blocks = [&quot;0.0.0.0/0&quot;]
-    description = &quot;for ping&quot;
-  }
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = &quot;tcp&quot;
-    cidr_blocks = [&quot;0.0.0.0/0&quot;]
-    description = &quot;for SSH&quot;
-  }
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = &quot;tcp&quot;
-    cidr_blocks = [&quot;0.0.0.0/0&quot;]
-    description = &quot;for HTTP&quot;
-  }
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = &quot;tcp&quot;
-    cidr_blocks = [&quot;0.0.0.0/0&quot;]
-    description = &quot;for HTTPS&quot;
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = &quot;-1&quot;
-    cidr_blocks = [&quot;0.0.0.0/0&quot;]
-  }
-}
-
-</code></pre></div><div id="md-src13" hidden><pre><code># EKS Cluster IAM Role 생성
-resource &quot;aws_iam_role&quot; &quot;terraform_eks_cluster_role&quot; {
-  name = &quot;terraform_eks_cluster_role&quot;
-
-  assume_role_policy = &lt;&lt;POLICY
-{
-  &quot;Version&quot;: &quot;2012-10-17&quot;,
-  &quot;Statement&quot;: [
-    {
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Principal&quot;: {
-        &quot;Service&quot;: &quot;eks.amazonaws.com&quot;
-      },
-      &quot;Action&quot;: &quot;sts:AssumeRole&quot;
-    }
-  ]
-}
-POLICY
-}
-
-# IAM Role에 정책 부착
-resource &quot;aws_iam_role_policy_attachment&quot; &quot;terraform_eks_cluster_AmazonEKSClusterPolicy&quot; {
-  policy_arn = &quot;arn:aws:iam::aws:policy/AmazonEKSClusterPolicy&quot;
-  role       = aws_iam_role.terraform_eks_cluster_role.name
-}
-
-resource &quot;aws_iam_role_policy_attachment&quot; &quot;terraform_eks_cluster_AmazonEKSVPCResourceController&quot; {
-  policy_arn = &quot;arn:aws:iam::aws:policy/AmazonEKSVPCResourceController&quot;
-  role       = aws_iam_role.terraform_eks_cluster_role.name
-}
-
-# EKS Cluster 생성
-resource &quot;aws_eks_cluster&quot; &quot;terraform_eks_cluster&quot; {
-  name     = &quot;terraform_eks_cluster&quot;
-  role_arn = aws_iam_role.terraform_eks_cluster_role.arn
-
-  version = &quot;1.32&quot; # 최신버전은 에러 발생 하는 경우도 있음 
-
-  vpc_config {
-    subnet_ids              = [local.pri_subnet_2a_id, local.pri_subnet_2c_id]
-    endpoint_public_access  = true
-    endpoint_private_access = false
-    security_group_ids      = [aws_security_group.terraform_sg_eks_node_group.id]
-  }
-
-  # 의존성
-  depends_on = [
-    aws_iam_role_policy_attachment.terraform_eks_cluster_AmazonEKSClusterPolicy,
-    aws_iam_role_policy_attachment.terraform_eks_cluster_AmazonEKSVPCResourceController,
-  ]
-}</code></pre></div><div id="md-src14" hidden><pre><code># Node Group IAM Role 생성
-resource &quot;aws_iam_role&quot; &quot;terraform_eks_node_group_role&quot; {
-  name = &quot;terraform_eks_node_group_role&quot;
-  assume_role_policy = jsonencode({
-    Version = &quot;2012-10-17&quot;
-    Statement = [
-      {
-        Action = &quot;sts:AssumeRole&quot;
-        Effect = &quot;Allow&quot;
-        Principal = {
-          Service = &quot;ec2.amazonaws.com&quot;
-        }
-      },
-    ]
-  })
-}
-
-# IAM Role에 정책 추가
-resource &quot;aws_iam_role_policy_attachment&quot; &quot;AmazonEKS_CNI_Policy&quot; {
-  policy_arn = &quot;arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy&quot;
-  role       = aws_iam_role.terraform_eks_node_group_role.name
-}
-
-resource &quot;aws_iam_role_policy_attachment&quot; &quot;AmazonEC2ContainerRegistryReadOnly&quot; {
-  policy_arn = &quot;arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly&quot;
-  role       = aws_iam_role.terraform_eks_node_group_role.name
-}
-
-resource &quot;aws_iam_role_policy_attachment&quot; &quot;AmazonEKSWorkerNodePolicy&quot; {
-  policy_arn = &quot;arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy&quot;
-  role       = aws_iam_role.terraform_eks_node_group_role.name
-}
-
-# Node Group 생성
-resource &quot;aws_eks_node_group&quot; &quot;terraform_eks_node_group&quot; {
-  cluster_name    = aws_eks_cluster.terraform_eks_cluster.name
-  node_group_name = &quot;terraform_eks_node_group&quot;
-  node_role_arn   = aws_iam_role.terraform_eks_node_group_role.arn
-  subnet_ids      = [local.pri_subnet_2a_id, local.pri_subnet_2c_id]
-
-  tags = {
-    &quot;k8s.io/cluster-autoscaler/enabled&quot;               = &quot;true&quot;
-    &quot;k8s.io/cluster-autoscaler/terraform_eks_cluster&quot; = &quot;owned&quot;
-  }
-
-  scaling_config {
-    desired_size = 2
-    max_size     = 4
-    min_size     = 2
-  }
-
-  ami_type       = &quot;AL2_x86_64&quot;
-  instance_types = [&quot;t3.large&quot;]
-  disk_size      = 20
-
-  depends_on = [
-    aws_iam_role_policy_attachment.AmazonEKSWorkerNodePolicy,
-    aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly,
-    aws_iam_role_policy_attachment.AmazonEKS_CNI_Policy
-  ]
-}</code></pre></div><div id="md-src15" hidden><pre><code>resource &quot;aws_ecr_repository&quot; &quot;terraform_ecr&quot; {
-  name                 = &quot;terraform_ecr&quot;
-  image_tag_mutability = &quot;IMMUTABLE&quot;
-
-  image_scanning_configuration {
-    scan_on_push = false
-  }
-  tags = {
-    Name = &quot;terraform_ecr&quot;
-  }
-}</code></pre></div><div id="md-src16" hidden><pre><code>#!/usr/bin/env bash
-# step3 EKS·ECR 결과 결과 확인 스크립트 — apply 직후 이 단계의 리소스만 검증
-# 사용법: ./check.sh [출력파일]   (기본: report.html)
-set -u
-cd &quot;$(dirname &quot;$0&quot;)&quot;
-REGION=&quot;ap-northeast-2&quot;
-OUT=&quot;${1:-report.html}&quot;
-NOW=&quot;$(date &#x27;+%Y-%m-%d %H:%M:%S&#x27;)&quot;
-run() { local title=&quot;$1&quot;; shift
-  { echo &quot;&lt;h2&gt;$title&lt;/h2&gt;&lt;pre&gt;&quot;; &quot;$@&quot; 2&gt;&amp;1 | sed -e &#x27;s/&amp;/\&amp;amp;/g&#x27; -e &#x27;s/&lt;/\&amp;lt;/g&#x27; -e &#x27;s/&gt;/\&amp;gt;/g&#x27;; echo &quot;&lt;/pre&gt;&quot;; } &gt;&gt; &quot;$OUT.tmp&quot;; }
-cat &gt; &quot;$OUT.tmp&quot; &lt;&lt;EOF
-&lt;!DOCTYPE html&gt;&lt;html lang=&quot;ko&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;title&gt;step3 결과 — $NOW&lt;/title&gt;
-&lt;style&gt;
-body{font-family:-apple-system,&#x27;Apple SD Gothic Neo&#x27;,&#x27;Noto Sans KR&#x27;,sans-serif;background:#f8fafc;color:#122033;margin:0}
-.bar{height:10px;background:#1769aa}main{max-width:1100px;margin:0 auto;padding:32px 40px 60px}
-h1{font-size:28px;margin:8px 0 4px}.sub{color:#516174;font-size:14px;margin-bottom:28px}
-h2{font-size:17px;color:#1769aa;border-bottom:1px solid #c9d5e1;padding-bottom:6px;margin-top:32px}
-pre{background:#fff;border:1px solid #c9d5e1;border-radius:8px;padding:14px 16px;font-family:ui-monospace,Menlo,&#x27;SF Mono&#x27;,monospace;font-size:12.5px;overflow-x:auto;white-space:pre}
-&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div class=&quot;bar&quot;&gt;&lt;/div&gt;&lt;main&gt;
-&lt;h1&gt;step3 — EKS·ECR 결과&lt;/h1&gt;&lt;p class=&quot;sub&quot;&gt;생성 시각: $NOW · 리전: $REGION · 디렉터리: $(pwd)&lt;/p&gt;
-EOF
-run &quot;terraform state list&quot; terraform state list
-run &quot;EKS 클러스터&quot; aws eks describe-cluster --region &quot;$REGION&quot; --name terraform-eks-cluster --query &#x27;cluster.{name:name,status:status,version:version,endpoint:endpoint}&#x27; --output table
-run &quot;EKS 노드그룹&quot; aws eks list-nodegroups --region &quot;$REGION&quot; --cluster-name terraform-eks-cluster --output table
-run &quot;노드 EC2 인스턴스&quot; aws ec2 describe-instances --region &quot;$REGION&quot; --filters &quot;Name=tag:kubernetes.io/cluster/terraform-eks-cluster,Values=owned,shared&quot; --query &#x27;Reservations[*].Instances[*].[InstanceId,InstanceType,State.Name,PrivateIpAddress]&#x27; --output table
-run &quot;EKS IAM 역할&quot; aws iam list-roles --query &#x27;Roles[?contains(RoleName,`terraform`)].RoleName&#x27; --output table
-run &quot;ECR 리포지토리&quot; aws ecr describe-repositories --region &quot;$REGION&quot; --query &#x27;repositories[*].[repositoryName,repositoryUri]&#x27; --output table
-echo &quot;&lt;/main&gt;&lt;/body&gt;&lt;/html&gt;&quot; &gt;&gt; &quot;$OUT.tmp&quot;
-mv &quot;$OUT.tmp&quot; &quot;$OUT&quot;
-echo &quot;→ $OUT 생성 완료&quot;
-</code></pre></div><div id="md-src17" hidden><pre><code># ============================================================
-# step1_network의 state를 읽어온다
-# — 같은 리소스를 다시 만들지 않고 ID만 참조
-# ============================================================
-data &quot;terraform_remote_state&quot; &quot;network&quot; {
-  backend = &quot;local&quot;
-  config = {
-    path = &quot;../step1_network/terraform.tfstate&quot;
-  }
-}
-
-locals {
-  vpc_id           = data.terraform_remote_state.network.outputs.vpc_id
-  pub_subnet_2a_id = data.terraform_remote_state.network.outputs.pub_subnet_2a_id
-  pub_subnet_2c_id = data.terraform_remote_state.network.outputs.pub_subnet_2c_id
-  pri_subnet_2a_id = data.terraform_remote_state.network.outputs.pri_subnet_2a_id
-  pri_subnet_2c_id = data.terraform_remote_state.network.outputs.pri_subnet_2c_id
-}
-</code></pre></div><div id="md-src18" hidden><pre><code># ============================================================
-# 01_provider.tf — Terraform 코어·프로바이더 선언
-# - terraform 블록: 실행에 필요한 코어 버전과 프로바이더를 고정
-# - provider 블록: 실제 AWS 접속 설정 (리전)
-# 인증 정보는 코드에 적지 않고 ~/.aws 자격증명 또는 환경변수를 사용
-# ============================================================
-
-terraform {
-  required_version = &quot;&gt;= 1.0.0, &lt;2.0.0&quot; # Terraform 1.x 버전대만 허용
-
-  required_providers {
-    aws = {
-      source  = &quot;hashicorp/aws&quot; # 레지스트리 주소 (네임스페이스/이름)
-      version = &quot;~&gt; 5.0&quot;        # 5.x만 허용 — 6.0 메이저 변경 차단
-    }
-  }
-}
-
-provider &quot;aws&quot; {
-  region = &quot;ap-northeast-2&quot; # Asia Pacific (Seoul)
-}
-</code></pre></div><div id="md-src19" hidden><pre><code># ============================================================
+</code></pre></div><div id="md-src6" hidden><pre><code># ============================================================
 # 07-sg-ec2-rds.tf — 보안 그룹 (Security Group)
 # 인스턴스 수준의 가상 방화벽. ingress=들어오는 트래픽, egress=나가는 트래픽
 # ※ cidr_blocks = 0.0.0.0/0 은 전체 인터넷 허용 — 실습용 설정이며
@@ -874,7 +387,7 @@ provider &quot;aws&quot; {
 resource &quot;aws_security_group&quot; &quot;terraform_sg_bastion&quot; {
   name        = &quot;terraform-sg-bastion&quot;
   description = &quot;for Bastion Server&quot;
-  vpc_id      = local.vpc_id
+  vpc_id      = aws_vpc.terraform_vpc.id
   tags = {
     &quot;Name&quot; = &quot;terraform-sg-bastion&quot;
   }
@@ -938,7 +451,7 @@ resource &quot;aws_security_group&quot; &quot;terraform_sg_bastion&quot; {
 resource &quot;aws_security_group&quot; &quot;terraform_sg_rds&quot; {
   name        = &quot;terraform-sg-rds&quot;
   description = &quot;for RDS MariaDB&quot;
-  vpc_id      = local.vpc_id
+  vpc_id      = aws_vpc.terraform_vpc.id
   tags = {
     &quot;Name&quot; = &quot;terraform-sg-rds&quot;
   }
@@ -960,7 +473,7 @@ resource &quot;aws_security_group&quot; &quot;terraform_sg_rds&quot; {
     cidr_blocks = [&quot;0.0.0.0/0&quot;]
   }
 }
-</code></pre></div><div id="md-src20" hidden><pre><code># ============================================================
+</code></pre></div><div id="md-src7" hidden><pre><code># ============================================================
 # 08-ec2.tf — EC2 인스턴스 (배스천 서버)
 #
 # - Elastic Compute Cloud의 약자로 AWS에서 제공하는 **가상 서버** 서비스
@@ -974,7 +487,7 @@ resource &quot;aws_instance&quot; &quot;terraform_pub_ec2_bastion_2a&quot; {
   ami                         = &quot;ami-056a29f2eddc40520&quot; # 리전별로 AMI ID가 다름 — ap-northeast-2용
   instance_type               = &quot;t2.micro&quot;              # 프리티어 대상 사양
   vpc_security_group_ids      = [aws_security_group.terraform_sg_bastion.id]
-  subnet_id                   = local.pub_subnet_2a_id
+  subnet_id                   = aws_subnet.terraform_pub_subnet_2a.id
   key_name                    = &quot;ja-01-v2&quot; # AWS 콘솔에 미리 생성된 키페어 이름
   associate_public_ip_address = true       # 퍼블릭 IP 부여 — 외부 SSH 접속용
 
@@ -990,7 +503,7 @@ resource &quot;aws_instance&quot; &quot;terraform_pub_ec2_bastion_2a&quot; {
     &quot;Name&quot; = &quot;terraform-pub-ec2-bastion-2a&quot;
   }
 }
-</code></pre></div><div id="md-src21" hidden><pre><code># ============================================================
+</code></pre></div><div id="md-src8" hidden><pre><code># ============================================================
 # 09-rds.tf — RDS (관계형 데이터베이스 서비스)
 # AWS가 설치·패치·백업을 대신 관리해 주는 관리형 DB.
 # 여기서는 MariaDB를 프라이빗 서브넷 2개(2a, 2c)에 배포한다.
@@ -1005,7 +518,7 @@ resource &quot;aws_instance&quot; &quot;terraform_pub_ec2_bastion_2a&quot; {
 # 서브넷 그룹이 필요하다
 resource &quot;aws_db_subnet_group&quot; &quot;terraform_rds_subnet_group&quot; {
   name       = &quot;terraform-rds-subnet-group&quot;
-  subnet_ids = [local.pri_subnet_2a_id, local.pri_subnet_2c_id]
+  subnet_ids = [aws_subnet.terraform_pri_subnet_2a.id, aws_subnet.terraform_pri_subnet_2c.id]
 
   tags = {
     Name = &quot;terraform-rds-subnet-group&quot;
@@ -1100,85 +613,119 @@ resource &quot;aws_db_instance&quot; &quot;terraform_mariadb_rds&quot; {
     Name = &quot;terraform-mariadb-rds&quot;
   }
 }
-</code></pre></div><div id="md-src22" hidden><pre><code>#!/usr/bin/env bash
-# step2 EC2·RDS 결과 결과 확인 스크립트 — apply 직후 이 단계의 리소스만 검증
+</code></pre></div><div id="md-src9" hidden><pre><code>#!/usr/bin/env bash
+# 03_aws 실습 결과 확인 스크립트
+# terraform state + AWS CLI 조회 결과를 하나의 HTML 리포트로 생성한다.
 # 사용법: ./check.sh [출력파일]   (기본: report.html)
 set -u
 cd &quot;$(dirname &quot;$0&quot;)&quot;
+
 REGION=&quot;ap-northeast-2&quot;
 OUT=&quot;${1:-report.html}&quot;
 NOW=&quot;$(date &#x27;+%Y-%m-%d %H:%M:%S&#x27;)&quot;
-run() { local title=&quot;$1&quot;; shift
-  { echo &quot;&lt;h2&gt;$title&lt;/h2&gt;&lt;pre&gt;&quot;; &quot;$@&quot; 2&gt;&amp;1 | sed -e &#x27;s/&amp;/\&amp;amp;/g&#x27; -e &#x27;s/&lt;/\&amp;lt;/g&#x27; -e &#x27;s/&gt;/\&amp;gt;/g&#x27;; echo &quot;&lt;/pre&gt;&quot;; } &gt;&gt; &quot;$OUT.tmp&quot;; }
+
+# 각 항목: &quot;제목|명령어 문자열&quot; — 실패해도 계속 진행
+run() {
+  local title=&quot;$1&quot;; shift
+  {
+    echo &quot;&lt;h2&gt;$title&lt;/h2&gt;&quot;
+    echo &quot;&lt;pre&gt;&quot;
+    &quot;$@&quot; 2&gt;&amp;1 | sed -e &#x27;s/&amp;/\&amp;amp;/g&#x27; -e &#x27;s/&lt;/\&amp;lt;/g&#x27; -e &#x27;s/&gt;/\&amp;gt;/g&#x27;
+    echo &quot;&lt;/pre&gt;&quot;
+  } &gt;&gt; &quot;$OUT.tmp&quot;
+}
+
 cat &gt; &quot;$OUT.tmp&quot; &lt;&lt;EOF
-&lt;!DOCTYPE html&gt;&lt;html lang=&quot;ko&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;title&gt;step2 결과 — $NOW&lt;/title&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;ko&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;title&gt;03_aws 실습 결과 — $NOW&lt;/title&gt;
 &lt;style&gt;
-body{font-family:-apple-system,&#x27;Apple SD Gothic Neo&#x27;,&#x27;Noto Sans KR&#x27;,sans-serif;background:#f8fafc;color:#122033;margin:0}
-.bar{height:10px;background:#1769aa}main{max-width:1100px;margin:0 auto;padding:32px 40px 60px}
-h1{font-size:28px;margin:8px 0 4px}.sub{color:#516174;font-size:14px;margin-bottom:28px}
-h2{font-size:17px;color:#1769aa;border-bottom:1px solid #c9d5e1;padding-bottom:6px;margin-top:32px}
-pre{background:#fff;border:1px solid #c9d5e1;border-radius:8px;padding:14px 16px;font-family:ui-monospace,Menlo,&#x27;SF Mono&#x27;,monospace;font-size:12.5px;overflow-x:auto;white-space:pre}
-&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div class=&quot;bar&quot;&gt;&lt;/div&gt;&lt;main&gt;
-&lt;h1&gt;step2 — EC2·RDS 결과&lt;/h1&gt;&lt;p class=&quot;sub&quot;&gt;생성 시각: $NOW · 리전: $REGION · 디렉터리: $(pwd)&lt;/p&gt;
+  body { font-family: -apple-system, &#x27;Apple SD Gothic Neo&#x27;, &#x27;Noto Sans KR&#x27;, sans-serif;
+         background: #f8fafc; color: #122033; margin: 0; }
+  .bar { height: 10px; background: #1769aa; }
+  main { max-width: 1100px; margin: 0 auto; padding: 32px 40px 60px; }
+  h1 { font-size: 28px; margin: 8px 0 4px; }
+  .sub { color: #516174; font-size: 14px; margin-bottom: 28px; }
+  h2 { font-size: 17px; color: #1769aa; border-bottom: 1px solid #c9d5e1;
+       padding-bottom: 6px; margin-top: 32px; }
+  pre { background: #fff; border: 1px solid #c9d5e1; border-radius: 8px;
+        padding: 14px 16px; font-family: ui-monospace, Menlo, &#x27;SF Mono&#x27;, monospace;
+        font-size: 12.5px; overflow-x: auto; white-space: pre; }
+  .warn { color: #b86e00; }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div class=&quot;bar&quot;&gt;&lt;/div&gt;
+&lt;main&gt;
+&lt;h1&gt;03_aws — Terraform 실습 결과&lt;/h1&gt;
+&lt;p class=&quot;sub&quot;&gt;생성 시각: $NOW · 리전: $REGION · 디렉터리: $(pwd)&lt;/p&gt;
 EOF
+
+# --- Terraform 쪽 ---
 run &quot;terraform state list&quot; terraform state list
-run &quot;step1 remote_state 연결 (VPC/서브넷 ID)&quot; terraform output -state=../step1_network/terraform.tfstate 2&gt;/dev/null || echo &quot;step1 state 없음 — step1_network를 먼저 apply&quot;
-run &quot;Security Groups&quot; aws ec2 describe-security-groups --region &quot;$REGION&quot; --query &#x27;SecurityGroups[*].[GroupId,GroupName,Description]&#x27; --output table
-run &quot;EC2 인스턴스&quot; aws ec2 describe-instances --region &quot;$REGION&quot; --filters &quot;Name=instance-state-name,Values=running,pending&quot; --query &#x27;Reservations[*].Instances[*].[InstanceId,InstanceType,PublicIpAddress,PrivateIpAddress,KeyName,State.Name]&#x27; --output table
-run &quot;RDS 인스턴스&quot; aws rds describe-db-instances --region &quot;$REGION&quot; --query &#x27;DBInstances[*].[DBInstanceIdentifier,DBInstanceStatus,Engine,EngineVersion,Endpoint.Address,MultiAZ]&#x27; --output table
-run &quot;RDS 서브넷·파라미터 그룹&quot; aws rds describe-db-subnet-groups --region &quot;$REGION&quot; --query &#x27;DBSubnetGroups[*].[DBSubnetGroupName,VpcId]&#x27; --output table
-echo &quot;&lt;/main&gt;&lt;/body&gt;&lt;/html&gt;&quot; &gt;&gt; &quot;$OUT.tmp&quot;
+run &quot;terraform validate&quot; terraform validate
+
+# --- AWS CLI 쪽 ---
+run &quot;VPC&quot; aws ec2 describe-vpcs --region &quot;$REGION&quot; \
+  --query &#x27;Vpcs[*].[VpcId,CidrBlock,Tags[?Key==`Name`].Value|[0]]&#x27; --output table
+
+run &quot;Subnets&quot; aws ec2 describe-subnets --region &quot;$REGION&quot; \
+  --query &#x27;Subnets[*].[SubnetId,CidrBlock,AvailabilityZone,Tags[?Key==`Name`].Value|[0]]&#x27; --output table
+
+run &quot;Internet Gateway&quot; aws ec2 describe-internet-gateways --region &quot;$REGION&quot; \
+  --query &#x27;InternetGateways[*].[InternetGatewayId,Attachments[0].VpcId]&#x27; --output table
+
+run &quot;NAT Gateway&quot; aws ec2 describe-nat-gateways --region &quot;$REGION&quot; \
+  --filter &quot;Name=state,Values=available&quot; \
+  --query &#x27;NatGateways[*].[NatGatewayId,State,SubnetId]&#x27; --output table
+
+run &quot;Elastic IP&quot; aws ec2 describe-addresses --region &quot;$REGION&quot; \
+  --query &#x27;Addresses[*].[AllocationId,PublicIp]&#x27; --output table
+
+run &quot;Route Tables&quot; aws ec2 describe-route-tables --region &quot;$REGION&quot; \
+  --query &#x27;RouteTables[*].[RouteTableId,Routes[*].[DestinationCidrBlock,GatewayId,NatGatewayId]|[]]&#x27; --output table
+
+run &quot;Security Groups&quot; aws ec2 describe-security-groups --region &quot;$REGION&quot; \
+  --query &#x27;SecurityGroups[*].[GroupId,GroupName,Description]&#x27; --output table
+
+run &quot;EC2 (running)&quot; aws ec2 describe-instances --region &quot;$REGION&quot; \
+  --filters &quot;Name=instance-state-name,Values=running&quot; \
+  --query &#x27;Reservations[*].Instances[*].[InstanceId,InstanceType,PublicIpAddress,KeyName,Tags[?Key==`Name`].Value|[0]]&#x27; --output table
+
+run &quot;RDS&quot; aws rds describe-db-instances --region &quot;$REGION&quot; \
+  --query &#x27;DBInstances[*].[DBInstanceIdentifier,DBInstanceStatus,Engine,EngineVersion,Endpoint.Address]&#x27; --output table
+
+run &quot;Key Pairs&quot; aws ec2 describe-key-pairs --region &quot;$REGION&quot; \
+  --query &#x27;KeyPairs[*].[KeyName,CreateTime]&#x27; --output table
+
+echo &#x27;&lt;/main&gt;&lt;/body&gt;&lt;/html&gt;&#x27; &gt;&gt; &quot;$OUT.tmp&quot;
 mv &quot;$OUT.tmp&quot; &quot;$OUT&quot;
-echo &quot;→ $OUT 생성 완료&quot;
-</code></pre></div><div id="md-src23" hidden><pre><code># ============================================================
-# 01_provider.tf — Terraform 코어·프로바이더 선언
-# - terraform 블록: 실행에 필요한 코어 버전과 프로바이더를 고정
-# - provider 블록: 실제 AWS 접속 설정 (리전)
-# 인증 정보는 코드에 적지 않고 ~/.aws 자격증명 또는 환경변수를 사용
+echo &quot;생성 완료: $(pwd)/$OUT&quot;
+</code></pre></div><div id="md-src10" hidden><pre><code># ============================================================
+# outputs.tf — apply 후 확인할 값 (계층별로 묶어둠)
 # ============================================================
 
-terraform {
-  required_version = &quot;&gt;= 1.0.0, &lt;2.0.0&quot; # Terraform 1.x 버전대만 허용
-
-  required_providers {
-    aws = {
-      source  = &quot;hashicorp/aws&quot; # 레지스트리 주소 (네임스페이스/이름)
-      version = &quot;~&gt; 5.0&quot;        # 5.x만 허용 — 6.0 메이저 변경 차단
-    }
-  }
+output &quot;vpc_id&quot; {
+  value = aws_vpc.terraform_vpc.id
 }
 
-provider &quot;aws&quot; {
-  region = &quot;ap-northeast-2&quot; # Asia Pacific (Seoul)
+output &quot;pub_subnet_2a_id&quot; {
+  value = aws_subnet.terraform_pub_subnet_2a.id
 }
-</code></pre></div><div id="md-src24" hidden><pre><code></code></pre></div><div id="md-src25" hidden><pre><code></code></pre></div><div id="md-src26" hidden><pre><code></code></pre></div><div id="md-src27" hidden><pre><code></code></pre></div><div id="md-src28" hidden><pre><code>#!/usr/bin/env bash
-# step4 ALB 결과 (작성 예정) 결과 확인 스크립트 — apply 직후 이 단계의 리소스만 검증
-# 사용법: ./check.sh [출력파일]   (기본: report.html)
-set -u
-cd &quot;$(dirname &quot;$0&quot;)&quot;
-REGION=&quot;ap-northeast-2&quot;
-OUT=&quot;${1:-report.html}&quot;
-NOW=&quot;$(date &#x27;+%Y-%m-%d %H:%M:%S&#x27;)&quot;
-run() { local title=&quot;$1&quot;; shift
-  { echo &quot;&lt;h2&gt;$title&lt;/h2&gt;&lt;pre&gt;&quot;; &quot;$@&quot; 2&gt;&amp;1 | sed -e &#x27;s/&amp;/\&amp;amp;/g&#x27; -e &#x27;s/&lt;/\&amp;lt;/g&#x27; -e &#x27;s/&gt;/\&amp;gt;/g&#x27;; echo &quot;&lt;/pre&gt;&quot;; } &gt;&gt; &quot;$OUT.tmp&quot;; }
-cat &gt; &quot;$OUT.tmp&quot; &lt;&lt;EOF
-&lt;!DOCTYPE html&gt;&lt;html lang=&quot;ko&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;title&gt;step4 결과 — $NOW&lt;/title&gt;
-&lt;style&gt;
-body{font-family:-apple-system,&#x27;Apple SD Gothic Neo&#x27;,&#x27;Noto Sans KR&#x27;,sans-serif;background:#f8fafc;color:#122033;margin:0}
-.bar{height:10px;background:#1769aa}main{max-width:1100px;margin:0 auto;padding:32px 40px 60px}
-h1{font-size:28px;margin:8px 0 4px}.sub{color:#516174;font-size:14px;margin-bottom:28px}
-h2{font-size:17px;color:#1769aa;border-bottom:1px solid #c9d5e1;padding-bottom:6px;margin-top:32px}
-pre{background:#fff;border:1px solid #c9d5e1;border-radius:8px;padding:14px 16px;font-family:ui-monospace,Menlo,&#x27;SF Mono&#x27;,monospace;font-size:12.5px;overflow-x:auto;white-space:pre}
-&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div class=&quot;bar&quot;&gt;&lt;/div&gt;&lt;main&gt;
-&lt;h1&gt;step4 — ALB 결과 (작성 예정)&lt;/h1&gt;&lt;p class=&quot;sub&quot;&gt;생성 시각: $NOW · 리전: $REGION · 디렉터리: $(pwd)&lt;/p&gt;
-EOF
-run &quot;terraform state list&quot; terraform state list
-run &quot;Route53 호스팅 존&quot; aws route53 list-hosted-zones --query &#x27;HostedZones[*].[Name,Id,ResourceRecordSetCount]&#x27; --output table
-run &quot;ACM 인증서&quot; aws acm list-certificates --region &quot;$REGION&quot; --query &#x27;CertificateSummaryList[*].[DomainName,Status]&#x27; --output table
-run &quot;ALB&quot; aws elbv2 describe-load-balancers --region &quot;$REGION&quot; --query &#x27;LoadBalancers[*].[LoadBalancerName,DNSName,State.Code]&#x27; --output table
-echo &quot;&lt;/main&gt;&lt;/body&gt;&lt;/html&gt;&quot; &gt;&gt; &quot;$OUT.tmp&quot;
-mv &quot;$OUT.tmp&quot; &quot;$OUT&quot;
-echo &quot;→ $OUT 생성 완료&quot;
+
+output &quot;pub_subnet_2c_id&quot; {
+  value = aws_subnet.terraform_pub_subnet_2c.id
+}
+
+output &quot;pri_subnet_2a_id&quot; {
+  value = aws_subnet.terraform_pri_subnet_2a.id
+}
+
+output &quot;pri_subnet_2c_id&quot; {
+  value = aws_subnet.terraform_pri_subnet_2c.id
+}
 </code></pre></div>
 <div id="viewer" hidden><div class="vbox"><div class="vhead"><span id="vtitle"></span><span style="display:flex;gap:.8rem;align-items:center"><a id="vopen" href="#" target="_blank">새 탭에서 열기</a><button class="dgbtn" id="vclose">✕ 닫기</button></span></div><div class="vbody" id="vbody"></div><button class="vside" id="vsprev" hidden title="이전 슬라이드">‹</button><button class="vside" id="vsnext" hidden title="다음 슬라이드">›</button></div></div>
 <script>
@@ -1196,7 +743,7 @@ window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
 show(location.hash.slice(1));
 
 // ===== 팝업 뷰어 =====
-const MD={'01_provider.tf':'md-src0','check.sh':'md-src1','step1_network/01_provider.tf':'md-src2','step1_network/02_vpc.tf':'md-src3','step1_network/03-subnet.tf':'md-src4','step1_network/04-igw.tf':'md-src5','step1_network/05-ngw.tf':'md-src6','step1_network/06-routing-table.tf':'md-src7','step1_network/check.sh':'md-src8','step1_network/outputs.tf':'md-src9','step3_eks/00-remote-state.tf':'md-src10','step3_eks/01_provider.tf':'md-src11','step3_eks/11-sg-eks.tf':'md-src12','step3_eks/12-eks.tf':'md-src13','step3_eks/13-eks-node-group.tf':'md-src14','step3_eks/14-ecr.tf':'md-src15','step3_eks/check.sh':'md-src16','step2_compute/00-remote-state.tf':'md-src17','step2_compute/01_provider.tf':'md-src18','step2_compute/07-sg-ec2-rds.tf':'md-src19','step2_compute/08-ec2.tf':'md-src20','step2_compute/09-rds.tf':'md-src21','step2_compute/check.sh':'md-src22','step4_alb/01_provider.tf':'md-src23','step4_alb/21-route53.tf':'md-src24','step4_alb/22-sg-alb.tf':'md-src25','step4_alb/23-acm.tf':'md-src26','step4_alb/24-alb.tf':'md-src27','step4_alb/check.sh':'md-src28'};
+const MD={'01_provider.tf':'md-src0','02_vpc.tf':'md-src1','03-subnet.tf':'md-src2','04-igw.tf':'md-src3','05-ngw.tf':'md-src4','06-routing-table.tf':'md-src5','07-sg-ec2-rds.tf':'md-src6','08-ec2.tf':'md-src7','09-rds.tf':'md-src8','check.sh':'md-src9','outputs.tf':'md-src10'};
 const $=id=>document.getElementById(id);
 let cur=null;
 function openViewer(href,title){
@@ -1252,5 +799,5 @@ document.addEventListener('click',e=>{
 // ===== 명령어 복사 =====
 /* TODO: copy_cmd_js — copyCmd 버튼 핸들러 */
 
-const COPY_CMD='cd step1_network && terraform init && terraform apply';$('copyCmd').onclick=()=>{navigator.clipboard.writeText(COPY_CMD).then(()=>{$('copyMsg').textContent='복사됨 — 터미널에 붙여넣기 (⌘V)'}).catch(()=>{$('copyMsg').textContent='복사 실패 — 직접 입력'})};</script>
+const COPY_CMD='terraform init';$('copyCmd').onclick=()=>{navigator.clipboard.writeText(COPY_CMD).then(()=>{$('copyMsg').textContent='복사됨 — 터미널에 붙여넣기 (⌘V)'}).catch(()=>{$('copyMsg').textContent='복사 실패 — 직접 입력'})};</script>
 </body></html>

@@ -97,4 +97,51 @@ variable "db_password" {
   description = "마스터 비밀번호 — 실습용 평문. 운영에서는 tfvars·Secrets Manager 사용"
   type        = string
   sensitive   = true
+  default     = "Password1234" # 02와 동일 실습값
+}
+
+# ---------------- EKS ----------------
+
+variable "eks_version" {
+  description = "EKS 클러스터 버전 — 최신이 꼭 안 되는 경우도 있어 고정"
+  type        = string
+  default     = "1.32"
+}
+
+variable "node_instance_types" {
+  description = "노드 인스턴스 사양"
+  type        = list(string)
+  default     = ["t3.large"]
+}
+
+variable "node_desired_size" {
+  description = "노드그룹 희망 대수"
+  type        = number
+  default     = 2
+}
+
+variable "node_min_size" {
+  description = "노드그룹 최소 대수"
+  type        = number
+  default     = 2
+}
+
+variable "node_max_size" {
+  description = "노드그룹 최대 대수"
+  type        = number
+  default     = 4
+}
+
+# ---------------- ALB ----------------
+
+variable "domain_name" {
+  description = "Route53에 생성할 호스팅 존 도메인 — 비워두면 존·레코드를 건너뛰고 ALB DNS로만 접속"
+  type        = string
+  default     = "jarrod.site"
+}
+
+variable "app_node_port" {
+  description = "앱 NodePort — NodePort 서비스의 nodePort 값과 일치해야 함"
+  type        = number
+  default     = 30080
 }

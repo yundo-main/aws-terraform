@@ -32,6 +32,7 @@ terraform plan                    # 생성 예정 리소스 미리보기
 terraform apply                   # VPC 1개 생성 — 승인 입력
 aws ec2 describe-vpcs --query 'Vpcs[*].[VpcId,CidrBlock]' --output table  # AWS에서 확인
 terraform state show aws_vpc.hello_vpc   # state에 기록된 실제 리소스 속성
+terraform output                  # 03_outputs.tf의 출력값 — vpc_id 등
 terraform destroy                 # 삭제 → state도 비워짐
 ```
 
@@ -47,7 +48,8 @@ terraform destroy                 # 삭제 → state도 비워짐
 ├── readme.md           # 이 문서
 ├── 01_provider.tf      # required_providers + provider 예제
 ├── 02_vpc.tf           # 생성/삭제 체험용 최소 VPC (무료)
-└── slides/             # 이론 슬라이드 11장 (s01~s11)
+├── 03_outputs.tf          # apply 후 출력되는 vpc_id·vpc_cidr
+└── slides/             # 이론 슬라이드 12장 (s01~s12)
 ```
 
 ## 파일·디렉터리 역할
@@ -55,7 +57,8 @@ terraform destroy                 # 삭제 → state도 비워짐
 | 경로 | 역할 |
 | --- | --- |
 | `01_provider.tf` | terraform 블록 + provider "aws" 설정 |
-| `02_vpc.tf` | apply/destroy 체험용 `aws_vpc.hello_vpc` 1개 |
+| `02_vpc.tf` | apply/destroy 체험용 `aws_vpc.hello_vpc` |
+| `03_outputs.tf` | `terraform output` 조회 대상 — 이후 단계의 출력 예제 |
 | `slides/` | s01~s11 슬라이드 — 이론 7 + 워크플로우 2 + 복습 2 |
 | `.terraform/` | init이 다운로드한 provider (커밋 금지) |
 | `.terraform.lock.hcl` | provider 버전·해시 잠금 (커밋 대상) |

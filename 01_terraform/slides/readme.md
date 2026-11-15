@@ -9,7 +9,8 @@
 | s05-provider-block.svg | provider 블록 |
 | s06-version.svg | 버전 제약 |
 | s07-init-registry.svg | init과 Registry |
-| s08-workflow.svg | 워크플로우 |
-| s09-lifecycle.svg | 리소스 생명주기·state |
+| s08-blocks.svg | HCL 블록 문법 |
+| s09-workflow.svg | 워크플로우 |
+| s10-lifecycle.svg | 리소스 생명주기·state |
 | s10-review-questions.svg | 생각해보기 |
 | s11-review-answers.svg | 정답과 해설 |

@@ -30,6 +30,7 @@
 | data 소스 | 생성하지 않고 기존 리소스를 읽는 블록 |
 | destroy | state가 관리하는 리소스를 전부 삭제 |
 | init | provider 다운로드·작업 디렉터리 초기화 |
+| output 블록 | apply 결과를 콘솔에 출력 — terraform output으로 조회 |
 | plan | 실행 전 변경 예정을 미리 보여주는 단계 |
 | provider | 클라우드 API를 Terraform 리소스로 번역하는 플러그인 |
 | provider 블록 | 리전·인증 등 실제 접속 설정 |
@@ -37,6 +38,7 @@
 | required_providers | 사용할 provider와 버전을 고정하는 블록 |
 | resource | 생성할 인프라 객체의 선언 블록 |
 | state | 실제 인프라와 코드의 매핑을 기록한 상태 파일 |
+| terraform output | outputs에 선언된 값만 모아 표시 |
 | terraform state show | state에 기록된 리소스 속성 조회 |
 | terraform.tfstate | 현재 관리 중인 리소스 상태가 저장되는 파일 |
 | validate | 문법·참조 오류를 실행 전 검사 |
@@ -67,7 +69,7 @@
 | terraform_remote_state | 다른 state의 outputs를 읽는 데이터 소스 |
 | 고아 리소스 | state 없이 AWS에만 남은 리소스 — import 또는 삭제 필요 |
 | 노드그룹 | EKS 워커 EC2 묶음 — 오토스케일링 범위 설정 |
-| 단계별 디렉터리 | step1~4로 state를 나눈 실행 구조 |
+| 단계별 디렉터리 | state를 나눈 실행 구조 — 10_cicd의 step1~3가 사례 |
 | 라우팅 테이블 | 서브넷 트래픽의 목적지 규칙 |
 | 리소스 이름 | 코드 식별자 — 언더스코어 권장 (태그와 별개) |
 | 배스천 | 프라이빗망 진입용 경유 서버 |
@@ -105,6 +107,31 @@
 | 하드코딩 | 값을 코드에 직접 박는 방식 — 변수화 대상 |
 | 환경 분리 | dev/stage/prod를 변수·디렉터리로 구분 |
 
+### 4단계 · CI/CD — AWS 네이티브 파이프라인
+
+| 용어 | 설명 |
+| --- | --- |
+| CI/CD | 코드 변경을 자동 빌드·테스트·배포하는 파이프라인 |
+| CodeBuild | 관리형 빌드 — buildspec.yml로 실행 명령 정의 |
+| CodeCommit | AWS 관리형 git 저장소 — push가 트리거 |
+| CodePipeline | 단계 오케스트레이션 — Source→Build→Approve→Deploy |
+| DynamoDB lock | state 동시 수정을 막는 잠금 테이블 |
+| ECR 리포지토리 | 컨테이너 이미지 저장소 — docker push 대상 |
+| EventBridge | push 같은 이벤트를 감지해 파이프라인 실행 |
+| GitOps | git push가 인프라 변경 트리거가 되는 운영 방식 |
+| S3 backend | state를 S3에 저장 — CI·팀 공유의 기본 |
+| artifact | 단계 간 전달되는 산출물 — plan_out의 tfplan |
+| aws-auth | EKS에 IAM 역할을 kubectl 권한으로 매핑하는 ConfigMap |
+| buildspec.yml | CodeBuild 실행 스크립트 — install/build/artifacts |
+| imageDetail.json | 빌드→배포로 이미지 URI를 전달하는 artifact |
+| kubectl set image | 실행 중 deployment의 이미지를 교체하는 명령 |
+| manual approval | plan과 apply 사이 사람 승인 게이트 |
+| migrate-state | 로컬 state를 S3 backend로 이전하는 init 옵션 |
+| prevent_destroy | 리소스 삭제를 차단하는 lifecycle 가드 |
+| privileged_mode | CodeBuild에서 docker 데몬을 쓰기 위한 플래그 |
+| rollout status | 배포 완료를 기다리는 kubectl 명령 |
+| 최소권한 | 필요한 작업만 허용하는 IAM 원칙 |
+
 ---
 
-총 81개 용어 · 4개 단계
+총 103개 용어 · 5개 단계

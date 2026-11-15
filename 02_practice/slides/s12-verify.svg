@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-label="apply 결과를 확인하는 세 가지 방법">
+  <rect width="1280" height="720" fill="#f8fafc"/>
+  <rect width="1280" height="10" fill="#1769aa"/>
+
+  <text x="60" y="90" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="40" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">결과 확인</text>
+  <text x="60" y="134" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="22" fill="#516174" xml:space="preserve" style="white-space:pre">apply가 끝난 뒤 실제로 만들어졌는지 확인하는 방법</text>
+
+  <g font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+    <!-- 방법 1 -->
+    <rect x="60" y="170" width="368" height="280" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="60" y="170" width="6" height="280" rx="3" fill="#1769aa"/>
+    <text x="92" y="216" font-size="22" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">① state로 확인</text>
+    <text x="92" y="256" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#122033" xml:space="preserve" style="white-space:pre">terraform state list</text>
+    <text x="92" y="292" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#122033" xml:space="preserve" style="white-space:pre">terraform show</text>
+    <text x="92" y="336" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">관리 중인 리소스 목록과</text>
+    <text x="92" y="366" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">실제 속성값을 확인</text>
+    <text x="92" y="410" font-size="15" fill="#b86e00" xml:space="preserve" style="white-space:pre">tfstate에는 민감값 포함 — 커밋 금지</text>
+
+    <!-- 방법 2 -->
+    <rect x="456" y="170" width="368" height="280" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="456" y="170" width="6" height="280" rx="3" fill="#1769aa"/>
+    <text x="488" y="216" font-size="22" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">② AWS 콘솔</text>
+    <text x="488" y="256" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">VPC 대시보드 → "Your VPCs"</text>
+    <text x="488" y="292" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">EC2 → "Instances"</text>
+    <text x="488" y="336" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">terraform- 태그가 붙은 리소스들</text>
+    <text x="488" y="366" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">눈으로 직접 확인</text>
+    <text x="488" y="410" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">리전을 ap-northeast-2로 맞출 것</text>
+
+    <!-- 방법 3 -->
+    <rect x="852" y="170" width="368" height="280" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="852" y="170" width="6" height="280" rx="3" fill="#1769aa"/>
+    <text x="884" y="216" font-size="22" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">③ SSH 접속 확인</text>
+    <text x="884" y="256" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#122033" xml:space="preserve" style="white-space:pre">ssh -i ja-01.pem \</text>
+    <text x="884" y="288" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#122033" xml:space="preserve" style="white-space:pre">  ec2-user@&lt;public-ip&gt;</text>
+    <text x="884" y="336" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">배스천 EC2의 퍼블릭 IP로 접속해</text>
+    <text x="884" y="366" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">네트워크·보안그룹이 뜻대로인지 검증</text>
+    <text x="884" y="410" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">RDS는 프라이빗 — 배스천 경유 접속</text>
+  </g>
+
+  <rect x="60" y="490" width="1160" height="110" rx="10" fill="#e6f1fa"/>
+  <text x="92" y="532" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="20" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">state 파일이 진실 공급원(source of truth)</text>
+  <text x="92" y="570" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">다음 plan 때 terraform은 .tf 선언과 state를 비교해 차이만 계산한다 —</text>
+  <text x="92" y="598" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">콘솔에서 손으로 지운 리소스는 다음 plan에서 "다시 만들겠다"로 나온다</text>
+
+  <text x="60" y="700" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">Terraform · 02 · AWS 실습</text>
+  <text x="1220" y="700" text-anchor="end" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" font-weight="600" fill="#516174" xml:space="preserve" style="white-space:pre">12</text>
+</svg>

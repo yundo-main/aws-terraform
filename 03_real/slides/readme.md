@@ -8,5 +8,6 @@
 | s04-tfvars.svg | 값 주입 방법 |
 | s05-patterns.svg | default_tags·dynamic |
 | s06-compare.svg | 02 vs 03 구조 비교 |
-| s07-review-questions.svg | 생각해보기 |
-| s08-review-answers.svg | 정답과 해설 |
+| s07-domain.svg | 도메인 위임 — NS 수동 등록 |
+| s08-review-questions.svg | 생각해보기 |
+| s09-review-answers.svg | 정답과 해설 |

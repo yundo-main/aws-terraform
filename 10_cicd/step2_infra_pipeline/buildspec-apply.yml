@@ -1,0 +1,15 @@
+# CodeBuild — Terraform apply 단계
+# plan 단계가 만든 tfplan 파일을 그대로 적용
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - yum install -y unzip
+      - curl -fsSL -o tf.zip "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip"
+      - unzip tf.zip && mv terraform /usr/local/bin/terraform && terraform version
+  build:
+    commands:
+      - cd "$TF_DIR"
+      - terraform init -input=false -backend-config="bucket=${TFSTATE_BUCKET}" -backend-config="key=${TFSTATE_KEY}" -backend-config="region=${AWS_DEFAULT_REGION}" -backend-config="dynamodb_table=${TFLOCK_TABLE}"
+      - terraform apply -input=false tfplan
