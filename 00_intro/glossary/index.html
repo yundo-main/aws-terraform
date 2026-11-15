@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>용어 정리 — AI 가드레일 운영 프레임워크</title>
+<style>
+:root{--bg:#f1f5f9;--card:#fff;--ink:#111827;--muted:#6b7280;--line:#e2e8f0;--accent:#2563eb;--accent2:#7c3aed}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.7}
+.wrap{max-width:1080px;margin:0 auto;padding:1.4rem 1.2rem 3rem}
+.topnav{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin-bottom:.9rem;padding:.55rem .8rem;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.topnav .brand{font-weight:800;margin-right:.8rem;background:linear-gradient(120deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.topnav a{color:var(--muted);text-decoration:none;font-size:.85rem;font-weight:600;padding:.35rem .75rem;border-radius:8px;transition:all .15s}
+.topnav a:hover{background:#eff6ff;color:var(--accent)}
+.topnav a.on{background:linear-gradient(120deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 2px 6px rgba(37,99,235,.3)}
+.hero{position:relative;overflow:hidden;border-radius:20px;padding:2.6rem 2.2rem;margin-bottom:1.5rem;color:#fff;background:linear-gradient(120deg,#0b1e3a 0%,#144a8a 50%,#6d28d9 100%);box-shadow:0 8px 24px rgba(15,23,42,.18)}
+.hero::before,.hero::after{content:'';position:absolute;border-radius:50%;background:rgba(255,255,255,.09)}
+.hero::before{width:380px;height:380px;right:-100px;top:-140px}
+.hero::after{width:240px;height:240px;left:-70px;bottom:-110px}
+.hero::before,.hero::after{animation:float 9s ease-in-out infinite}
+.hero::after{animation-delay:-4s}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(18px,-14px)}}
+.hero>*{position:relative}
+.eyebrow{font-size:.72rem;letter-spacing:.18em;font-weight:800;opacity:.85;margin-bottom:.55rem;text-transform:uppercase}
+.hero h1{margin:0 0 .65rem;font-size:2.05rem;letter-spacing:-.01em}
+.hero .sub{margin:0 0 1.2rem;max-width:680px;font-size:.88rem;font-weight:500;line-height:1.6;color:rgba(255,255,255,.92);text-shadow:0 1px 4px rgba(0,0,0,.35)}
+.steps{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.4rem}
+.steps span{font-size:.74rem;font-weight:600;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);padding:.32rem .8rem;border-radius:999px;backdrop-filter:blur(4px)}
+.ltab{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.5rem 1.6rem;margin-bottom:1.2rem;display:none;box-shadow:0 1px 3px rgba(15,23,42,.04)}
+.ltab.on{display:block;animation:fadein .25s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ltitle{font-size:1.15rem;font-weight:800;margin-bottom:1rem;padding-bottom:.55rem;border-bottom:2px solid var(--accent);display:inline-block;letter-spacing:-.01em}
+h3{font-size:1rem;margin:1.25rem 0 .5rem}
+p{margin:.45rem 0}
+ul,ol{margin:.45rem 0 .65rem;padding-left:1.3rem}
+li{margin:.28rem 0}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:.85rem;margin:.7rem 0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+th,td{border-bottom:1px solid var(--line);padding:.5rem .75rem;text-align:left;vertical-align:top}
+th{background:linear-gradient(180deg,#f1f5f9,#e8eef5);font-weight:700;font-size:.8rem;letter-spacing:.02em}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#f8fafc}
+code{background:#eef2f7;padding:.12em .38em;border-radius:5px;font-size:.85em;font-family:ui-monospace,Menlo,monospace;color:#be185d}
+pre{background:linear-gradient(180deg,#f8fafc,#f1f5f9);border:1px solid var(--line);border-radius:10px;padding:.95rem 1.05rem;overflow:auto;font-size:.82rem;line-height:1.55}
+pre code{background:none;padding:0;color:inherit}
+.sub{color:var(--muted);font-size:.85rem}
+.dtree{font-family:ui-monospace,Menlo,monospace;font-size:.8rem;background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:.95rem 1.15rem;overflow:auto}
+.dtn{font-weight:700;margin-bottom:.3rem;color:var(--ink)}
+.dt{margin:.15rem 0}
+.dt summary{cursor:pointer;color:var(--accent);font-weight:600}
+.dt-kids{margin-left:1.1rem;border-left:2px solid var(--line);padding-left:.9rem}
+.dtl{color:var(--muted);padding:.1rem 0}
+.dt-note{color:var(--muted);font-weight:400;font-size:.75rem}
+.dgi{border:1px solid var(--line);border-radius:14px;padding:.9rem;margin-bottom:1.1rem;background:#fff;box-shadow:0 1px 3px rgba(15,23,42,.04);transition:box-shadow .2s}
+.dgi:hover{box-shadow:0 4px 14px rgba(15,23,42,.08)}
+.dgi-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;font-size:.85rem;font-weight:700}
+.dgi-head .badge{font-size:.68rem;font-weight:800;color:#fff;background:linear-gradient(120deg,var(--accent),var(--accent2));padding:.18rem .6rem;border-radius:999px;letter-spacing:.03em}
+.dgi img{width:100%;border:1px solid var(--line);border-radius:10px;cursor:zoom-in;background:#fff;transition:transform .2s}
+.dgi img:hover{transform:scale(1.005)}
+.codebox{position:relative;margin:.6rem 0}
+.codebox pre{margin:0;padding-right:4.5rem}
+.copybtn{position:absolute;top:.5rem;right:.5rem;font-size:.72rem;font-weight:700;color:var(--accent);background:#fff;border:1px solid var(--line);border-radius:6px;padding:.28rem .65rem;cursor:pointer;transition:all .15s}
+.copybtn:hover{border-color:var(--accent);background:#eff6ff;box-shadow:0 1px 4px rgba(37,99,235,.15)}
+.dgbtn{display:inline-block;font-size:.85rem;font-weight:700;color:#fff;background:linear-gradient(120deg,var(--accent),var(--accent2));border:none;border-radius:9px;padding:.55rem 1.1rem;cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(37,99,235,.3);transition:transform .15s,box-shadow .15s}
+.dgbtn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,.4)}
+footer{color:var(--muted);font-size:.78rem;text-align:center;margin-top:1.6rem}
+#viewer{position:fixed;inset:0;background:rgba(15,23,42,.72);display:flex;align-items:center;justify-content:center;z-index:50}
+#viewer[hidden]{display:none}
+.vbox{background:#fff;border-radius:14px;width:94vw;height:92vh;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.vhead{display:flex;justify-content:space-between;align-items:center;padding:.7rem 1.1rem;border-bottom:1px solid var(--line);font-weight:600;font-size:.9rem}
+.vhead a{color:var(--accent);font-size:.78rem;text-decoration:none}
+.vhead button{font-size:.8rem}
+.vbody{flex:1;overflow:auto;padding:1.2rem;display:flex;align-items:flex-start;justify-content:center}
+.vbody img{max-width:100%;max-height:100%;object-fit:contain}
+.vbody .mdview{width:100%;max-width:860px;margin:0 auto;font-size:.9rem}
+.vbody .mdview h1{font-size:1.4rem}.vbody .mdview h2{font-size:1.15rem}.vbody .mdview h3{font-size:1rem}
+.vbody .mdview table{font-size:.82rem}
+.vside{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:72px;border:none;border-radius:10px;background:rgba(15,23,42,.55);color:#fff;font-size:1.8rem;cursor:pointer;z-index:5}
+.vside:hover{background:var(--accent)}
+#vsprev{left:12px}#vsnext{right:12px}
+.vside[hidden]{display:none}
+.gidx{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:1rem;position:sticky;top:0;background:var(--card);padding:.5rem 0;z-index:10;border-bottom:1px solid var(--line)}
+.gidx a{display:inline-block;min-width:1.7rem;text-align:center;font-size:.78rem;font-weight:700;color:var(--muted);text-decoration:none;padding:.25rem .4rem;border-radius:6px}
+.gidx a:hover{background:#eff6ff;color:var(--accent)}
+.gidx a.on{background:var(--accent);color:#fff}
+.gidx-off{display:inline-block;min-width:1.7rem;text-align:center;font-size:.78rem;font-weight:700;color:#d1d5db;padding:.25rem .4rem;border-radius:6px}
+.stepidx{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem}
+.stepidx .lbl{font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.05em;margin-right:.2rem}
+.stepidx a{display:inline-block;min-width:2rem;text-align:center;font-size:.8rem;font-weight:700;color:var(--muted);text-decoration:none;padding:.35rem .55rem;border-radius:8px;border:1px solid var(--line);background:#fff}
+.stepidx a:hover{border-color:var(--accent);color:var(--accent)}
+.stepidx a.cur{background:var(--accent);border-color:var(--accent);color:#fff}
+.ggroup{margin:1rem 0 .4rem;font-size:.95rem;font-weight:700;color:var(--accent)}
+[hidden]{display:none!important}
+
+.chips{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.2rem}
+.chip{font-size:.8rem;font-weight:700;color:var(--muted);text-decoration:none;padding:.4rem .85rem;border-radius:999px;border:1px solid var(--line);background:#fff}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.stepidx a{min-width:2rem}
+</style></head><body>
+<div class="wrap">
+<nav class="topnav">
+<a class="brand" href="#top">📚 용어 정리</a>
+<a href="../glossary.md">glossary.md</a>
+</nav>
+<div class="stepidx"><span class="lbl">단계</span><a href="../../index.html">⌂</a><a href="../../00_intro/index.html">0</a><a href="../../01_terraform/index.html">1</a><a href="../../02_practice/index.html">2</a><a href="../../03_real/index.html">3</a></div>
+<div class="hero" id="top">
+<div class="eyebrow">GLOSSARY · 통합 용어집</div>
+<h1>용어 정리</h1>
+<p class="sub">1~6단계 학습 자료의 핵심 용어를 단계별로 모은 통합 용어집입니다. 각 단계 포털의 용어 탭과 동일한 내용이며, 용어는 한글 자음순으로 정렬했습니다.</p>
+<div class="chips"><a class="chip" href="#s1">0단계</a><a class="chip" href="#s2">1단계</a><a class="chip" href="#s3">2단계</a><a class="chip" href="#s4">3단계</a></div>
+<div class="steps"><span>총 81개 용어</span><span>4개 단계</span><span>자음순 정렬</span></div>
+</div>
+<div class="ltitle" style="margin-bottom:1rem">단계별 용어 — 아래 칩 또는 스크롤로 이동</div>
+<section class="ltab on" id="s1">
+<div class="ltitle">0단계 · 과정 개요 — IaC와 Terraform <span class="sub" style="font-weight:400">— 용어 10개</span></div>
+<h3 class="ggroup">ㅁ</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>멀티 클라우드</b></td><td>AWS·GCP·Azure 등을 같은 도구로 관리</td></tr><tr><td style="width:180px"><b>멱등성</b></td><td>여러 번 실행해도 같은 결과 — 선언적 도구의 특징</td></tr><tr><td style="width:180px"><b>명령적</b></td><td>실행 절차를 직접 기술 — 스크립트 방식</td></tr></table><h3 class="ggroup">ㅅ</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>선언적</b></td><td>원하는 최종 상태만 기술 — 절차는 도구가 결정</td></tr></table><h3 class="ggroup">ㅍ</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>프로비저닝</b></td><td>클라우드 자원을 실제로 생성·배치하는 과정</td></tr></table><h3 class="ggroup">#</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>Ansible vs Terraform</b></td><td>구성 관리(명령적) vs 프로비저닝(선언적)</td></tr><tr><td style="width:180px"><b>CloudFormation</b></td><td>AWS 전용 IaC 서비스</td></tr><tr><td style="width:180px"><b>IaC</b></td><td>Infrastructure as Code — 인프라를 코드로 선언·관리</td></tr><tr><td style="width:180px"><b>Kubernetes Manifest</b></td><td>K8s 리소스를 YAML로 선언하는 방식</td></tr><tr><td style="width:180px"><b>Terraform</b></td><td>HashiCorp의 멀티 클라우드 IaC 도구</td></tr></table>
+</section><section class="ltab on" id="s2">
+<div class="ltitle">1단계 · Terraform 개념 — Provider와 워크플로우 <span class="sub" style="font-weight:400">— 용어 20개</span></div>
+<h3 class="ggroup">ㅇ</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>워크플로우</b></td><td>write → init → plan → apply → destroy 순서</td></tr><tr><td style="width:180px"><b>의존성 그래프</b></td><td>리소스 참조 관계로 실행 순서를 자동 결정</td></tr></table><h3 class="ggroup">#</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>.terraform.lock.hcl</b></td><td>provider 버전·해시 잠금 파일 — 커밋 대상</td></tr><tr><td style="width:180px"><b>.terraform/</b></td><td>init이 다운로드한 provider 플러그인 디렉터리</td></tr><tr><td style="width:180px"><b>HCL</b></td><td>HashiCorp Configuration Language — .tf 파일 문법</td></tr><tr><td style="width:180px"><b>apply</b></td><td>계획을 실제 인프라에 반영하는 명령</td></tr><tr><td style="width:180px"><b>data 소스</b></td><td>생성하지 않고 기존 리소스를 읽는 블록</td></tr><tr><td style="width:180px"><b>destroy</b></td><td>state가 관리하는 리소스를 전부 삭제</td></tr><tr><td style="width:180px"><b>init</b></td><td>provider 다운로드·작업 디렉터리 초기화</td></tr><tr><td style="width:180px"><b>plan</b></td><td>실행 전 변경 예정을 미리 보여주는 단계</td></tr><tr><td style="width:180px"><b>provider</b></td><td>클라우드 API를 Terraform 리소스로 번역하는 플러그인</td></tr><tr><td style="width:180px"><b>provider 블록</b></td><td>리전·인증 등 실제 접속 설정</td></tr><tr><td style="width:180px"><b>registry</b></td><td>provider·모듈을 배포하는 공개 저장소</td></tr><tr><td style="width:180px"><b>required_providers</b></td><td>사용할 provider와 버전을 고정하는 블록</td></tr><tr><td style="width:180px"><b>resource</b></td><td>생성할 인프라 객체의 선언 블록</td></tr><tr><td style="width:180px"><b>state</b></td><td>실제 인프라와 코드의 매핑을 기록한 상태 파일</td></tr><tr><td style="width:180px"><b>terraform state show</b></td><td>state에 기록된 리소스 속성 조회</td></tr><tr><td style="width:180px"><b>terraform.tfstate</b></td><td>현재 관리 중인 리소스 상태가 저장되는 파일</td></tr><tr><td style="width:180px"><b>validate</b></td><td>문법·참조 오류를 실행 전 검사</td></tr><tr><td style="width:180px"><b>version constraint</b></td><td>~&gt; 5.0 같은 provider 버전 범위 지정</td></tr></table>
+</section><section class="ltab on" id="s3">
+<div class="ltitle">2단계 · Terraform 실습 — AWS 인프라 구축 <span class="sub" style="font-weight:400">— 용어 28개</span></div>
+<h3 class="ggroup">ㄱ</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>고아 리소스</b></td><td>state 없이 AWS에만 남은 리소스 — import 또는 삭제 필요</td></tr></table><h3 class="ggroup">ㄴ</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>노드그룹</b></td><td>EKS 워커 EC2 묶음 — 오토스케일링 범위 설정</td></tr></table><h3 class="ggroup">ㄷ</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>단계별 디렉터리</b></td><td>step1~4로 state를 나눈 실행 구조</td></tr></table><h3 class="ggroup">ㄹ</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>라우팅 테이블</b></td><td>서브넷 트래픽의 목적지 규칙</td></tr><tr><td style="width:180px"><b>리소스 이름</b></td><td>코드 식별자 — 언더스코어 권장 (태그와 별개)</td></tr></table><h3 class="ggroup">ㅂ</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>배스천</b></td><td>프라이빗망 진입용 경유 서버</td></tr><tr><td style="width:180px"><b>보안 그룹</b></td><td>인스턴스 수준 가상 방화벽</td></tr></table><h3 class="ggroup">ㅅ</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>서브넷</b></td><td>VPC 안의 IP 대역 분할 — 퍼블릭/프라이빗</td></tr><tr><td style="width:180px"><b>서브넷 그룹</b></td><td>RDS가 배치될 서브넷 묶음</td></tr></table><h3 class="ggroup">ㅋ</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>키페어</b></td><td>EC2 SSH 접속용 공개키/개인키 쌍</td></tr></table><h3 class="ggroup">ㅍ</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>파라미터 그룹</b></td><td>RDS 엔진 설정 모음</td></tr></table><h3 class="ggroup">#</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>-target</b></td><td>apply 대상을 특정 리소스로 제한 — 일상 사용 비추천</td></tr><tr><td style="width:180px"><b>Availability Zone</b></td><td>리전 내 물리적 데이터센터 구역</td></tr><tr><td style="width:180px"><b>CIDR</b></td><td>IP 대역 표기 — 10.200.0.0/16</td></tr><tr><td style="width:180px"><b>EC2</b></td><td>AWS 가상 서버 — 여기서는 배스천</td></tr><tr><td style="width:180px"><b>ECR</b></td><td>Elastic Container Registry — 컨테이너 이미지 저장소</td></tr><tr><td style="width:180px"><b>EIP</b></td><td>Elastic IP — 고정 공인 IP (NGW에 연결)</td></tr><tr><td style="width:180px"><b>EKS</b></td><td>관리형 Kubernetes — 컨트롤플레인은 AWS 관리</td></tr><tr><td style="width:180px"><b>IAM role</b></td><td>AWS API 권한을 리소스에 부여하는 역할</td></tr><tr><td style="width:180px"><b>IGW</b></td><td>Internet Gateway — VPC ↔ 인터넷 연결</td></tr><tr><td style="width:180px"><b>NGW</b></td><td>NAT Gateway — 프라이빗 서브넷의 외부 출구 (과금)</td></tr><tr><td style="width:180px"><b>RDS</b></td><td>관리형 관계형 DB — 여기서는 MariaDB</td></tr><tr><td style="width:180px"><b>VPC</b></td><td>Virtual Private Cloud — 격리된 가상 네트워크</td></tr><tr><td style="width:180px"><b>check.sh</b></td><td>step별 생성 리소스를 AWS CLI로 검증 → HTML 리포트</td></tr><tr><td style="width:180px"><b>kubectl</b></td><td>Kubernetes 클러스터 조작 CLI</td></tr><tr><td style="width:180px"><b>outputs</b></td><td>다음 단계·사용자에게 노출할 값</td></tr><tr><td style="width:180px"><b>terraform import</b></td><td>기존 AWS 리소스를 state로 편입</td></tr><tr><td style="width:180px"><b>terraform_remote_state</b></td><td>다른 state의 outputs를 읽는 데이터 소스</td></tr></table>
+</section><section class="ltab on" id="s4">
+<div class="ltitle">3단계 · Terraform 실전 — 변수·모듈 구조 <span class="sub" style="font-weight:400">— 용어 23개</span></div>
+<h3 class="ggroup">ㄷ</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>단일 state</b></td><td>모듈 방식 — 한 번의 apply로 전체 관리</td></tr></table><h3 class="ggroup">ㄹ</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>루트 모듈</b></td><td>실행 디렉터리의 .tf 파일 집합</td></tr><tr><td style="width:180px"><b>리팩터링</b></td><td>동작 유지하며 구조만 개선</td></tr></table><h3 class="ggroup">ㅁ</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>모듈</b></td><td>재사용 가능한 리소스 묶음 — main.tf에서 호출</td></tr></table><h3 class="ggroup">ㅂ</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>버전 고정</b></td><td>terraform·provider 버전을 명시해 재현성 확보</td></tr></table><h3 class="ggroup">ㅍ</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>표준 레이아웃</b></td><td>versions/providers/variables/main/outputs 파일 분리</td></tr></table><h3 class="ggroup">ㅎ</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>하드코딩</b></td><td>값을 코드에 직접 박는 방식 — 변수화 대상</td></tr><tr><td style="width:180px"><b>환경 분리</b></td><td>dev/stage/prod를 변수·디렉터리로 구분</td></tr></table><h3 class="ggroup">#</h3><table><tr><th style="width:180px">용어</th><th>설명</th></tr><tr><td style="width:180px"><b>-var / -var-file</b></td><td>apply 시 변수 값을 주입하는 옵션</td></tr><tr><td style="width:180px"><b>DRY</b></td><td>반복하지 않는 원칙 — 변수·모듈로 달성</td></tr><tr><td style="width:180px"><b>TF_VAR_ 접두사</b></td><td>환경변수로 변수를 전달하는 방식</td></tr><tr><td style="width:180px"><b>count</b></td><td>리소스를 조건부·반복 생성하는 메타 인자</td></tr><tr><td style="width:180px"><b>default_tags</b></td><td>provider 레벨 공통 태그 — 모든 리소스에 자동 적용</td></tr><tr><td style="width:180px"><b>dynamic 블록</b></td><td>반복되는 중첩 블록을 for_each로 생성</td></tr><tr><td style="width:180px"><b>for_each</b></td><td>맵·집합을 순회하며 리소스·블록 생성</td></tr><tr><td style="width:180px"><b>locals</b></td><td>반복 계산 값에 이름을 붙이는 로컬 변수</td></tr><tr><td style="width:180px"><b>outputs.tf</b></td><td>출력 선언 파일</td></tr><tr><td style="width:180px"><b>sensitive</b></td><td>출력에서 값을 가리는 변수 속성 — 비밀번호에 필수</td></tr><tr><td style="width:180px"><b>tfvars</b></td><td>변수 값을 파일로 전달 — .gitignore 대상</td></tr><tr><td style="width:180px"><b>var.xxx</b></td><td>변수 참조 문법</td></tr><tr><td style="width:180px"><b>variable 블록</b></td><td>타입·기본값·설명을 가진 매개변수 선언</td></tr><tr><td style="width:180px"><b>variables.tf</b></td><td>입력 변수 선언 파일</td></tr><tr><td style="width:180px"><b>workspace</b></td><td>같은 코드의 별도 state — 환경 복제용, 스텝과 무관</td></tr></table>
+</section>
+<footer>Terraform AWS · 용어 원본: 00_intro/glossary.md · 단계별 용어: 각 포털</footer>
+</div>
+<div id="md-gloss" hidden><h2>용어 정리 — 전체 단계 통합 용어집</h2>
+<p>00~03단계 학습 자료에서 사용하는 핵심 용어를 단계별로 모았다.</p>
+<h3>단계별 용어</h3>
+<h4>0단계 · 과정 개요 — IaC와 Terraform</h4>
+<table><tr><th>용어</th><th>설명</th></tr><tr><td>Ansible vs Terraform</td><td>구성 관리(명령적) vs 프로비저닝(선언적)</td></tr><tr><td>CloudFormation</td><td>AWS 전용 IaC 서비스</td></tr><tr><td>IaC</td><td>Infrastructure as Code — 인프라를 코드로 선언·관리</td></tr><tr><td>Kubernetes Manifest</td><td>K8s 리소스를 YAML로 선언하는 방식</td></tr><tr><td>Terraform</td><td>HashiCorp의 멀티 클라우드 IaC 도구</td></tr><tr><td>멀티 클라우드</td><td>AWS·GCP·Azure 등을 같은 도구로 관리</td></tr><tr><td>멱등성</td><td>여러 번 실행해도 같은 결과 — 선언적 도구의 특징</td></tr><tr><td>명령적</td><td>실행 절차를 직접 기술 — 스크립트 방식</td></tr><tr><td>선언적</td><td>원하는 최종 상태만 기술 — 절차는 도구가 결정</td></tr><tr><td>프로비저닝</td><td>클라우드 자원을 실제로 생성·배치하는 과정</td></tr></table>
+<h4>1단계 · Terraform 개념 — Provider와 워크플로우</h4>
+<table><tr><th>용어</th><th>설명</th></tr><tr><td>.terraform.lock.hcl</td><td>provider 버전·해시 잠금 파일 — 커밋 대상</td></tr><tr><td>.terraform/</td><td>init이 다운로드한 provider 플러그인 디렉터리</td></tr><tr><td>HCL</td><td>HashiCorp Configuration Language — .tf 파일 문법</td></tr><tr><td>apply</td><td>계획을 실제 인프라에 반영하는 명령</td></tr><tr><td>data 소스</td><td>생성하지 않고 기존 리소스를 읽는 블록</td></tr><tr><td>destroy</td><td>state가 관리하는 리소스를 전부 삭제</td></tr><tr><td>init</td><td>provider 다운로드·작업 디렉터리 초기화</td></tr><tr><td>plan</td><td>실행 전 변경 예정을 미리 보여주는 단계</td></tr><tr><td>provider</td><td>클라우드 API를 Terraform 리소스로 번역하는 플러그인</td></tr><tr><td>provider 블록</td><td>리전·인증 등 실제 접속 설정</td></tr><tr><td>registry</td><td>provider·모듈을 배포하는 공개 저장소</td></tr><tr><td>required_providers</td><td>사용할 provider와 버전을 고정하는 블록</td></tr><tr><td>resource</td><td>생성할 인프라 객체의 선언 블록</td></tr><tr><td>state</td><td>실제 인프라와 코드의 매핑을 기록한 상태 파일</td></tr><tr><td>terraform state show</td><td>state에 기록된 리소스 속성 조회</td></tr><tr><td>terraform.tfstate</td><td>현재 관리 중인 리소스 상태가 저장되는 파일</td></tr><tr><td>validate</td><td>문법·참조 오류를 실행 전 검사</td></tr><tr><td>version constraint</td><td>~&gt; 5.0 같은 provider 버전 범위 지정</td></tr><tr><td>워크플로우</td><td>write → init → plan → apply → destroy 순서</td></tr><tr><td>의존성 그래프</td><td>리소스 참조 관계로 실행 순서를 자동 결정</td></tr></table>
+<h4>2단계 · Terraform 실습 — AWS 인프라 구축</h4>
+<table><tr><th>용어</th><th>설명</th></tr><tr><td>-target</td><td>apply 대상을 특정 리소스로 제한 — 일상 사용 비추천</td></tr><tr><td>Availability Zone</td><td>리전 내 물리적 데이터센터 구역</td></tr><tr><td>CIDR</td><td>IP 대역 표기 — 10.200.0.0/16</td></tr><tr><td>EC2</td><td>AWS 가상 서버 — 여기서는 배스천</td></tr><tr><td>ECR</td><td>Elastic Container Registry — 컨테이너 이미지 저장소</td></tr><tr><td>EIP</td><td>Elastic IP — 고정 공인 IP (NGW에 연결)</td></tr><tr><td>EKS</td><td>관리형 Kubernetes — 컨트롤플레인은 AWS 관리</td></tr><tr><td>IAM role</td><td>AWS API 권한을 리소스에 부여하는 역할</td></tr><tr><td>IGW</td><td>Internet Gateway — VPC ↔ 인터넷 연결</td></tr><tr><td>NGW</td><td>NAT Gateway — 프라이빗 서브넷의 외부 출구 (과금)</td></tr><tr><td>RDS</td><td>관리형 관계형 DB — 여기서는 MariaDB</td></tr><tr><td>VPC</td><td>Virtual Private Cloud — 격리된 가상 네트워크</td></tr><tr><td>check.sh</td><td>step별 생성 리소스를 AWS CLI로 검증 → HTML 리포트</td></tr><tr><td>kubectl</td><td>Kubernetes 클러스터 조작 CLI</td></tr><tr><td>outputs</td><td>다음 단계·사용자에게 노출할 값</td></tr><tr><td>terraform import</td><td>기존 AWS 리소스를 state로 편입</td></tr><tr><td>terraform_remote_state</td><td>다른 state의 outputs를 읽는 데이터 소스</td></tr><tr><td>고아 리소스</td><td>state 없이 AWS에만 남은 리소스 — import 또는 삭제 필요</td></tr><tr><td>노드그룹</td><td>EKS 워커 EC2 묶음 — 오토스케일링 범위 설정</td></tr><tr><td>단계별 디렉터리</td><td>step1~4로 state를 나눈 실행 구조</td></tr><tr><td>라우팅 테이블</td><td>서브넷 트래픽의 목적지 규칙</td></tr><tr><td>리소스 이름</td><td>코드 식별자 — 언더스코어 권장 (태그와 별개)</td></tr><tr><td>배스천</td><td>프라이빗망 진입용 경유 서버</td></tr><tr><td>보안 그룹</td><td>인스턴스 수준 가상 방화벽</td></tr><tr><td>서브넷</td><td>VPC 안의 IP 대역 분할 — 퍼블릭/프라이빗</td></tr><tr><td>서브넷 그룹</td><td>RDS가 배치될 서브넷 묶음</td></tr><tr><td>키페어</td><td>EC2 SSH 접속용 공개키/개인키 쌍</td></tr><tr><td>파라미터 그룹</td><td>RDS 엔진 설정 모음</td></tr></table>
+<h4>3단계 · Terraform 실전 — 변수·모듈 구조</h4>
+<table><tr><th>용어</th><th>설명</th></tr><tr><td>-var / -var-file</td><td>apply 시 변수 값을 주입하는 옵션</td></tr><tr><td>DRY</td><td>반복하지 않는 원칙 — 변수·모듈로 달성</td></tr><tr><td>TF_VAR_ 접두사</td><td>환경변수로 변수를 전달하는 방식</td></tr><tr><td>count</td><td>리소스를 조건부·반복 생성하는 메타 인자</td></tr><tr><td>default_tags</td><td>provider 레벨 공통 태그 — 모든 리소스에 자동 적용</td></tr><tr><td>dynamic 블록</td><td>반복되는 중첩 블록을 for_each로 생성</td></tr><tr><td>for_each</td><td>맵·집합을 순회하며 리소스·블록 생성</td></tr><tr><td>locals</td><td>반복 계산 값에 이름을 붙이는 로컬 변수</td></tr><tr><td>outputs.tf</td><td>출력 선언 파일</td></tr><tr><td>sensitive</td><td>출력에서 값을 가리는 변수 속성 — 비밀번호에 필수</td></tr><tr><td>tfvars</td><td>변수 값을 파일로 전달 — .gitignore 대상</td></tr><tr><td>var.xxx</td><td>변수 참조 문법</td></tr><tr><td>variable 블록</td><td>타입·기본값·설명을 가진 매개변수 선언</td></tr><tr><td>variables.tf</td><td>입력 변수 선언 파일</td></tr><tr><td>workspace</td><td>같은 코드의 별도 state — 환경 복제용, 스텝과 무관</td></tr><tr><td>단일 state</td><td>모듈 방식 — 한 번의 apply로 전체 관리</td></tr><tr><td>루트 모듈</td><td>실행 디렉터리의 .tf 파일 집합</td></tr><tr><td>리팩터링</td><td>동작 유지하며 구조만 개선</td></tr><tr><td>모듈</td><td>재사용 가능한 리소스 묶음 — main.tf에서 호출</td></tr><tr><td>버전 고정</td><td>terraform·provider 버전을 명시해 재현성 확보</td></tr><tr><td>표준 레이아웃</td><td>versions/providers/variables/main/outputs 파일 분리</td></tr><tr><td>하드코딩</td><td>값을 코드에 직접 박는 방식 — 변수화 대상</td></tr><tr><td>환경 분리</td><td>dev/stage/prod를 변수·디렉터리로 구분</td></tr></table>
+<p>---</p>
+<p>총 81개 용어 · 4개 단계</p></div>
+<div id="viewer" hidden><div class="vbox"><div class="vhead"><span id="vtitle"></span><span style="display:flex;gap:.8rem;align-items:center"><a id="vopen" href="#" target="_blank">새 탭에서 열기</a><button class="dgbtn" id="vclose">✕ 닫기</button></span></div><div class="vbody" id="vbody"></div></div></div>
+<script>
+const MD={'glossary.md':'md-gloss','../glossary.md':'md-gloss'};
+const $=id=>document.getElementById(id);
+function openViewer(href,title){
+  $('vtitle').textContent=title||href.split('/').pop();
+  $('vopen').href=href;
+  const body=$('vbody');body.innerHTML='';
+  const key=Object.keys(MD).sort((a,b)=>b.length-a.length).find(k=>href===k||href.endsWith('/'+k)||href.endsWith(k)||href.endsWith(k.replace('../','')));
+  if(key){body.innerHTML='<div class="mdview">'+document.getElementById(MD[key]).innerHTML+'</div>';}
+  else{const im=new Image();im.src=href;im.style.maxWidth='100%';body.appendChild(im);}
+  $('viewer').hidden=false;
+}
+function closeViewer(){$('viewer').hidden=true}
+$('vclose').onclick=closeViewer;
+$('viewer').onclick=e=>{if(e.target===$('viewer'))closeViewer()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('viewer').hidden)closeViewer()});
+document.querySelectorAll('a[href$=".md"]').forEach(a=>a.onclick=e=>{
+  const href=a.getAttribute('href');
+  if(href.startsWith('http'))return;
+  e.preventDefault();openViewer(href,href.split('/').pop());
+});
+document.addEventListener('click',e=>{
+  const a=e.target.closest&&e.target.closest('#vbody a');
+  if(!a)return;
+  const href=a.getAttribute('href');
+  if(!href||href.startsWith('http')||href.startsWith('#'))return;
+  e.preventDefault();openViewer(href,href.split('/').pop());
+});
+</script>
+</body></html>

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-label="terraform init이 레지스트리에서 프로바이더를 다운로드하는 흐름">
+  <defs>
+    <marker id="ah1769aa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1769aa"/>
+    </marker>
+  </defs>
+  <rect width="1280" height="720" fill="#f8fafc"/>
+  <rect width="1280" height="10" fill="#1769aa"/>
+
+  <text x="60" y="90" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="40" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">init과 Terraform Registry</text>
+  <text x="60" y="134" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="22" fill="#516174" xml:space="preserve" style="white-space:pre">terraform init이 선언된 프로바이더를 자동으로 내려받는다</text>
+
+  <!-- 흐름 도식 -->
+  <g font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+    <!-- required_providers 읽기 -->
+    <rect x="60" y="220" width="280" height="150" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <text x="200" y="270" text-anchor="middle" font-size="19" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">required_providers</text>
+    <text x="200" y="308" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">hashicorp/aws ~&gt; 5.0</text>
+    <text x="200" y="342" text-anchor="middle" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">versions.tf에 선언</text>
+
+    <line x1="346" y1="295" x2="406" y2="295" stroke="#1769aa" stroke-width="3" marker-end="url(#ah1769aa)"/>
+
+    <!-- terraform init -->
+    <rect x="414" y="220" width="220" height="150" rx="10" fill="#1769aa"/>
+    <text x="524" y="288" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="24" font-weight="700" fill="#ffffff" xml:space="preserve" style="white-space:pre">init</text>
+    <text x="524" y="326" text-anchor="middle" font-size="15" fill="#d8e8f5" xml:space="preserve" style="white-space:pre">다운로드 + 잠금</text>
+
+    <line x1="640" y1="295" x2="700" y2="295" stroke="#1769aa" stroke-width="3" marker-end="url(#ah1769aa)"/>
+
+    <!-- Registry -->
+    <rect x="708" y="220" width="240" height="150" rx="10" fill="#ffffff" stroke="#1769aa" stroke-width="2"/>
+    <text x="828" y="275" text-anchor="middle" font-size="18" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">Terraform</text>
+    <text x="828" y="302" text-anchor="middle" font-size="18" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">Registry</text>
+    <text x="828" y="340" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="14" fill="#516174" xml:space="preserve" style="white-space:pre">registry.terraform.io</text>
+
+    <line x1="954" y1="295" x2="1014" y2="295" stroke="#1769aa" stroke-width="3" marker-end="url(#ah1769aa)"/>
+
+    <!-- .terraform -->
+    <rect x="1022" y="220" width="198" height="150" rx="10" fill="#ffffff" stroke="#1a7f4b" stroke-width="2"/>
+    <text x="1121" y="280" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="18" font-weight="700" fill="#1a7f4b" xml:space="preserve" style="white-space:pre">.terraform/</text>
+    <text x="1121" y="318" text-anchor="middle" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">플러그인 설치됨</text>
+  </g>
+
+  <!-- init이 하는 일 -->
+  <g font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+    <rect x="60" y="420" width="760" height="190" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <text x="92" y="462" font-size="20" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">terraform init이 하는 일</text>
+    <text x="92" y="500" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">① backend 초기화 — state를 저장할 위치 준비</text>
+    <text x="92" y="534" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">② required_providers의 플러그인을 레지스트리에서 다운로드</text>
+    <text x="92" y="568" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">③ 모듈 다운로드 + .terraform.lock.hcl 에 버전·해시 기록</text>
+
+    <rect x="848" y="420" width="372" height="190" rx="10" fill="#e6f1fa"/>
+    <text x="880" y="462" font-size="20" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">언제 다시 init?</text>
+    <text x="880" y="500" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">· 프로바이더 추가·버전 변경 시</text>
+    <text x="880" y="532" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">· backend 설정 변경 시</text>
+    <text x="880" y="564" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">· 새로 clone 받은 직후</text>
+  </g>
+
+  <text x="60" y="700" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">Terraform · 01 · Provider</text>
+  <text x="1220" y="700" text-anchor="end" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" font-weight="600" fill="#516174" xml:space="preserve" style="white-space:pre">07</text>
+</svg>

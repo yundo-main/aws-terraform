@@ -1,0 +1,25 @@
+# API 키·자격증명 (절대 커밋하지 않는다)
+.env
+.env.*
+!.env.example
+*.pem
+
+# Terraform — 상태 파일과 플러그인 캐시는 커밋 금지
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars
+!*.tfvars.example
+# .terraform.lock.hcl 은 버전 잠금 파일 — 커밋한다
+
+# OS / 에디터
+.DS_Store
+.idea/
+.vscode/
+
+# 에이전트용 파일: 학생에게 공개되는 저장소라 제외
+.agents/
+
+# 생성물 (check.sh 산출)
+report.html

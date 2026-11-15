@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-label="Terraform 코어에서 Provider를 거쳐 클라우드 API로 가는 동작 구조">
+  <defs>
+    <marker id="ah1769aa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1769aa"/>
+    </marker>
+  </defs>
+  <rect width="1280" height="720" fill="#f8fafc"/>
+  <rect width="1280" height="10" fill="#1769aa"/>
+
+  <text x="60" y="90" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="40" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">동작 구조</text>
+  <text x="60" y="134" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="22" fill="#516174" xml:space="preserve" style="white-space:pre">코어는 HCL을 해석하고, 실제 API 호출은 프로바이더가 담당한다</text>
+
+  <!-- 좌→우 흐름 도식 -->
+  <g font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+    <!-- .tf 파일 -->
+    <rect x="60" y="240" width="180" height="140" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <text x="150" y="300" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="22" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">.tf</text>
+    <text x="150" y="336" text-anchor="middle" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">HCL 선언</text>
+
+    <line x1="246" y1="310" x2="296" y2="310" stroke="#1769aa" stroke-width="3" marker-end="url(#ah1769aa)"/>
+
+    <!-- Terraform Core -->
+    <rect x="304" y="240" width="210" height="140" rx="10" fill="#1769aa"/>
+    <text x="409" y="296" text-anchor="middle" font-size="21" font-weight="700" fill="#ffffff" xml:space="preserve" style="white-space:pre">Terraform</text>
+    <text x="409" y="324" text-anchor="middle" font-size="21" font-weight="700" fill="#ffffff" xml:space="preserve" style="white-space:pre">Core</text>
+    <text x="409" y="358" text-anchor="middle" font-size="14" fill="#d8e8f5" xml:space="preserve" style="white-space:pre">계획 수립 · 상태 관리</text>
+
+    <line x1="520" y1="310" x2="570" y2="310" stroke="#1769aa" stroke-width="3" marker-end="url(#ah1769aa)"/>
+
+    <!-- Provider -->
+    <rect x="578" y="240" width="210" height="140" rx="10" fill="#ffffff" stroke="#1769aa" stroke-width="2"/>
+    <text x="683" y="300" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="22" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">provider</text>
+    <text x="683" y="336" text-anchor="middle" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">aws · azurerm · google</text>
+
+    <line x1="794" y1="310" x2="844" y2="310" stroke="#1769aa" stroke-width="3" marker-end="url(#ah1769aa)"/>
+
+    <!-- Cloud API -->
+    <rect x="852" y="240" width="170" height="140" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <text x="937" y="300" text-anchor="middle" font-size="20" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">Cloud API</text>
+    <text x="937" y="336" text-anchor="middle" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">AWS · Azure · GCP</text>
+
+    <line x1="1028" y1="310" x2="1078" y2="310" stroke="#1769aa" stroke-width="3" marker-end="url(#ah1769aa)"/>
+
+    <!-- 결과 -->
+    <rect x="1086" y="240" width="134" height="140" rx="10" fill="#ffffff" stroke="#1a7f4b" stroke-width="2"/>
+    <text x="1153" y="300" text-anchor="middle" font-size="19" font-weight="700" fill="#1a7f4b" xml:space="preserve" style="white-space:pre">실제</text>
+    <text x="1153" y="328" text-anchor="middle" font-size="19" font-weight="700" fill="#1a7f4b" xml:space="preserve" style="white-space:pre">인프라</text>
+  </g>
+
+  <!-- 역할 구분 설명 -->
+  <g font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+    <rect x="60" y="430" width="565" height="160" rx="10" fill="#e6f1fa"/>
+    <text x="92" y="472" font-size="20" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">Terraform Core가 하는 일</text>
+    <text x="92" y="510" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">HCL 파싱 · 의존 그래프 계산 · plan 생성</text>
+    <text x="92" y="540" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">state 파일 관리 — "무엇을 바꿀지" 결정</text>
+
+    <rect x="655" y="430" width="565" height="160" rx="10" fill="#eef1f4"/>
+    <text x="687" y="472" font-size="20" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">Provider가 하는 일</text>
+    <text x="687" y="510" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">각 플랫폼의 API 호출로 변환해 실행</text>
+    <text x="687" y="540" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">인증·리전·엔드포인트 처리 — "어떻게" 호출</text>
+  </g>
+
+  <text x="60" y="700" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">Terraform · 01 · Provider</text>
+  <text x="1220" y="700" text-anchor="end" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" font-weight="600" fill="#516174" xml:space="preserve" style="white-space:pre">03</text>
+</svg>

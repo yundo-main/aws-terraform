@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-label="provider 블록과 alias를 이용한 멀티 리전 설정">
+  <rect width="1280" height="720" fill="#f8fafc"/>
+  <rect width="1280" height="10" fill="#1769aa"/>
+
+  <text x="60" y="90" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="40" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">provider 블록</text>
+  <text x="60" y="134" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="22" fill="#516174" xml:space="preserve" style="white-space:pre">프로바이더의 실제 접속 설정 — 리전·자격증명·기본 태그</text>
+
+  <!-- 기본 provider 블록 -->
+  <g>
+    <rect x="60" y="170" width="560" height="180" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="60" y="170" width="560" height="44" rx="10" fill="#eef1f4"/>
+    <rect x="60" y="196" width="560" height="18" fill="#eef1f4"/>
+    <text x="88" y="199" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">providers.tf</text>
+
+    <text x="88" y="258" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="18" xml:space="preserve" style="white-space:pre"><tspan fill="#1769aa" font-weight="700">provider</tspan><tspan fill="#122033"> "aws" {</tspan></text>
+    <text x="112" y="302" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="18" xml:space="preserve" style="white-space:pre"><tspan fill="#122033">region = </tspan><tspan fill="#1a7f4b">"ap-northeast-2"</tspan></text>
+    <text x="88" y="346" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">}</text>
+  </g>
+
+  <!-- alias 멀티 리전 -->
+  <g>
+    <rect x="60" y="390" width="560" height="220" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="60" y="390" width="560" height="44" rx="10" fill="#eef1f4"/>
+    <rect x="60" y="416" width="560" height="18" fill="#eef1f4"/>
+    <text x="88" y="419" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">멀티 리전 — alias</text>
+
+    <text x="88" y="478" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="17" xml:space="preserve" style="white-space:pre"><tspan fill="#1769aa" font-weight="700">provider</tspan><tspan fill="#122033"> "aws" {</tspan></text>
+    <text x="112" y="518" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="17" xml:space="preserve" style="white-space:pre"><tspan fill="#122033">alias  = </tspan><tspan fill="#1a7f4b">"us"</tspan></text>
+    <text x="112" y="558" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="17" xml:space="preserve" style="white-space:pre"><tspan fill="#122033">region = </tspan><tspan fill="#1a7f4b">"us-east-1"</tspan></text>
+    <text x="88" y="598" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">}</text>
+  </g>
+
+  <!-- 오른쪽 설명 -->
+  <g font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+    <rect x="660" y="170" width="560" height="180" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <text x="692" y="212" font-size="20" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">여기에 들어가는 것</text>
+    <text x="692" y="250" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">· 리전 — region, endpoints</text>
+    <text x="692" y="282" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">· 인증 — profile, assume_role</text>
+    <text x="692" y="314" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">· 기본값 — default_tags 등</text>
+
+    <rect x="660" y="390" width="560" height="220" rx="10" fill="#e6f1fa"/>
+    <text x="692" y="432" font-size="20" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">alias는 이름표</text>
+    <text x="692" y="470" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">같은 프로바이더의 다른 설정을 구분한다</text>
+    <text x="692" y="508" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">리소스에서 사용:</text>
+    <text x="692" y="544" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="16" fill="#122033" xml:space="preserve" style="white-space:pre">provider = aws.us</text>
+    <text x="692" y="582" font-size="17" fill="#516174" xml:space="preserve" style="white-space:pre">예) 서울 리전 + 미국 리전에 동시 배포</text>
+  </g>
+
+  <text x="60" y="700" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">Terraform · 01 · Provider</text>
+  <text x="1220" y="700" text-anchor="end" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" font-weight="600" fill="#516174" xml:space="preserve" style="white-space:pre">05</text>
+</svg>

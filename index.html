@@ -1,0 +1,117 @@
+<!doctype html>
+<!--
+  루트 인덱스 템플릿 — templates/gen_index.py 가 index.html 을 생성할 때 사용하는 마스터.
+  단계 카드·readme 뷰어 내장 콘텐츠는 gen_index.py 가 채운다.
+  직접 편집하지 말고 gen_index.py 의 STEPS 설정을 수정한 뒤 `python3 templates/gen_index.py` 를 실행한다.
+-->
+<html lang="ko"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terraform AWS 인프라 — 과정 인덱스</title>
+<style>
+:root{--bg:#f1f5f9;--card:#fff;--ink:#111827;--muted:#6b7280;--line:#e2e8f0;--accent:#2563eb;--accent2:#7c3aed}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.65}
+.wrap{max-width:1080px;margin:0 auto;padding:1.4rem 1.2rem 3rem}
+.topnav{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin-bottom:.9rem;padding:.55rem .8rem;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.topnav .brand{font-weight:800;margin-right:.8rem;background:linear-gradient(120deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.topnav a{color:var(--muted);text-decoration:none;font-size:.85rem;font-weight:600;padding:.35rem .75rem;border-radius:8px;transition:all .15s}
+.topnav a:hover{background:#eff6ff;color:var(--accent)}
+.hero{position:relative;overflow:hidden;border-radius:20px;padding:2.6rem 2.2rem;margin-bottom:1.5rem;color:#fff;background:linear-gradient(120deg,#0b1e3a 0%,#144a8a 50%,#6d28d9 100%);box-shadow:0 8px 24px rgba(15,23,42,.18)}
+.hero::before,.hero::after{content:'';position:absolute;border-radius:50%;background:rgba(255,255,255,.09)}
+.hero::before{width:380px;height:380px;right:-100px;top:-140px}
+.hero::after{width:240px;height:240px;left:-70px;bottom:-110px}
+.hero::before,.hero::after{animation:float 9s ease-in-out infinite}
+.hero::after{animation-delay:-4s}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(18px,-14px)}}
+.hero>*{position:relative}
+.eyebrow{font-size:.72rem;letter-spacing:.18em;font-weight:800;opacity:.85;margin-bottom:.55rem;text-transform:uppercase}
+.hero h1{margin:0 0 .65rem;font-size:2.05rem;letter-spacing:-.01em}
+.hero .sub{margin:0 0 1.2rem;max-width:680px;font-size:.88rem;font-weight:500;line-height:1.6;color:rgba(255,255,255,.92);text-shadow:0 1px 4px rgba(0,0,0,.35)}
+.steps{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.4rem}
+.steps span{font-size:.74rem;font-weight:600;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);padding:.32rem .8rem;border-radius:999px;backdrop-filter:blur(4px)}
+.sec-title{font-size:1.15rem;font-weight:800;margin:1.8rem 0 .9rem;padding-bottom:.55rem;border-bottom:2px solid var(--accent);display:inline-block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.1rem;margin-bottom:1.7rem}
+.card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:1.3rem 1.35rem;box-shadow:0 1px 3px rgba(15,23,42,.04);transition:transform .18s,box-shadow .18s,border-color .18s;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));opacity:0;transition:opacity .18s}
+.card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(15,23,42,.1);border-color:#c7d2fe}
+.card:hover::before{opacity:1}
+.num{display:inline-flex;align-items:center;justify-content:center;min-width:2.1rem;height:2.1rem;padding:0 .5rem;border-radius:10px;font-weight:800;font-size:.95rem;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 2px 8px rgba(37,99,235,.3)}
+.card h3{margin:.65rem 0 .3rem;font-size:1.05rem;letter-spacing:-.01em}
+.card .cat{font-size:.72rem;font-weight:700;color:var(--accent);letter-spacing:.04em;text-transform:uppercase}
+.card p{margin:.35rem 0 .7rem;color:var(--muted);font-size:.85rem;line-height:1.6}
+.card .meta{font-size:.75rem;color:var(--muted)}
+.card .links{display:flex;gap:.5rem;margin-top:.8rem;flex-wrap:wrap}
+.lnk{display:inline-block;font-size:.78rem;font-weight:700;color:var(--accent);background:#eff6ff;border:1px solid #dbeafe;border-radius:8px;padding:.35rem .75rem;text-decoration:none;transition:all .15s}
+.lnk:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+footer{color:var(--muted);font-size:.78rem;text-align:center;margin-top:2rem}
+a{color:var(--accent)}
+.dgbtn{display:inline-block;font-size:.85rem;font-weight:700;color:#fff;background:linear-gradient(120deg,var(--accent),var(--accent2));border:none;border-radius:9px;padding:.55rem 1.1rem;cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(37,99,235,.3)}
+#viewer{position:fixed;inset:0;background:rgba(15,23,42,.72);display:flex;align-items:center;justify-content:center;z-index:50}
+#viewer[hidden]{display:none}
+.vbox{background:#fff;border-radius:14px;width:94vw;height:92vh;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.vhead{display:flex;justify-content:space-between;align-items:center;padding:.7rem 1.1rem;border-bottom:1px solid var(--line);font-weight:600;font-size:.9rem}
+.vhead a{color:var(--accent);font-size:.78rem;text-decoration:none}
+.vbody{flex:1;overflow:auto;padding:1.2rem;display:flex;align-items:flex-start;justify-content:center}
+.vbody .mdview{width:100%;max-width:860px;margin:0 auto;font-size:.9rem}
+.vbody .mdview h1{font-size:1.4rem}.vbody .mdview h2{font-size:1.15rem}.vbody .mdview h3{font-size:1rem}
+.vbody .mdview table{font-size:.82rem}
+</style></head>
+<body>
+<div class="wrap">
+<nav class="topnav">
+<span class="brand">TERRAFORM AWS</span>
+</nav>
+
+<header class="hero">
+<div class="eyebrow">COURSE INDEX · 4 STEPS</div>
+<h1>Terraform으로 AWS 인프라 다루기</h1>
+<p class="sub">IaC 개념부터 Provider 이론, 단계별 AWS 실습, 변수·모듈화된 실전 레이아웃까지 이어지는 Terraform 학습 과정입니다. 각 단계 폴더의 포털에서 슬라이드·readme·실습 방법을 확인할 수 있습니다.</p>
+<div class="steps">
+<span>0 과정 개요</span><span>1 Terraform·Provider</span><span>2 AWS 실습</span><span>3 모듈·실전</span>
+</div>
+</header>
+
+<h2 class="sec-title">학습 단계</h2>
+<div class="grid">
+<div class="card"><span class="num">0</span><div class="cat">COURSE OVERVIEW</div><h3>과정 개요 — IaC와 Terraform</h3><p>IaC 개념·프로비저닝·Terraform 워크플로우·장점·Ansible 비교를 다루는 개요 단계</p><div class="meta">슬라이드 8 · 00_intro/slides/</div><div class="links"><a class="lnk" href="00_intro/index.html">포털 →</a></div></div>
+<div class="card"><span class="num">1</span><div class="cat">TERRAFORM · PROVIDER</div><h3>Terraform 개념과 Provider</h3><p>Terraform 동작 구조·provider·버전 고정·init/Registry의 이론 단계</p><div class="meta">슬라이드 11 · 01_terraform/slides/</div><div class="links"><a class="lnk" href="01_terraform/index.html">포털 →</a></div></div>
+<div class="card"><span class="num">2</span><div class="cat">AWS · HANDS-ON</div><h3>Terraform 실습 — AWS 인프라</h3><p>step1~4 디렉터리로 단계별 apply — VPC→EC2/RDS→EKS→ALB</p><div class="meta">슬라이드 20 · step1~4 · check.sh</div><div class="links"><a class="lnk" href="02_practice/index.html">포털 →</a></div></div>
+<div class="card"><span class="num">3</span><div class="cat">VARIABLES · MODULES</div><h3>Terraform 실전 — 모듈 구조</h3><p>variables/outputs/providers 분리와 모듈화 — 실전 표준 레이아웃</p><div class="meta">슬라이드 8 · variables.tf · origin/</div><div class="links"><a class="lnk" href="03_real/index.html">포털 →</a></div></div>
+</div>
+
+<footer>Terraform AWS — 단계별 포털은 각 폴더의 index.html, 전체 과정은 readme.md 참조</footer>
+</div>
+
+<div id="viewer" hidden><div class="vbox"><div class="vhead"><span id="vtitle"></span><span style="display:flex;gap:.8rem;align-items:center"><a id="vopen" href="#" target="_blank">새 탭에서 열기</a><button class="dgbtn" id="vclose" style="font-size:.8rem;padding:.4rem .9rem">✕ 닫기</button></span></div><div class="vbody" id="vbody"></div></div></div>
+<script>
+const MD={};
+const $=id=>document.getElementById(id);
+function openViewer(href,title){
+  $('vtitle').textContent=title||href.split('/').pop();
+  $('vopen').href=href;
+  const body=$('vbody');body.innerHTML='';
+  const key=Object.keys(MD).sort((a,b)=>b.length-a.length).find(k=>href===k||href.endsWith('/'+k)||href.endsWith(k));
+  if(key){body.innerHTML='<div class="mdview">'+document.getElementById(MD[key]).innerHTML+'</div>';}
+  else{const im=new Image();im.src=href;im.style.maxWidth='100%';body.appendChild(im);}
+  $('viewer').hidden=false;
+}
+function closeViewer(){$('viewer').hidden=true}
+$('vclose').onclick=closeViewer;
+$('viewer').onclick=e=>{if(e.target===$('viewer'))closeViewer()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('viewer').hidden)closeViewer()});
+document.querySelectorAll('a[href$=".md"],a[href$=".svg"],a[href$=".tf"],a[href$=".sh"],a[href$=".txt"],a[href$=".json"]').forEach(a=>a.onclick=e=>{
+  const href=a.getAttribute('href');
+  if(href.startsWith('http'))return;
+  e.preventDefault();openViewer(href,href.split('/').pop());
+});
+document.addEventListener('click',e=>{
+  const a=e.target.closest&&e.target.closest('#vbody a');
+  if(!a)return;
+  const href=a.getAttribute('href');
+  if(!href||href.startsWith('http')||href.startsWith('#'))return;
+  e.preventDefault();openViewer(href,href.split('/').pop());
+});
+</script>
+</body>
+</html>

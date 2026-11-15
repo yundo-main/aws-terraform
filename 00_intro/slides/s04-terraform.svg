@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-label="Terraform 개념과 HCL 매니페스트 예시">
+  <rect width="1280" height="720" fill="#f8fafc"/>
+  <rect width="1280" height="10" fill="#1769aa"/>
+
+  <text x="60" y="90" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="40" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">Terraform이란?</text>
+  <text x="60" y="134" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="22" fill="#516174" xml:space="preserve" style="white-space:pre">HashiCorp에서 개발한 선언적 IaC 도구</text>
+
+  <!-- 왼쪽: 개념 카드 -->
+  <g font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+    <rect x="60" y="170" width="520" height="150" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <text x="92" y="212" font-size="24" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">Manifest — .tf 파일</text>
+    <text x="92" y="252" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">"무엇을" 구축할지 HCL로 작성한</text>
+    <text x="92" y="282" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">선언적 구성 파일</text>
+
+    <rect x="60" y="340" width="520" height="130" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <text x="92" y="382" font-size="24" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">HCL</text>
+    <text x="92" y="420" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">HashiCorp Configuration Language</text>
+    <text x="92" y="450" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">JSON 유사 문법, 사람이 읽기 쉬운 형태</text>
+
+    <rect x="60" y="490" width="520" height="120" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <text x="92" y="532" font-size="24" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">State</text>
+    <text x="92" y="570" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">관리 중인 인프라의 현재 상태를</text>
+    <text x="92" y="598" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">상태 파일(terraform.tfstate)로 추적</text>
+  </g>
+
+  <!-- 오른쪽: 코드 블록 -->
+  <g>
+    <rect x="620" y="170" width="600" height="300" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="620" y="170" width="600" height="44" rx="10" fill="#eef1f4"/>
+    <rect x="620" y="196" width="600" height="18" fill="#eef1f4"/>
+    <text x="648" y="199" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">main.tf</text>
+
+    <text x="648" y="258" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="18" xml:space="preserve" style="white-space:pre"><tspan fill="#1769aa" font-weight="700">resource</tspan><tspan fill="#122033"> "aws_instance" "web" {</tspan></text>
+    <text x="672" y="306" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="18" xml:space="preserve" style="white-space:pre"><tspan fill="#122033">ami           = </tspan><tspan fill="#1a7f4b">"ami-xxxxxxxx"</tspan></text>
+    <text x="672" y="354" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="18" xml:space="preserve" style="white-space:pre"><tspan fill="#122033">instance_type = </tspan><tspan fill="#1a7f4b">"t3.micro"</tspan></text>
+    <text x="648" y="402" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">}</text>
+  </g>
+
+  <text x="60" y="700" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">Terraform · 00 · IaC</text>
+  <text x="1220" y="700" text-anchor="end" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" font-weight="600" fill="#516174" xml:space="preserve" style="white-space:pre">04</text>
+</svg>

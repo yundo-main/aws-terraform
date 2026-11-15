@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-label="Terraform의 장점 다섯 가지">
+  <rect width="1280" height="720" fill="#f8fafc"/>
+  <rect width="1280" height="10" fill="#1769aa"/>
+
+  <text x="60" y="90" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="40" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">Terraform의 장점</text>
+  <text x="60" y="134" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="22" fill="#516174" xml:space="preserve" style="white-space:pre">코드 기반 인프라 관리가 주는 효과</text>
+
+  <g font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+    <!-- 카드 1 -->
+    <rect x="60" y="170" width="565" height="135" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="60" y="170" width="6" height="135" rx="3" fill="#1769aa"/>
+    <text x="92" y="212" font-size="24" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">자동화</text>
+    <text x="92" y="252" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">반복 작업을 줄이고 빠르고 정확한</text>
+    <text x="92" y="282" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">리소스 배포·관리 실현</text>
+
+    <!-- 카드 2 -->
+    <rect x="655" y="170" width="565" height="135" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="655" y="170" width="6" height="135" rx="3" fill="#1769aa"/>
+    <text x="687" y="212" font-size="24" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">일관성</text>
+    <text x="687" y="252" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">동일 코드로 개발·테스트·운영 환경 간</text>
+    <text x="687" y="282" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">차이 제거, 예측 가능한 구성 보장</text>
+
+    <!-- 카드 3 -->
+    <rect x="60" y="325" width="565" height="135" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="60" y="325" width="6" height="135" rx="3" fill="#1769aa"/>
+    <text x="92" y="367" font-size="24" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">멀티 클라우드</text>
+    <text x="92" y="407" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">AWS · Azure · GCP · VMware 등 클라우드와</text>
+    <text x="92" y="437" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">온프레미스 자원을 한 도구로 프로비저닝</text>
+
+    <!-- 카드 4 -->
+    <rect x="655" y="325" width="565" height="135" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="655" y="325" width="6" height="135" rx="3" fill="#1769aa"/>
+    <text x="687" y="367" font-size="24" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">효율성</text>
+    <text x="687" y="407" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">복잡한 인프라도 빠르게 배포</text>
+    <text x="687" y="437" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">수작업 대비 시간·오류 감소</text>
+
+    <!-- 카드 5 (와이드) -->
+    <rect x="60" y="480" width="1160" height="120" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="60" y="480" width="6" height="120" rx="3" fill="#1769aa"/>
+    <text x="92" y="522" font-size="24" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">버전 관리 용이</text>
+    <text x="92" y="562" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">Git으로 Terraform 코드를 버전 관리하고, CI/CD 파이프라인에서 변경 이력을 추적해 안정적인 배포 가능</text>
+  </g>
+
+  <text x="60" y="700" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">Terraform · 00 · IaC</text>
+  <text x="1220" y="700" text-anchor="end" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" font-weight="600" fill="#516174" xml:space="preserve" style="white-space:pre">06</text>
+</svg>

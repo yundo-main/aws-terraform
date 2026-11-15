@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-label="Terraform 워크플로우: init, validate, plan, apply">
+  <defs>
+    <marker id="ah1769aa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1769aa"/>
+    </marker>
+  </defs>
+  <rect width="1280" height="720" fill="#f8fafc"/>
+  <rect width="1280" height="10" fill="#1769aa"/>
+
+  <text x="60" y="90" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="40" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">Terraform 워크플로우</text>
+  <text x="60" y="134" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="22" fill="#516174" xml:space="preserve" style="white-space:pre">선언한 상태가 실제 인프라가 되기까지의 4단계</text>
+
+  <!-- 4단계 플로우 -->
+  <g font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+    <rect x="60" y="190" width="260" height="150" rx="10" fill="#ffffff" stroke="#1769aa" stroke-width="2"/>
+    <text x="190" y="240" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="28" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">init</text>
+    <text x="190" y="282" text-anchor="middle" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">작업 디렉터리 초기화</text>
+    <text x="190" y="310" text-anchor="middle" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">프로바이더 설치</text>
+
+    <line x1="328" y1="265" x2="372" y2="265" stroke="#1769aa" stroke-width="3" marker-end="url(#ah1769aa)"/>
+
+    <rect x="360" y="190" width="260" height="150" rx="10" fill="#ffffff" stroke="#1769aa" stroke-width="2"/>
+    <text x="490" y="240" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="28" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">validate</text>
+    <text x="490" y="282" text-anchor="middle" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">구성 파일 문법</text>
+    <text x="490" y="310" text-anchor="middle" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">유효성 검증</text>
+
+    <line x1="628" y1="265" x2="672" y2="265" stroke="#1769aa" stroke-width="3" marker-end="url(#ah1769aa)"/>
+
+    <rect x="660" y="190" width="260" height="150" rx="10" fill="#ffffff" stroke="#1769aa" stroke-width="2"/>
+    <text x="790" y="240" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="28" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">plan</text>
+    <text x="790" y="282" text-anchor="middle" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">실제 적용 전</text>
+    <text x="790" y="310" text-anchor="middle" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">변경 내용 미리보기</text>
+
+    <line x1="928" y1="265" x2="972" y2="265" stroke="#1769aa" stroke-width="3" marker-end="url(#ah1769aa)"/>
+
+    <rect x="960" y="190" width="260" height="150" rx="10" fill="#1769aa"/>
+    <text x="1090" y="240" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="28" font-weight="700" fill="#ffffff" xml:space="preserve" style="white-space:pre">apply</text>
+    <text x="1090" y="282" text-anchor="middle" font-size="17" fill="#d8e8f5" xml:space="preserve" style="white-space:pre">실제 인프라에</text>
+    <text x="1090" y="310" text-anchor="middle" font-size="17" fill="#d8e8f5" xml:space="preserve" style="white-space:pre">생성·변경·삭제 적용</text>
+  </g>
+
+  <!-- 상태 파일 역할 -->
+  <g font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+    <rect x="60" y="390" width="565" height="150" rx="10" fill="#e6f1fa"/>
+    <text x="92" y="432" font-size="20" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">plan 단계가 핵심</text>
+    <text x="92" y="472" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">apply 전에 "무엇이 만들어지고 바뀌는지"</text>
+    <text x="92" y="502" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">실행 계획을 검토할 수 있다</text>
+
+    <rect x="655" y="390" width="565" height="150" rx="10" fill="#eef1f4"/>
+    <text x="687" y="432" font-size="20" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">state 파일이 차이를 계산</text>
+    <text x="687" y="472" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">선언한 상태(.tf)와 현재 상태(실제 인프라)를</text>
+    <text x="687" y="502" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">비교해 필요한 변경만 적용 — 멱등성 보장</text>
+  </g>
+
+  <text x="60" y="700" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">Terraform · 00 · IaC</text>
+  <text x="1220" y="700" text-anchor="end" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" font-weight="600" fill="#516174" xml:space="preserve" style="white-space:pre">05</text>
+</svg>

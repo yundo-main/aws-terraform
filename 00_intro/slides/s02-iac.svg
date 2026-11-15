@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-label="IaC 개념: 선언적과 명령적 방식 비교">
+  <rect width="1280" height="720" fill="#f8fafc"/>
+  <rect width="1280" height="10" fill="#1769aa"/>
+
+  <text x="60" y="90" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="40" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">IaC (Infrastructure as Code)</text>
+  <text x="60" y="134" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="22" fill="#516174" xml:space="preserve" style="white-space:pre">GUI·웹 콘솔 대신 코드로 인프라 리소스를 정의하고 관리하는 방식</text>
+
+  <!-- 핵심 정의 배너 -->
+  <rect x="60" y="170" width="1160" height="60" rx="8" fill="#e6f1fa"/>
+  <text x="640" y="207" text-anchor="middle" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="24" font-weight="600" fill="#1769aa" xml:space="preserve" style="white-space:pre">"인프라를 코드로 관리한다"</text>
+
+  <!-- 두 방식 카드 -->
+  <g>
+    <rect x="60" y="270" width="565" height="210" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="60" y="270" width="6" height="210" rx="3" fill="#1769aa"/>
+    <text x="92" y="318" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="26" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">선언적 (Declarative)</text>
+    <text x="92" y="364" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="19" fill="#122033" xml:space="preserve" style="white-space:pre">"무엇을" 만들지 — 최종 상태를 정의하면</text>
+    <text x="92" y="394" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="19" fill="#122033" xml:space="preserve" style="white-space:pre">도구가 방법을 결정한다</text>
+    <text x="92" y="442" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">예) Terraform · AWS CloudFormation</text>
+  </g>
+  <g>
+    <rect x="655" y="270" width="565" height="210" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="655" y="270" width="6" height="210" rx="3" fill="#8a96a3"/>
+    <text x="687" y="318" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="26" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">명령적 (Imperative)</text>
+    <text x="687" y="364" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="19" fill="#122033" xml:space="preserve" style="white-space:pre">"어떻게" 만들지 — 수행 절차를 순서대로</text>
+    <text x="687" y="394" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="19" fill="#122033" xml:space="preserve" style="white-space:pre">기술한다</text>
+    <text x="687" y="442" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">예) 셸 스크립트 · 명령어 시퀀스</text>
+  </g>
+
+  <!-- 대표 도구 -->
+  <rect x="60" y="520" width="1160" height="90" rx="10" fill="#eef1f4"/>
+  <text x="92" y="556" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="18" font-weight="600" fill="#122033" xml:space="preserve" style="white-space:pre">대표 도구</text>
+  <text x="92" y="590" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="18" fill="#516174" xml:space="preserve" style="white-space:pre">Terraform · 00 · IaC</text>
+
+  <text x="60" y="700" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">Terraform · 00 · IaC</text>
+  <text x="1220" y="700" text-anchor="end" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" font-weight="600" fill="#516174" xml:space="preserve" style="white-space:pre">02</text>
+</svg>

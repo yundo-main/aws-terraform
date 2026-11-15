@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-label="required_providers 블록: source와 version 선언">
+  <defs>
+    <marker id="ahb86e00" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b86e00"/>
+    </marker>
+  </defs>
+  <rect width="1280" height="720" fill="#f8fafc"/>
+  <rect width="1280" height="10" fill="#1769aa"/>
+
+  <text x="60" y="90" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="40" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">required_providers 선언</text>
+  <text x="60" y="134" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="22" fill="#516174" xml:space="preserve" style="white-space:pre">terraform 블록에서 어떤 프로바이더를 어떤 버전으로 쓸지 고정한다</text>
+
+  <!-- 코드 블록 -->
+  <g>
+    <rect x="60" y="170" width="660" height="440" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="60" y="170" width="660" height="44" rx="10" fill="#eef1f4"/>
+    <rect x="60" y="196" width="660" height="18" fill="#eef1f4"/>
+    <text x="88" y="199" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">versions.tf</text>
+
+    <text x="88" y="258" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="18" xml:space="preserve" style="white-space:pre"><tspan fill="#1769aa" font-weight="700">terraform</tspan><tspan fill="#122033"> {</tspan></text>
+    <text x="112" y="302" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="18" xml:space="preserve" style="white-space:pre"><tspan fill="#1769aa" font-weight="700">required_providers</tspan><tspan fill="#122033"> {</tspan></text>
+    <text x="136" y="346" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="18" xml:space="preserve" style="white-space:pre"><tspan fill="#122033">aws = {</tspan></text>
+    <text x="160" y="390" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="18" xml:space="preserve" style="white-space:pre"><tspan fill="#122033">source  = </tspan><tspan fill="#1a7f4b">"hashicorp/aws"</tspan></text>
+    <text x="160" y="434" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="18" xml:space="preserve" style="white-space:pre"><tspan fill="#122033">version = </tspan><tspan fill="#1a7f4b">"~&gt; 5.0"</tspan></text>
+    <text x="136" y="478" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">}</text>
+    <text x="112" y="522" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">}</text>
+    <text x="88" y="566" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">}</text>
+  </g>
+
+  <!-- 오른쪽 주석 -->
+  <g font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+    <rect x="760" y="170" width="460" height="140" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <text x="792" y="210" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="18" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">source</text>
+    <text x="792" y="246" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">레지스트리 주소 — 네임스페이스/이름</text>
+    <text x="792" y="280" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">registry.terraform.io/hashicorp/aws</text>
+
+    <rect x="760" y="330" width="460" height="140" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <text x="792" y="370" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="18" font-weight="700" fill="#b86e00" xml:space="preserve" style="white-space:pre">version</text>
+    <text x="792" y="406" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">허용 버전 범위 — 생략하면 최신 버전</text>
+    <text x="792" y="440" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">재현성을 위해 항상 명시 권장</text>
+
+    <rect x="760" y="490" width="460" height="120" rx="10" fill="#e6f1fa"/>
+    <text x="792" y="528" font-size="18" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">로컬 이름은 자유</text>
+    <text x="792" y="562" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">aws = { … } 의 "aws"가 코드에서 쓰는 이름</text>
+    <text x="792" y="592" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">→ aws_instance, aws_vpc 등의 접두어</text>
+  </g>
+
+  <text x="60" y="700" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">Terraform · 01 · Provider</text>
+  <text x="1220" y="700" text-anchor="end" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" font-weight="600" fill="#516174" xml:space="preserve" style="white-space:pre">04</text>
+</svg>

@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-label="terraform validate 에러 리포트: 이름 불일치 5건과 누락 리소스">
+  <rect width="1280" height="720" fill="#f8fafc"/>
+  <rect width="1280" height="10" fill="#1769aa"/>
+
+  <text x="60" y="90" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="40" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">validate 에러 리포트</text>
+  <text x="60" y="134" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="22" fill="#516174" xml:space="preserve" style="white-space:pre">실행 전에 고쳐야 할 것 — 참조 이름 불일치 5건 + 누락 리소스 1건</text>
+
+  <!-- 에러 표 -->
+  <g font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+    <rect x="60" y="165" width="1160" height="44" fill="#122033"/>
+    <text x="220" y="193" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff" xml:space="preserve" style="white-space:pre">파일 (줄)</text>
+    <text x="620" y="193" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff" xml:space="preserve" style="white-space:pre">참조한 이름 (하이픈 — 없는 이름)</text>
+    <text x="1040" y="193" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff" xml:space="preserve" style="white-space:pre">선언된 이름 (언더스코어)</text>
+
+    <rect x="60" y="209" width="1160" height="44" fill="#ffffff"/>
+    <text x="220" y="237" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#122033" xml:space="preserve" style="white-space:pre">05-ngw.tf:23</text>
+    <text x="620" y="237" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#c0392b" xml:space="preserve" style="white-space:pre">aws_subnet.terraform-pub-subnet-2a</text>
+    <text x="1040" y="237" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#1a7f4b" xml:space="preserve" style="white-space:pre">terraform_pub_subnet_2a</text>
+
+    <rect x="60" y="253" width="1160" height="44" fill="#eef1f4"/>
+    <text x="220" y="281" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#122033" xml:space="preserve" style="white-space:pre">06-routing-table.tf:22</text>
+    <text x="620" y="281" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#c0392b" xml:space="preserve" style="white-space:pre">aws_vpc.terraform-vpc</text>
+    <text x="1040" y="281" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#1a7f4b" xml:space="preserve" style="white-space:pre">terraform_vpc</text>
+
+    <rect x="60" y="297" width="1160" height="44" fill="#ffffff"/>
+    <text x="220" y="325" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#122033" xml:space="preserve" style="white-space:pre">06-routing-table.tf:30</text>
+    <text x="620" y="325" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#c0392b" xml:space="preserve" style="white-space:pre">aws_vpc.terraform-vpc</text>
+    <text x="1040" y="325" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#1a7f4b" xml:space="preserve" style="white-space:pre">terraform_vpc</text>
+
+    <rect x="60" y="341" width="1160" height="44" fill="#eef1f4"/>
+    <text x="220" y="369" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#122033" xml:space="preserve" style="white-space:pre">09-rds.tf:16</text>
+    <text x="620" y="369" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#c0392b" xml:space="preserve" style="white-space:pre">aws_subnet.terraform-pri-subnet-2a</text>
+    <text x="1040" y="369" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#1a7f4b" xml:space="preserve" style="white-space:pre">terraform_pri_subnet_2a</text>
+
+    <rect x="60" y="385" width="1160" height="44" fill="#ffffff"/>
+    <text x="220" y="413" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#122033" xml:space="preserve" style="white-space:pre">09-rds.tf:16</text>
+    <text x="620" y="413" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#c0392b" xml:space="preserve" style="white-space:pre">aws_subnet.terraform-pri-subnet-2c</text>
+    <text x="1040" y="413" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="15" fill="#1a7f4b" xml:space="preserve" style="white-space:pre">terraform_pri_subnet_2c</text>
+
+    <line x1="380" y1="165" x2="380" y2="429" stroke="#c9d5e1"/>
+    <line x1="860" y1="165" x2="860" y2="429" stroke="#c9d5e1"/>
+    <rect x="60" y="165" width="1160" height="264" fill="none" stroke="#c9d5e1"/>
+  </g>
+
+  <!-- 누락 리소스 -->
+  <g font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+    <rect x="60" y="455" width="1160" height="80" rx="10" fill="#fdf0ef" stroke="#c0392b" stroke-width="2"/>
+    <text x="92" y="488" font-size="18" font-weight="700" fill="#c0392b" xml:space="preserve" style="white-space:pre">누락: aws_security_group "terraform-sg-rds"</text>
+    <text x="92" y="518" font-size="16" fill="#122033" xml:space="preserve" style="white-space:pre">09-rds.tf:88이 참조하지만 선언된 적 없음 — 07번 파일엔 terraform-sg-bastion만 있다</text>
+  </g>
+
+  <!-- 해결 방법 -->
+  <g font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+    <rect x="60" y="555" width="1160" height="105" rx="10" fill="#e6f1fa"/>
+    <text x="92" y="592" font-size="19" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">고치는 법</text>
+    <text x="92" y="626" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">① 05~09의 하이픈 참조를 선언부와 같은 언더스코어 이름으로 통일</text>
+    <text x="620" y="626" font-size="17" fill="#122033" xml:space="preserve" style="white-space:pre">② terraform-sg-rds 보안 그룹을 추가 선언 (3306 포트 규칙)</text>
+  </g>
+
+  <text x="60" y="700" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">Terraform · 02 · AWS 실습</text>
+  <text x="1220" y="700" text-anchor="end" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" font-weight="600" fill="#516174" xml:space="preserve" style="white-space:pre">18</text>
+</svg>

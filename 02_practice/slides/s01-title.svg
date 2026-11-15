@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-label="03 AWS 실습 타이틀 슬라이드">
+  <rect width="1280" height="720" fill="#f8fafc"/>
+  <rect width="1280" height="10" fill="#1769aa"/>
+
+  <text x="640" y="310" text-anchor="middle" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="72" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">03 AWS 실습</text>
+  <rect x="580" y="352" width="120" height="4" fill="#1769aa"/>
+  <text x="640" y="414" text-anchor="middle" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="24" fill="#516174" xml:space="preserve" style="white-space:pre">.tf 코드를 실제 인프라로 만드는 실행 절차</text>
+
+  <text x="640" y="540" text-anchor="middle" font-family="ui-monospace, Menlo, 'SF Mono', monospace" font-size="22" fill="#1769aa" xml:space="preserve" style="white-space:pre">init → plan → apply → destroy</text>
+
+  <text x="60" y="700" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">Terraform · 02 · AWS 실습</text>
+  <text x="1220" y="700" text-anchor="end" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" font-weight="600" fill="#516174" xml:space="preserve" style="white-space:pre">01</text>
+</svg>

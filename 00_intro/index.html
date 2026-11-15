@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>0단계 · 과정 개요 — Terraform AWS 인프라</title>
+<style>
+:root{--bg:#f1f5f9;--card:#fff;--ink:#111827;--muted:#6b7280;--line:#e2e8f0;--accent:#2563eb;--accent2:#7c3aed}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.7}
+.wrap{max-width:1080px;margin:0 auto;padding:1.4rem 1.2rem 3rem}
+.topnav{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin-bottom:.9rem;padding:.55rem .8rem;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.topnav .brand{font-weight:800;margin-right:.8rem;background:linear-gradient(120deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.topnav a{color:var(--muted);text-decoration:none;font-size:.85rem;font-weight:600;padding:.35rem .75rem;border-radius:8px;transition:all .15s}
+.topnav a:hover{background:#eff6ff;color:var(--accent)}
+.topnav a.on{background:linear-gradient(120deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 2px 6px rgba(37,99,235,.3)}
+.hero{position:relative;overflow:hidden;border-radius:20px;padding:2.6rem 2.2rem;margin-bottom:1.5rem;color:#fff;background:linear-gradient(120deg,#0b1e3a 0%,#144a8a 50%,#6d28d9 100%);box-shadow:0 8px 24px rgba(15,23,42,.18)}
+.hero::before,.hero::after{content:'';position:absolute;border-radius:50%;background:rgba(255,255,255,.09)}
+.hero::before{width:380px;height:380px;right:-100px;top:-140px}
+.hero::after{width:240px;height:240px;left:-70px;bottom:-110px}
+.hero::before,.hero::after{animation:float 9s ease-in-out infinite}
+.hero::after{animation-delay:-4s}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(18px,-14px)}}
+.hero>*{position:relative}
+.eyebrow{font-size:.72rem;letter-spacing:.18em;font-weight:800;opacity:.85;margin-bottom:.55rem;text-transform:uppercase}
+.hero h1{margin:0 0 .65rem;font-size:2.05rem;letter-spacing:-.01em}
+.hero .sub{margin:0 0 1.2rem;max-width:680px;font-size:.88rem;font-weight:500;line-height:1.6;color:rgba(255,255,255,.92);text-shadow:0 1px 4px rgba(0,0,0,.35)}
+.steps{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.4rem}
+.steps span{font-size:.74rem;font-weight:600;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);padding:.32rem .8rem;border-radius:999px;backdrop-filter:blur(4px)}
+.ltab{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.5rem 1.6rem;margin-bottom:1.2rem;display:none;box-shadow:0 1px 3px rgba(15,23,42,.04)}
+.ltab.on{display:block;animation:fadein .25s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ltitle{font-size:1.15rem;font-weight:800;margin-bottom:1rem;padding-bottom:.55rem;border-bottom:2px solid var(--accent);display:inline-block;letter-spacing:-.01em}
+h3{font-size:1rem;margin:1.25rem 0 .5rem}
+p{margin:.45rem 0}
+ul,ol{margin:.45rem 0 .65rem;padding-left:1.3rem}
+li{margin:.28rem 0}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:.85rem;margin:.7rem 0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+th,td{border-bottom:1px solid var(--line);padding:.5rem .75rem;text-align:left;vertical-align:top}
+th{background:linear-gradient(180deg,#f1f5f9,#e8eef5);font-weight:700;font-size:.8rem;letter-spacing:.02em}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#f8fafc}
+code{background:#eef2f7;padding:.12em .38em;border-radius:5px;font-size:.85em;font-family:ui-monospace,Menlo,monospace;color:#be185d}
+pre{background:linear-gradient(180deg,#f8fafc,#f1f5f9);border:1px solid var(--line);border-radius:10px;padding:.95rem 1.05rem;overflow:auto;font-size:.82rem;line-height:1.55}
+pre code{background:none;padding:0;color:inherit}
+.sub{color:var(--muted);font-size:.85rem}
+.dtree{font-family:ui-monospace,Menlo,monospace;font-size:.8rem;background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:.95rem 1.15rem;overflow:auto}
+.dtn{font-weight:700;margin-bottom:.3rem;color:var(--ink)}
+.dt{margin:.15rem 0}
+.dt summary{cursor:pointer;color:var(--accent);font-weight:600}
+.dt-kids{margin-left:1.1rem;border-left:2px solid var(--line);padding-left:.9rem}
+.dtl{color:var(--muted);padding:.1rem 0}
+.dt-note{color:var(--muted);font-weight:400;font-size:.75rem}
+.dgi{border:1px solid var(--line);border-radius:14px;padding:.9rem;margin-bottom:1.1rem;background:#fff;box-shadow:0 1px 3px rgba(15,23,42,.04);transition:box-shadow .2s}
+.dgi:hover{box-shadow:0 4px 14px rgba(15,23,42,.08)}
+.dgi-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;font-size:.85rem;font-weight:700}
+.dgi-head .badge{font-size:.68rem;font-weight:800;color:#fff;background:linear-gradient(120deg,var(--accent),var(--accent2));padding:.18rem .6rem;border-radius:999px;letter-spacing:.03em}
+.dgi img{width:100%;border:1px solid var(--line);border-radius:10px;cursor:zoom-in;background:#fff;transition:transform .2s}
+.dgi img:hover{transform:scale(1.005)}
+.codebox{position:relative;margin:.6rem 0}
+.codebox pre{margin:0;padding-right:4.5rem}
+.copybtn{position:absolute;top:.5rem;right:.5rem;font-size:.72rem;font-weight:700;color:var(--accent);background:#fff;border:1px solid var(--line);border-radius:6px;padding:.28rem .65rem;cursor:pointer;transition:all .15s}
+.copybtn:hover{border-color:var(--accent);background:#eff6ff;box-shadow:0 1px 4px rgba(37,99,235,.15)}
+.dgbtn{display:inline-block;font-size:.85rem;font-weight:700;color:#fff;background:linear-gradient(120deg,var(--accent),var(--accent2));border:none;border-radius:9px;padding:.55rem 1.1rem;cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(37,99,235,.3);transition:transform .15s,box-shadow .15s}
+.dgbtn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,.4)}
+footer{color:var(--muted);font-size:.78rem;text-align:center;margin-top:1.6rem}
+#viewer{position:fixed;inset:0;background:rgba(15,23,42,.72);display:flex;align-items:center;justify-content:center;z-index:50}
+#viewer[hidden]{display:none}
+.vbox{background:#fff;border-radius:14px;width:94vw;height:92vh;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.vhead{display:flex;justify-content:space-between;align-items:center;padding:.7rem 1.1rem;border-bottom:1px solid var(--line);font-weight:600;font-size:.9rem}
+.vhead a{color:var(--accent);font-size:.78rem;text-decoration:none}
+.vhead button{font-size:.8rem}
+.vbody{flex:1;overflow:auto;padding:1.2rem;display:flex;align-items:flex-start;justify-content:center}
+.vbody img{max-width:100%;max-height:100%;object-fit:contain}
+.vbody .mdview{width:100%;max-width:860px;margin:0 auto;font-size:.9rem}
+.vbody .mdview h1{font-size:1.4rem}.vbody .mdview h2{font-size:1.15rem}.vbody .mdview h3{font-size:1rem}
+.vbody .mdview table{font-size:.82rem}
+.vside{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:72px;border:none;border-radius:10px;background:rgba(15,23,42,.55);color:#fff;font-size:1.8rem;cursor:pointer;z-index:5}
+.vside:hover{background:var(--accent)}
+#vsprev{left:12px}#vsnext{right:12px}
+.vside[hidden]{display:none}
+.gidx{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:1rem;position:sticky;top:0;background:var(--card);padding:.5rem 0;z-index:10;border-bottom:1px solid var(--line)}
+.gidx a{display:inline-block;min-width:1.7rem;text-align:center;font-size:.78rem;font-weight:700;color:var(--muted);text-decoration:none;padding:.25rem .4rem;border-radius:6px}
+.gidx a:hover{background:#eff6ff;color:var(--accent)}
+.gidx a.on{background:var(--accent);color:#fff}
+.gidx-off{display:inline-block;min-width:1.7rem;text-align:center;font-size:.78rem;font-weight:700;color:#d1d5db;padding:.25rem .4rem;border-radius:6px}
+.stepidx{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem}
+.stepidx .lbl{font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.05em;margin-right:.2rem}
+.stepidx a{display:inline-block;min-width:2rem;text-align:center;font-size:.8rem;font-weight:700;color:var(--muted);text-decoration:none;padding:.35rem .55rem;border-radius:8px;border:1px solid var(--line);background:#fff}
+.stepidx a:hover{border-color:var(--accent);color:var(--accent)}
+.stepidx a.cur{background:var(--accent);border-color:var(--accent);color:#fff}
+.ggroup{margin:1rem 0 .4rem;font-size:.95rem;font-weight:700;color:var(--accent)}
+[hidden]{display:none!important}
+</style></head><body>
+<div class="wrap">
+<nav class="topnav">
+<a class="brand" href="#top">📘 00_intro · 과정 개요</a>
+<a href="#tab-overview">과정 개요</a><a href="#tab-flow">흐름</a><a href="#tab-stack">기술 스택</a><a href="#tab-slides">슬라이드</a><a href="#tab-help">도움말</a>
+</nav>
+<div class="stepidx"><span class="lbl">단계</span><a href="../index.html">⌂</a><a href="index.html" class="cur">0</a><a href="../01_terraform/index.html">1</a><a href="../02_practice/index.html">2</a><a href="../03_real/index.html">3</a></div>
+<div class="hero" id="top">
+<div class="eyebrow">STEP 00 · COURSE OVERVIEW</div>
+<h1>과정 개요 — IaC와 Terraform</h1>
+<p class="sub">IaC 개념부터 AWS 실습·모듈화까지 이어지는 Terraform 학습 과정의 전체 흐름을 정리한 개요 단계입니다.</p>
+</div>
+<section class="ltab on" id="tab-overview">
+<div class="ltitle">과정 개요 — 과정 목표·단계 구성·학습 흐름</div>
+<h2>00_intro — 과정 개요 (IaC와 Terraform)</h2>
+<p>Terraform으로 AWS 인프라를 코드로 관리하는 학습 과정의 전체 흐름을 소개하는 단계입니다.</p>
+<h3>과정 목표</h3>
+<ul><li>IaC(Infrastructure as Code)의 개념과 필요성을 이해한다</li><li>Terraform의 동작 방식과 워크플로우(init → plan → apply → destroy)를 익힌다</li><li>AWS 실습을 통해 실제 인프라를 코드로 구축·검증·삭제한다</li><li>변수·모듈화로 실전 표준 레이아웃까지 확장한다</li></ul>
+<h3>단계 구성</h3>
+<ul><li><code>00_intro</code> — 과정 개요, IaC·Terraform 개념 슬라이드 (이 단계)</li><li><code>01_terraform</code> — Provider·required_providers·버전 고정·init/Registry 이론</li><li><code>02_practice</code> — step1~4 디렉터리로 단계별 apply하는 AWS 실습</li><li><code>03_real</code> — variables/outputs 분리와 모듈화된 실전 레이아웃</li></ul>
+<h3>학습 흐름</h3>
+<ol><li>개념: IaC와 프로비저닝이 왜 필요한지 이해</li><li>이론: Terraform provider와 상태(state) 관리 방식</li><li>실습: 단계별 디렉터리로 네트워크→컴퓨트→EKS 순으로 구축</li><li>실전: 하드코딩된 값을 변수·모듈로 리팩터링</li></ol>
+<h3>주의사항</h3>
+<ul><li>실습은 실제 AWS 계정에 리소스를 생성합니다 — NAT Gateway·EC2·RDS·EKS는 <b>과금</b>됩니다</li><li><code>terraform destroy</code>로 실습 후 정리하세요 (역순: step4 → step1)</li><li>AWS 태그(<code>Name</code>)와 Terraform 리소스 이름은 별개입니다 — 코드 식별자는 언더스코어</li></ul>
+<h3>용어집</h3>
+<p>전 단계 용어 <b>81개</b>를 자음순으로 정리한 통합 용어집:</p>
+<ul><li><a href="glossary/index.html"><code>glossary/index.html</code></a> — 단계별 탭으로 보는 용어집 포털</li><li><a href="glossary.md"><code>glossary.md</code></a> — 원본 마크다운</li></ul>
+<p>단계 구성: 0단계 IaC 개념 · 1단계 Provider·워크플로우 · 2단계 AWS 리소스·실습 · 3단계 변수·실전 패턴</p>
+
+</section>
+<section class="ltab" id="tab-flow" hidden>
+<div class="ltitle">흐름 — 주요 개념·워크플로우</div>
+<h3>주요 개념</h3>
+<ul><li><b>IaC</b>: 인프라를 코드로 선언해 버전 관리·자동화·재현을 가능하게 하는 방식</li><li><b>선언적 vs 명령적</b>: 결과 상태를 선언(Terraform) vs 실행 절차를 기술(스크립트·Ansible)</li><li><b>프로비저닝</b>: 선언된 자원을 실제 클라우드에 생성·배치하는 과정</li></ul>
+<h3>Terraform 워크플로우</h3>
+<pre><code>terraform init       # provider 다운로드·초기화
+terraform validate   # 문법·참조 검증
+terraform plan       # 변경 예정 미리보기
+terraform apply      # 실제 적용
+terraform destroy    # 전체 삭제</code></pre>
+</section>
+<section class="ltab" id="tab-stack" hidden>
+<div class="ltitle">도구·구조 — Ansible 비교·디렉터리 구성</div>
+<h3>도구 비교</h3>
+<table><tr><th>구분</th><th>Terraform</th><th>Ansible</th></tr><tr><td>목적</td><td>인프라 프로비저닝</td><td>구성 관리·배포</td></tr><tr><td>방식</td><td>선언적 (최종 상태)</td><td>명령적 (실행 절차)</td></tr><tr><td>상태 관리</td><td>state 파일로 추적</td><td>상태 비관리 (멱등성)</td></tr><tr><td>언어</td><td>HCL</td><td>YAML</td></tr></table>
+<h3>디렉터리 구조</h3>
+<pre><code>aws-tf/
+├── index.html          # 루트 포털 (이 파일에서 각 단계로 이동)
+├── 00_intro/           # 개요 슬라이드 8장 + 통합 용어집
+├── 01_terraform/       # 이론 슬라이드 11장 + provider/VPC 예제
+├── 02_practice/        # step1~4 실습 .tf + 슬라이드 20장 + check.sh
+├── 03_real/            # 실전 표준 레이아웃 + 슬라이드 8장 + origin/ 비교본
+└── .agents/            # 강사용 템플릿·생성기·로그 (학생 배포 제외)</code></pre>
+</section>
+<section class="ltab" id="tab-slides" hidden>
+<div class="ltitle">슬라이드 — IaC·Terraform 개요 (SVG)</div>
+<h3>SVG 슬라이드</h3>
+<table><tr><th>파일</th><th>내용</th></tr><tr><td>s01-title</td><td>타이틀</td></tr><tr><td>s02-iac</td><td>IaC 개념 (선언적 vs 명령적)</td></tr><tr><td>s03-provisioning</td><td>프로비저닝 대상 자원</td></tr><tr><td>s04-terraform</td><td>Terraform 소개 + HCL 예시</td></tr><tr><td>s05-workflow</td><td>init → apply 워크플로우</td></tr><tr><td>s06-benefits</td><td>장점 5가지</td></tr><tr><td>s07-vs-ansible</td><td>Ansible 비교 표</td></tr><tr><td>s08-summary</td><td>정리</td></tr></table>
+<p class="sub">이미지를 클릭하면 뷰어가 열리고 <b>‹ ›</b> 버튼 또는 <b>← →</b> 키로 슬라이드 간 이동합니다.</p>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s01-title · s01-title</span><span class="badge">SVG</span></div><img src="slides/s01-title.svg" alt="s01-title" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s02-iac · s02-iac</span><span class="badge">SVG</span></div><img src="slides/s02-iac.svg" alt="s02-iac" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s03-provisioning · s03-provisioning</span><span class="badge">SVG</span></div><img src="slides/s03-provisioning.svg" alt="s03-provisioning" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s04-terraform · s04-terraform</span><span class="badge">SVG</span></div><img src="slides/s04-terraform.svg" alt="s04-terraform" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s05-workflow · s05-workflow</span><span class="badge">SVG</span></div><img src="slides/s05-workflow.svg" alt="s05-workflow" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s06-benefits · s06-benefits</span><span class="badge">SVG</span></div><img src="slides/s06-benefits.svg" alt="s06-benefits" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s07-vs-ansible · s07-vs-ansible</span><span class="badge">SVG</span></div><img src="slides/s07-vs-ansible.svg" alt="s07-vs-ansible" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s08-summary · s08-summary</span><span class="badge">SVG</span></div><img src="slides/s08-summary.svg" alt="s08-summary" loading="lazy"></div>
+</section>
+<section class="ltab" id="tab-help" hidden>
+<div class="ltitle">도움말 — SVG 규칙·메타프롬프트·페이지 사용법</div>
+
+<h3>SVG 뷰어</h3>
+<ul>
+<li>슬라이드 탭의 <b>SVG 이미지를 클릭</b>하면 팝업 뷰어로 확대 표시됩니다</li>
+<li>뷰어에서 <code>‹</code> <code>›</code> 버튼 또는 <code>←</code> <code>→</code> 키로 이전/다음 슬라이드 이동</li>
+<li><code>ESC</code> · <code>✕ 닫기</code> · 어두운 배경 클릭으로 닫습니다</li>
+</ul>
+
+<h3>참고</h3>
+<ul>
+<li>이 페이지는 <b>서버 없이</b> 동작합니다 — <code>index.html</code>을 브라우저로 바로 열면 됩니다</li>
+<li>탭 내용은 생성 시점의 스냅샷입니다 — 원본이 수정되면 페이지 재생성이 필요합니다</li>
+</ul>
+</section>
+<footer>00_intro · Terraform 학습 자료</footer>
+</div>
+
+<div id="viewer" hidden><div class="vbox"><div class="vhead"><span id="vtitle"></span><span style="display:flex;gap:.8rem;align-items:center"><a id="vopen" href="#" target="_blank">새 탭에서 열기</a><button class="dgbtn" id="vclose">✕ 닫기</button></span></div><div class="vbody" id="vbody"></div><button class="vside" id="vsprev" hidden title="이전 슬라이드">‹</button><button class="vside" id="vsnext" hidden title="다음 슬라이드">›</button></div></div>
+<script>
+// ===== 탭 전환 (해시 동기화 + 활성 표시) =====
+const tabs=[...document.querySelectorAll('.ltab')];
+const navs=[...document.querySelectorAll('.topnav a[href^="#tab-"]')];
+function show(id){
+  const t=id&&document.getElementById(id)?id:'tab-overview';
+  tabs.forEach(x=>{x.classList.toggle('on',x.id===t);x.hidden=x.id!==t;});
+  navs.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+t));
+  if(location.hash!=='#'+t)history.replaceState(null,'','#'+t);
+}
+navs.forEach(a=>a.onclick=e=>{e.preventDefault();show(a.getAttribute('href').slice(1))});
+window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+show(location.hash.slice(1));
+
+// ===== 팝업 뷰어 =====
+const MD={};
+const $=id=>document.getElementById(id);
+let cur=null;
+function openViewer(href,title){
+  cur=href;
+  $('vtitle').textContent=title||href.split('/').pop();
+  $('vopen').href=href;
+  const body=$('vbody');body.innerHTML='';
+  const key=Object.keys(MD).sort((a,b)=>b.length-a.length).find(k=>href===k||href.endsWith('/'+k)||href.endsWith(k));
+  if(key){body.innerHTML='<div class="mdview">'+document.getElementById(MD[key]).innerHTML+'</div>';}
+  else{const im=new Image();im.src=href;im.style.maxWidth='100%';body.appendChild(im);}
+  // 슬라이드 목록 내 이전/다음
+  const slides=[...document.querySelectorAll('.dgi img')].map(i=>i.getAttribute('src'));
+  const idx=slides.indexOf(href);
+  $('vsprev').hidden=$('vsnext').hidden=idx<0;
+  if(idx>=0){
+    $('vsprev').onclick=()=>go(idx-1);$('vsnext').onclick=()=>go(idx+1);
+    window._slideIdx=idx;
+  }
+  $('viewer').hidden=false;
+}
+function go(i){
+  const slides=[...document.querySelectorAll('.dgi img')].map(x=>x.getAttribute('src'));
+  if(!slides.length)return;
+  const idx=((i%slides.length)+slides.length)%slides.length;
+  const src=slides[idx];
+  openViewer(src,src.split('/').pop());
+  window._slideIdx=idx;
+}
+function closeViewer(){$('viewer').hidden=true;cur=null}
+$('vclose').onclick=closeViewer;
+$('viewer').onclick=e=>{if(e.target===$('viewer'))closeViewer()};
+document.addEventListener('keydown',e=>{
+  if($('viewer').hidden)return;
+  if(e.key==='Escape')closeViewer();
+  if(e.key==='ArrowLeft')go((window._slideIdx||0)-1);
+  if(e.key==='ArrowRight')go((window._slideIdx||0)+1);
+});
+// SVG 이미지/링크 클릭 → 뷰어
+document.querySelectorAll('.dgi img').forEach(im=>im.onclick=()=>openViewer(im.getAttribute('src'),im.closest('.dgi').querySelector('.dgi-t')?.textContent||im.getAttribute('src').split('/').pop()));
+document.querySelectorAll('a[href$=".svg"],a[href$=".md"],a[href$=".tf"],a[href$=".sh"],a[href$=".txt"],a[href$=".json"],a[href$=".tfvars"],a[href$=".yml"],a[href$=".yaml"],a[href$=".hcl"]').forEach(a=>a.onclick=e=>{
+  const href=a.getAttribute('href');
+  if(href.startsWith('http'))return;
+  e.preventDefault();openViewer(href,href.split('/').pop());
+});
+// 뷰어 내부 링크도 재귀 처리
+document.addEventListener('click',e=>{
+  const a=e.target.closest&&e.target.closest('#vbody a');
+  if(!a)return;
+  const href=a.getAttribute('href');
+  if(!href||href.startsWith('http')||href.startsWith('#'))return;
+  e.preventDefault();openViewer(href,href.split('/').pop());
+});
+// ===== 명령어 복사 =====
+/* TODO: copy_cmd_js — copyCmd 버튼 핸들러 */
+
+</script>
+</body></html>

@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-label="03_aws 파일 구성과 각 파일이 만드는 리소스">
+  <rect width="1280" height="720" fill="#f8fafc"/>
+  <rect width="1280" height="10" fill="#1769aa"/>
+
+  <text x="60" y="90" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="40" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">코드가 만드는 것</text>
+  <text x="60" y="134" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="22" fill="#516174" xml:space="preserve" style="white-space:pre">terraform은 폴더 안 모든 .tf를 하나의 코드로 읽는다 — 번호는 읽기 순서일 뿐</text>
+
+  <!-- 왼쪽: 파일 목록 -->
+  <g font-family="ui-monospace, Menlo, 'SF Mono', monospace">
+    <rect x="60" y="170" width="440" height="440" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="60" y="170" width="440" height="44" rx="10" fill="#eef1f4"/>
+    <rect x="60" y="196" width="440" height="18" fill="#eef1f4"/>
+    <text x="88" y="199" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">03_aws/</text>
+    <g font-size="17" fill="#122033">
+      <text x="88" y="252" xml:space="preserve" style="white-space:pre">01_provider.tf</text>
+      <text x="88" y="292" xml:space="preserve" style="white-space:pre">02_vpc.tf</text>
+      <text x="88" y="332" xml:space="preserve" style="white-space:pre">03-subnet.tf</text>
+      <text x="88" y="372" xml:space="preserve" style="white-space:pre">04-igw.tf</text>
+      <text x="88" y="412" xml:space="preserve" style="white-space:pre">05-ngw.tf</text>
+      <text x="88" y="452" xml:space="preserve" style="white-space:pre">06-routing-table.tf</text>
+      <text x="88" y="492" xml:space="preserve" style="white-space:pre">07-sg-ec2-rds.tf</text>
+      <text x="88" y="532" xml:space="preserve" style="white-space:pre">08-ec2.tf</text>
+      <text x="88" y="572" xml:space="preserve" style="white-space:pre">09-rds.tf</text>
+    </g>
+  </g>
+
+  <!-- 오른쪽: 생성 자원 -->
+  <g font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="17" fill="#122033">
+    <text x="540" y="252" xml:space="preserve" style="white-space:pre">버전·리전 선언</text>
+    <text x="540" y="292" xml:space="preserve" style="white-space:pre">VPC 10.200.0.0/16</text>
+    <text x="540" y="332" xml:space="preserve" style="white-space:pre">서브넷 ×4 (pub 2 + pri 2)</text>
+    <text x="540" y="372" xml:space="preserve" style="white-space:pre">인터넷 게이트웨이</text>
+    <text x="540" y="412" xml:space="preserve" style="white-space:pre">EIP + NAT 게이트웨이</text>
+    <text x="540" y="452" xml:space="preserve" style="white-space:pre">라우팅 테이블 ×2 + 연결</text>
+    <text x="540" y="492" xml:space="preserve" style="white-space:pre">보안 그룹</text>
+    <text x="540" y="532" xml:space="preserve" style="white-space:pre">EC2 배스천 (t2.micro)</text>
+    <text x="540" y="572" xml:space="preserve" style="white-space:pre">RDS MariaDB (db.t3.micro)</text>
+
+    <!-- 파일→자원 구분선 -->
+    <line x1="516" y1="200" x2="516" y2="590" stroke="#c9d5e1" stroke-dasharray="4 4"/>
+  </g>
+
+  <text x="60" y="700" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">Terraform · 02 · AWS 실습</text>
+  <text x="1220" y="700" text-anchor="end" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" font-weight="600" fill="#516174" xml:space="preserve" style="white-space:pre">03</text>
+</svg>

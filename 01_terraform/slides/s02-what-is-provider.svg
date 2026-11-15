@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-label="Provider 정의와 세 가지 역할">
+  <rect width="1280" height="720" fill="#f8fafc"/>
+  <rect width="1280" height="10" fill="#1769aa"/>
+
+  <text x="60" y="90" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="40" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">Provider란?</text>
+  <text x="60" y="134" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="22" fill="#516174" xml:space="preserve" style="white-space:pre">Terraform 코어가 각 플랫폼 API와 통신하게 해주는 플러그인</text>
+
+  <rect x="60" y="170" width="1160" height="60" rx="8" fill="#e6f1fa"/>
+  <text x="640" y="207" text-anchor="middle" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="24" font-weight="600" fill="#1769aa" xml:space="preserve" style="white-space:pre">"Terraform 코어 ↔ 클라우드 API 사이의 번역기"</text>
+
+  <!-- 역할 카드 3개 -->
+  <g font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+    <rect x="60" y="270" width="368" height="220" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="60" y="270" width="6" height="220" rx="3" fill="#1769aa"/>
+    <text x="92" y="318" font-size="24" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">① API 번역</text>
+    <text x="92" y="362" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">HCL 선언을 각 플랫폼의</text>
+    <text x="92" y="392" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">API 호출로 변환한다</text>
+    <text x="92" y="440" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">예) aws_instance → EC2 RunInstances</text>
+
+    <rect x="456" y="270" width="368" height="220" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="456" y="270" width="6" height="220" rx="3" fill="#1769aa"/>
+    <text x="488" y="318" font-size="24" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">② 리소스 타입 제공</text>
+    <text x="488" y="362" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">resource · data source 목록을</text>
+    <text x="488" y="392" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">코어에 등록한다</text>
+    <text x="488" y="440" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">예) aws_vpc · aws_s3_bucket · aws_iam_role</text>
+
+    <rect x="852" y="270" width="368" height="220" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="852" y="270" width="6" height="220" rx="3" fill="#1769aa"/>
+    <text x="884" y="318" font-size="24" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">③ 인증·연결 처리</text>
+    <text x="884" y="362" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">자격증명·리전·엔드포인트 등</text>
+    <text x="884" y="392" font-size="18" fill="#122033" xml:space="preserve" style="white-space:pre">플랫폼 접속 정보를 관리한다</text>
+    <text x="884" y="440" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">예) AWS 자격증명 체인 · region 설정</text>
+  </g>
+
+  <rect x="60" y="530" width="1160" height="80" rx="10" fill="#eef1f4"/>
+  <text x="92" y="564" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="18" font-weight="600" fill="#122033" xml:space="preserve" style="white-space:pre">프로바이더 종류</text>
+  <text x="92" y="594" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="18" fill="#516174" xml:space="preserve" style="white-space:pre">aws · azurerm · google · kubernetes · github · datadog … 수백 개가 레지스트리에 공개</text>
+
+  <text x="60" y="700" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">Terraform · 01 · Provider</text>
+  <text x="1220" y="700" text-anchor="end" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" font-weight="600" fill="#516174" xml:space="preserve" style="white-space:pre">02</text>
+</svg>
