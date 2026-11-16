@@ -68,7 +68,7 @@ a{color:var(--accent)}
 <h1>Terraform으로 AWS 인프라 다루기</h1>
 <p class="sub">IaC 개념부터 Provider 이론, 단계별 AWS 실습, 변수·모듈화된 실전 레이아웃까지 이어지는 Terraform 학습 과정입니다. 각 단계 폴더의 포털에서 슬라이드·readme·실습 방법을 확인할 수 있습니다.</p>
 <div class="steps">
-<span>0 과정 개요</span><span>1 Terraform·Provider</span><span>2 AWS 실습</span><span>3 모듈·실전</span><span>4 HTTPS 확장</span><span>10 Backend</span><span>11 CI/CD</span><span>12 App Deploy</span>
+<span>0 과정 개요</span><span>1 Terraform·Provider</span><span>2 AWS 실습</span><span>3 모듈·실전</span><span>4 HTTPS 확장</span><span>10 CI/CD</span><span>11 App Deploy</span>
 </div>
 </header>
 
@@ -79,9 +79,8 @@ a{color:var(--accent)}
 <div class="card"><span class="num">2</span><div class="cat">AWS · HANDS-ON</div><h3>Terraform 실습 — AWS 인프라</h3><p>번호 파일 순서로 전체 apply — VPC→서브넷→게이트웨이→EC2/RDS</p><div class="meta">슬라이드 17 · 단일 state · check.sh</div><div class="links"><a class="lnk" href="02_practice/index.html">포털 →</a></div></div>
 <div class="card"><span class="num">3</span><div class="cat">VARIABLES · MODULES</div><h3>Terraform 실전 — 모듈 구조</h3><p>variables/outputs/providers 분리와 모듈화 — 실전 표준 레이아웃</p><div class="meta">슬라이드 9 · variables.tf · origin/</div><div class="links"><a class="lnk" href="03_real/index.html">포털 →</a></div></div>
 <div class="card"><span class="num">4</span><div class="cat">HTTPS · REMOTE STATE</div><h3>HTTPS 확장 — ACM 인증서</h3><p>03의 ALB·Route53을 remote_state로 읽어 인증서+443 리스너 부착 — 선택 단계</p><div class="meta">슬라이드 6 · remote_state · 03 선행 필요</div><div class="links"><a class="lnk" href="04_https/index.html">포털 →</a></div></div>
-<div class="card"><span class="num">10</span><div class="cat">S3 BACKEND · LOCK</div><h3>저장소 계층</h3><p>tfstate 버킷·DynamoDB lock·artifact 버킷 — 파이프라인 전 단계의 기반</p><div class="meta">슬라이드 4 · prevent_destroy · remote_state</div><div class="links"><a class="lnk" href="10_backend/index.html">포털 →</a></div></div>
-<div class="card"><span class="num">11</span><div class="cat">CI/CD · PIPELINE</div><h3>GitHub 인프라 파이프라인</h3><p>GitHub push→CodeBuild(plan)→승인→CodeBuild(apply) — 03_real을 파이프라인으로 배포</p><div class="meta">슬라이드 10 · CodeConnections · main 브랜치</div><div class="links"><a class="lnk" href="11_infra_pipeline/index.html">포털 →</a></div></div>
-<div class="card"><span class="num">12</span><div class="cat">APP DEPLOY · GITOPS</div><h3>앱 배포 파이프라인</h3><p>dev 브랜치 push → docker build → ECR → EKS — 리포 1개, 브랜치로 운영/개발 분리</p><div class="meta">슬라이드 4 · dev 브랜치 · 10·11 선행 필요</div><div class="links"><a class="lnk" href="12_app_pipeline/index.html">포털 →</a></div></div>
+<div class="card"><span class="num">10</span><div class="cat">CI/CD · PIPELINE</div><h3>GitHub 인프라 파이프라인</h3><p>저장소 계층+파이프라인 한 디렉터리 — push→plan→승인→apply로 03_real 배포</p><div class="meta">슬라이드 14 · CodeConnections · S3 backend</div><div class="links"><a class="lnk" href="10_cicd/index.html">포털 →</a></div></div>
+<div class="card"><span class="num">11</span><div class="cat">APP DEPLOY · GITOPS</div><h3>앱 배포 파이프라인</h3><p>dev 브랜치 push → docker build → ECR → EKS — 리포 1개, 브랜치로 운영/개발 분리</p><div class="meta">슬라이드 4 · dev 브랜치 · 10 선행 필요</div><div class="links"><a class="lnk" href="11_app_pipeline/index.html">포털 →</a></div></div>
 </div>
 
 <footer>Terraform AWS — 단계별 포털은 각 폴더의 index.html, 전체 과정은 readme.md 참조</footer>

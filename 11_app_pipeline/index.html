@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>앱 배포 파이프라인 — dev 브랜치</title>
+<style>
+:root{--bg:#f1f5f9;--card:#fff;--ink:#111827;--muted:#6b7280;--line:#e2e8f0;--accent:#2563eb;--accent2:#7c3aed}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.7}
+.wrap{max-width:1080px;margin:0 auto;padding:1.4rem 1.2rem 3rem}
+.topnav{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin-bottom:.9rem;padding:.55rem .8rem;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.topnav .brand{font-weight:800;margin-right:.8rem;background:linear-gradient(120deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.topnav a{color:var(--muted);text-decoration:none;font-size:.85rem;font-weight:600;padding:.35rem .75rem;border-radius:8px;transition:all .15s}
+.topnav a:hover{background:#eff6ff;color:var(--accent)}
+.topnav a.on{background:linear-gradient(120deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 2px 6px rgba(37,99,235,.3)}
+.hero{position:relative;overflow:hidden;border-radius:20px;padding:2.6rem 2.2rem;margin-bottom:1.5rem;color:#fff;background:linear-gradient(120deg,#0b1e3a 0%,#144a8a 50%,#6d28d9 100%);box-shadow:0 8px 24px rgba(15,23,42,.18)}
+.hero::before,.hero::after{content:'';position:absolute;border-radius:50%;background:rgba(255,255,255,.09)}
+.hero::before{width:380px;height:380px;right:-100px;top:-140px}
+.hero::after{width:240px;height:240px;left:-70px;bottom:-110px}
+.hero::before,.hero::after{animation:float 9s ease-in-out infinite}
+.hero::after{animation-delay:-4s}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(18px,-14px)}}
+.hero>*{position:relative}
+.eyebrow{font-size:.72rem;letter-spacing:.18em;font-weight:800;opacity:.85;margin-bottom:.55rem;text-transform:uppercase}
+.hero h1{margin:0 0 .65rem;font-size:2.05rem;letter-spacing:-.01em}
+.hero .sub{margin:0 0 1.2rem;max-width:680px;font-size:.88rem;font-weight:500;line-height:1.6;color:rgba(255,255,255,.92);text-shadow:0 1px 4px rgba(0,0,0,.35)}
+.steps{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.4rem}
+.steps span{font-size:.74rem;font-weight:600;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);padding:.32rem .8rem;border-radius:999px;backdrop-filter:blur(4px)}
+.ltab{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.5rem 1.6rem;margin-bottom:1.2rem;display:none;box-shadow:0 1px 3px rgba(15,23,42,.04)}
+.ltab.on{display:block;animation:fadein .25s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ltitle{font-size:1.15rem;font-weight:800;margin-bottom:1rem;padding-bottom:.55rem;border-bottom:2px solid var(--accent);display:inline-block;letter-spacing:-.01em}
+h3{font-size:1rem;margin:1.25rem 0 .5rem}
+p{margin:.45rem 0}
+ul,ol{margin:.45rem 0 .65rem;padding-left:1.3rem}
+li{margin:.28rem 0}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:.85rem;margin:.7rem 0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+th,td{border-bottom:1px solid var(--line);padding:.5rem .75rem;text-align:left;vertical-align:top}
+th{background:linear-gradient(180deg,#f1f5f9,#e8eef5);font-weight:700;font-size:.8rem;letter-spacing:.02em}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#f8fafc}
+code{background:#eef2f7;padding:.12em .38em;border-radius:5px;font-size:.85em;font-family:ui-monospace,Menlo,monospace;color:#be185d}
+pre{background:linear-gradient(180deg,#f8fafc,#f1f5f9);border:1px solid var(--line);border-radius:10px;padding:.95rem 1.05rem;overflow:auto;font-size:.82rem;line-height:1.55}
+pre code{background:none;padding:0;color:inherit}
+.sub{color:var(--muted);font-size:.85rem}
+.dtree{font-family:ui-monospace,Menlo,monospace;font-size:.8rem;background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:.95rem 1.15rem;overflow:auto}
+.dtn{font-weight:700;margin-bottom:.3rem;color:var(--ink)}
+.dt{margin:.15rem 0}
+.dt summary{cursor:pointer;color:var(--accent);font-weight:600}
+.dt-kids{margin-left:1.1rem;border-left:2px solid var(--line);padding-left:.9rem}
+.dtl{color:var(--muted);padding:.1rem 0}
+.dt-note{color:var(--muted);font-weight:400;font-size:.75rem}
+.dgi{border:1px solid var(--line);border-radius:14px;padding:.9rem;margin-bottom:1.1rem;background:#fff;box-shadow:0 1px 3px rgba(15,23,42,.04);transition:box-shadow .2s}
+.dgi:hover{box-shadow:0 4px 14px rgba(15,23,42,.08)}
+.dgi-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;font-size:.85rem;font-weight:700}
+.dgi-head .badge{font-size:.68rem;font-weight:800;color:#fff;background:linear-gradient(120deg,var(--accent),var(--accent2));padding:.18rem .6rem;border-radius:999px;letter-spacing:.03em}
+.dgi img{width:100%;border:1px solid var(--line);border-radius:10px;cursor:zoom-in;background:#fff;transition:transform .2s}
+.dgi img:hover{transform:scale(1.005)}
+.codebox{position:relative;margin:.6rem 0}
+.codebox pre{margin:0;padding-right:4.5rem}
+.copybtn{position:absolute;top:.5rem;right:.5rem;font-size:.72rem;font-weight:700;color:var(--accent);background:#fff;border:1px solid var(--line);border-radius:6px;padding:.28rem .65rem;cursor:pointer;transition:all .15s}
+.copybtn:hover{border-color:var(--accent);background:#eff6ff;box-shadow:0 1px 4px rgba(37,99,235,.15)}
+.dgbtn{display:inline-block;font-size:.85rem;font-weight:700;color:#fff;background:linear-gradient(120deg,var(--accent),var(--accent2));border:none;border-radius:9px;padding:.55rem 1.1rem;cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(37,99,235,.3);transition:transform .15s,box-shadow .15s}
+.dgbtn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,.4)}
+footer{color:var(--muted);font-size:.78rem;text-align:center;margin-top:1.6rem}
+#viewer{position:fixed;inset:0;background:rgba(15,23,42,.72);display:flex;align-items:center;justify-content:center;z-index:50}
+#viewer[hidden]{display:none}
+.vbox{background:#fff;border-radius:14px;width:94vw;height:92vh;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.vhead{display:flex;justify-content:space-between;align-items:center;padding:.7rem 1.1rem;border-bottom:1px solid var(--line);font-weight:600;font-size:.9rem}
+.vhead a{color:var(--accent);font-size:.78rem;text-decoration:none}
+.vhead button{font-size:.8rem}
+.vbody{flex:1;overflow:auto;padding:1.2rem;display:flex;align-items:flex-start;justify-content:center}
+.vbody img{max-width:100%;max-height:100%;object-fit:contain}
+.vbody .mdview{width:100%;max-width:860px;margin:0 auto;font-size:.9rem}
+.vbody .mdview h1{font-size:1.4rem}.vbody .mdview h2{font-size:1.15rem}.vbody .mdview h3{font-size:1rem}
+.vbody .mdview table{font-size:.82rem}
+.vside{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:72px;border:none;border-radius:10px;background:rgba(15,23,42,.55);color:#fff;font-size:1.8rem;cursor:pointer;z-index:5}
+.vside:hover{background:var(--accent)}
+#vsprev{left:12px}#vsnext{right:12px}
+.vside[hidden]{display:none}
+.gidx{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:1rem;position:sticky;top:0;background:var(--card);padding:.5rem 0;z-index:10;border-bottom:1px solid var(--line)}
+.gidx a{display:inline-block;min-width:1.7rem;text-align:center;font-size:.78rem;font-weight:700;color:var(--muted);text-decoration:none;padding:.25rem .4rem;border-radius:6px}
+.gidx a:hover{background:#eff6ff;color:var(--accent)}
+.gidx a.on{background:var(--accent);color:#fff}
+.gidx-off{display:inline-block;min-width:1.7rem;text-align:center;font-size:.78rem;font-weight:700;color:#d1d5db;padding:.25rem .4rem;border-radius:6px}
+.stepidx{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem}
+.stepidx .lbl{font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.05em;margin-right:.2rem}
+.stepidx a{display:inline-block;min-width:2rem;text-align:center;font-size:.8rem;font-weight:700;color:var(--muted);text-decoration:none;padding:.35rem .55rem;border-radius:8px;border:1px solid var(--line);background:#fff}
+.stepidx a:hover{border-color:var(--accent);color:var(--accent)}
+.stepidx a.cur{background:var(--accent);border-color:var(--accent);color:#fff}
+.ggroup{margin:1rem 0 .4rem;font-size:.95rem;font-weight:700;color:var(--accent)}
+[hidden]{display:none!important}
+</style></head><body>
+<div class="wrap">
+<nav class="topnav">
+<a class="brand" href="#top">📘 11_app_pipeline</a>
+<a href="#tab-overview">개요</a><a href="#tab-slides">슬라이드</a><a href="#tab-practice">실습</a><a href="#tab-help">도움말</a>
+</nav>
+<div class="stepidx"><span class="lbl">단계</span><a href="../index.html">⌂</a><a href="../00_intro/index.html">0</a><a href="../01_terraform/index.html">1</a><a href="../02_practice/index.html">2</a><a href="../03_real/index.html">3</a><a href="../04_https/index.html">4</a></div>
+<div class="hero" id="top">
+<div class="eyebrow">STEP 11 · APP DEPLOY · GITOPS</div>
+<h1>앱 배포 파이프라인 — dev 브랜치</h1>
+<p class="sub"></p>
+<div class="steps">
+<span>단계 1</span><span>단계 2</span>
+</div>
+</div>
+<section class="ltab on" id="tab-overview">
+<div class="ltitle">개요 — STEP 11 학습 내용</div>
+<h3>리포 구조 — 리포 1개, 브랜치 2개</h3><pre><code>yundo-main/aws-terraform  (GitHub 리포 하나)
+├── main 브랜치  → 10_cicd 인프라 파이프라인 트리거 (운영)
+└── dev  브랜치  → 11_app_pipeline 앱 파이프라인 트리거 (개발)</code></pre>
+<p>CodeCommit·별도 리포 없이 평소 하던 <code>git push</code>만으로 두 파이프라인이 각자의 브랜치를 감시합니다.</p>
+<h3>전제 조건</h3><ol><li><b>10_cicd가 apply된 상태</b> — connection·공용 역할·artifact 버킷을 remote_state로 참조</li></ol>
+<p>(10_cicd를 apply해야 <code>github_connection_arn</code> 출력이 생깁니다)</p>
+<ol><li><b>GitHub connection AVAILABLE</b> — 10_cicd에서 이미 승인했다면 재사용</li><li><b>EKS 클러스터</b> — <code>03_real</code> apply (EKS 포함) 또는 <code>eks_cluster_name</code> 변수 변경</li><li><b>aws-auth 등록</b> — CodeBuild 역할이 kubectl을 쓰려면 EKS의 aws-auth ConfigMap에 역할 추가:</li></ol>
+<pre><code>   kubectl edit configmap aws-auth -n kube-system
+   # mapRoles에 추가:
+   #   - rolearn: &lt;10_cicd outputs의 codebuild_role_arn&gt;
+   #     username: codebuild
+   #     groups: [&quot;system:masters&quot;]</code></pre>
+<h3>만드는 리소스 (5개)</h3><table><tr><th>리소스</th><th>역할</th></tr><tr><td><code>aws_ecr_repository.app</code></td><td>앱 이미지 저장소</td></tr><tr><td><code>aws_codebuild_project.app_build</code></td><td><code>privileged_mode</code> docker build → ECR push</td></tr><tr><td><code>aws_codebuild_project.app_deploy</code></td><td>kubectl apply + set image + rollout 대기</td></tr><tr><td><code>aws_codepipeline.app</code></td><td>Source→Build→Deploy 3단계 — 소스는 10_cicd의 connection 공용</td></tr><tr><td>(10_cicd의 <code>aws_codestarconnections_connection</code> 재사용)</td><td>별도 연결 생성 없음 — 역할 권한도 이미 커버</td></tr></table>
+<h3>실행</h3><pre><code>terraform init
+terraform apply</code></pre>
+<h3>사용 흐름 — dev 브랜치 push</h3><pre><code># 1) dev 브랜치 생성 (한 번) — 앱 파이프라인은 dev를 감시
+git push origin main:dev
+
+# 2) 앱 코드를 고치고 push → 이미지 빌드 → EKS 배포 자동 실행
+#    (11_app_pipeline/app/ 안 파일을 수정 → 커밋 → dev로 push)
+git commit -am &quot;app v2&quot;
+git push origin main:dev    # main의 변경을 dev로 넘기며 트리거</code></pre>
+<ul><li>Build 로그에서 <code>build tag: &lt;커밋 해시&gt;</code> 확인 → Deploy 로그에서 <code>set image</code>·rollout 대기</li><li><code>kubectl rollout status deploy/sample-app</code> + <code>kubectl port-forward svc/sample-app 8080:80</code></li></ul>
+<p><b>왜 브랜치로 나누는가</b>: <code>main</code>에 push할 때마다 앱 이미지까지 재빌드되면 낭비입니다.</p>
+<p>브랜치가 트리거 경계라, 인프라 변경은 <code>main</code>, 앱 변경은 <code>dev</code>로 흐름을 나눕니다 —</p>
+<p>단일 리포의 단순함과 리포 분리의 격리 효과를 동시에 얻는 절충입니다.</p>
+<h3>핵심 포인트</h3><ul><li><code>local.*</code>은 10_cicd의 출력입니다 — connection·역할·버킷을 새로 안 만듭니다.</li><li><code>imageDetail.json</code>이 빌드→배포 간 이미지 URI를 전달하는 artifact입니다.</li><li>buildspec은 리포 안 경로(<code>11_app_pipeline/</code>)로 참조 — 소스가 모노리포라 디렉터리 그대로 동작합니다.</li><li>리포 분리(실제 다른 리포)를 원하면 10과 같은 connection으로 <code>github_repo</code>만 바꾸면 됩니다 — 구조는 같습니다.</li></ul>
+<h3>프로젝트 구조</h3>
+<div class="dtree"><div class="dtn">11_app_pipeline/</div><div class="dtl"><a href="00-remote-state.tf">00-remote-state.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="01-provider.tf">01-provider.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="buildspec-app-build.yml">buildspec-app-build.yml</a></div><div class="dtl"><a href="buildspec-app-deploy.yml">buildspec-app-deploy.yml</a></div><div class="dtl">index.html <span class="dt-note">— 포털 페이지</span></div><div class="dtl"><a href="main.tf">main.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="outputs.tf">outputs.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl">readme.md <span class="dt-note">— 단계 학습 문서</span></div><div class="dtl">terraform.tfstate <span class="dt-note">— Terraform 상태 파일</span></div><div class="dtl">terraform.tfstate.backup <span class="dt-note">— state 백업</span></div><div class="dtl"><a href="variables.tf">variables.tf</a> <span class="dt-note">— Terraform 설정</span></div><details class="dt" open><summary>app/</summary><div class="dt-kids"><div class="dtl"><a href="app/deployment.yaml">deployment.yaml</a></div><div class="dtl">Dockerfile</div><div class="dtl">index.html <span class="dt-note">— 포털 페이지</span></div></div></details><details class="dt" open><summary>slides/</summary><div class="dt-kids"><div class="dtl">readme.md <span class="dt-note">— 단계 학습 문서</span></div><div class="dtl">s01-title.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s02-app-pipeline.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s03-app-flow.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s04-app-test.svg <span class="dt-note">— 슬라이드 SVG</span></div></div></details></div>
+
+
+
+</section>
+<section class="ltab" id="tab-slides" hidden>
+<div class="ltitle">슬라이드 — 발표 자료 (SVG)</div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s01-title · s01 title</span><span class="badge">SVG</span></div><img src="slides/s01-title.svg" alt="s01 title" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s02-app-pipeline · s02 app pipeline</span><span class="badge">SVG</span></div><img src="slides/s02-app-pipeline.svg" alt="s02 app pipeline" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s03-app-flow · s03 app flow</span><span class="badge">SVG</span></div><img src="slides/s03-app-flow.svg" alt="s03 app flow" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s04-app-test · s04 app test</span><span class="badge">SVG</span></div><img src="slides/s04-app-test.svg" alt="s04 app test" loading="lazy"></div>
+</section>
+<section class="ltab" id="tab-practice" hidden>
+<div class="ltitle">실습 — STEP 11 실행</div>
+<p>아래 명령은 <b>터미널</b>에서 프로젝트 루트(<code>aws-tf/</code>) 기준으로 실행합니다.</p>
+<h3>실행 방법</h3>
+<p class="sub">복사 버튼으로 명령을 가져간 뒤 터미널에 붙여넣기 (⌘V) 하세요.</p>
+<div class="codebox"><pre><code>terraform init</code></pre><button class="copybtn" id="copyCmd">복사</button></div>
+<p class="sub" id="copyMsg" style="margin-top:.4rem"></p>
+
+
+<h3>추가 명령</h3><div class="codebox"><pre><code>kubectl edit configmap aws-auth -n kube-system
+   # mapRoles에 추가:
+   #   - rolearn: &lt;10_cicd outputs의 codebuild_role_arn&gt;
+   #     username: codebuild
+   #     groups: [&quot;system:masters&quot;]</code></pre></div>
+<div class="codebox"><pre><code># 1) dev 브랜치 생성 (한 번) — 앱 파이프라인은 dev를 감시
+git push origin main:dev
+
+# 2) 앱 코드를 고치고 push → 이미지 빌드 → EKS 배포 자동 실행
+#    (11_app_pipeline/app/ 안 파일을 수정 → 커밋 → dev로 push)
+git commit -am &quot;app v2&quot;
+git push origin main:dev    # main의 변경을 dev로 넘기며 트리거</code></pre></div>
+<h3>소스 구조</h3><h3>파일 맵 — .tf ↔ 선언 리소스</h3><table><tr><th>파일</th><th>리소스 / 데이터 소스</th></tr><tr><td><code>00-remote-state.tf</code></td><td><code>terraform_remote_state.cicd</code></td></tr><tr><td><code>01-provider.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr><tr><td><code>main.tf</code></td><td><code>aws_ecr_repository.app<br>aws_codebuild_project.app_build<br>aws_codebuild_project.app_deploy<br>aws_codepipeline.app</code></td></tr><tr><td><code>outputs.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr><tr><td><code>variables.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr></table>
+<p class="sub" style="margin-top:.8rem">※ 브라우저에서는 실행할 수 없습니다 — 명령을 복사해 터미널에 붙여넣으세요.</p>
+</section>
+<section class="ltab" id="tab-help" hidden>
+<div class="ltitle">도움말 — 페이지 사용법</div>
+<h3>탭 전환</h3>
+<p>상단 내비게이션을 클릭하면 해당 패널이 표시됩니다. 주소창 해시(<code>#tab-slides</code> 등)로 특정 탭에 바로 이동할 수 있습니다.</p>
+<h3>SVG 뷰어</h3>
+<ul>
+<li>슬라이드 탭의 <b>SVG 이미지를 클릭</b>하면 팝업 뷰어로 확대 표시됩니다</li>
+<li>뷰어에서 <code>‹</code> <code>›</code> 버튼 또는 <code>←</code> <code>→</code> 키로 이동합니다</li>
+<li><code>ESC</code> · <code>✕ 닫기</code> · 어두운 배경 클릭으로 닫습니다</li>
+</ul>
+
+<h3>단축키</h3>
+<table>
+<tr><th>키</th><th>동작</th></tr>
+<tr><td><code>←</code> <code>→</code></td><td>뷰어에서 이전/다음 슬라이드</td></tr>
+<tr><td><code>ESC</code></td><td>뷰어 닫기</td></tr>
+</table>
+<h3>참고</h3>
+<ul>
+<li>이 페이지는 <b>서버 없이</b> 동작합니다 — <code>index.html</code>을 브라우저로 바로 열면 됩니다</li>
+<li>탭 내용과 뷰어의 소스 코드는 생성 시점의 스냅샷입니다 — 원본이 수정되면 페이지 재생성이 필요합니다</li>
+</ul>
+</section>
+<footer>
+<span>11_app_pipeline · STEP 11 학습 자료</span>
+</footer>
+</div>
+<div id="md-src0" hidden><pre><code># ============================================================
+# 00-remote-state.tf — 10_cicd의 출력을 읽는 연결부
+#   artifact 버킷·공용 역할·connection을 한 state에서 가져온다
+# ============================================================
+
+# remote_state — 다른 단계의 출력 읽기
+data &quot;terraform_remote_state&quot; &quot;cicd&quot; {
+  backend = &quot;local&quot;
+  config = {
+    path = &quot;../10_cicd/terraform.tfstate&quot;
+  }
+}
+
+locals {
+  artifacts_bucket   = data.terraform_remote_state.cicd.outputs.artifacts_bucket
+  codebuild_role_arn = data.terraform_remote_state.cicd.outputs.codebuild_role_arn
+  pipeline_role_arn  = data.terraform_remote_state.cicd.outputs.pipeline_role_arn
+  pipeline_role_name = data.terraform_remote_state.cicd.outputs.pipeline_role_name
+  connection_arn     = data.terraform_remote_state.cicd.outputs.github_connection_arn
+}
+</code></pre></div><div id="md-src1" hidden><pre><code>terraform {
+  required_version = &quot;&gt;= 1.6.0, &lt; 2.0.0&quot;
+
+  required_providers {
+    aws = {
+      source  = &quot;hashicorp/aws&quot;
+      version = &quot;~&gt; 5.0&quot;
+    }
+  }
+}
+
+provider &quot;aws&quot; {
+  region = var.aws_region
+
+  default_tags {
+    tags = {
+      Project   = &quot;aws-tf&quot;
+      Stage     = &quot;11_app_pipeline&quot;
+      ManagedBy = &quot;terraform&quot;
+    }
+  }
+}
+</code></pre></div><div id="md-src2" hidden><pre><code># CodeBuild — 앱 이미지 빌드 + ECR push
+# 출력: imageDetail.json (다음 단계가 읽을 이미지 URI)
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_URI
+      - TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION:0:8}   # 커밋 해시 앞 8자리를 이미지 태그로
+      - echo &quot;build tag: $TAG&quot;
+  build:
+    commands:
+      - cd &quot;$APP_DIR&quot;
+      - docker build -t &quot;$ECR_URI:$TAG&quot; .
+  post_build:
+    commands:
+      - docker push &quot;$ECR_URI:$TAG&quot;
+      - printf &#x27;{&quot;image&quot;:&quot;%s:%s&quot;}&#x27; &quot;$ECR_URI&quot; &quot;$TAG&quot; &gt; imageDetail.json
+artifacts:
+  files:
+    - imageDetail.json
+    - &#x27;11_app_pipeline/app/deployment.yaml&#x27;
+</code></pre></div><div id="md-src3" hidden><pre><code># CodeBuild — EKS 배포 단계
+# imageDetail.json의 이미지 태그로 deployment 이미지를 교체
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - curl -fsSL -o kubectl &quot;https://dl.k8s.io/release/v1.32.0/bin/linux/amd64/kubectl&quot;
+      - install -m 0755 kubectl /usr/local/bin/kubectl &amp;&amp; kubectl version --client
+  build:
+    commands:
+      - aws eks update-kubeconfig --name &quot;$EKS_CLUSTER_NAME&quot; --region &quot;$AWS_DEFAULT_REGION&quot;
+      - IMAGE=$(grep -o &#x27;&quot;image&quot;:&quot;[^&quot;]*&quot;&#x27; imageDetail.json | cut -d&#x27;&quot;&#x27; -f4)
+      - echo &quot;deploy image: $IMAGE&quot;
+      - kubectl apply -f 11_app_pipeline/app/deployment.yaml
+      - kubectl set image &quot;deployment/$APP_NAME&quot; &quot;$APP_NAME=$IMAGE&quot;
+      - kubectl rollout status &quot;deployment/$APP_NAME&quot; --timeout=120s
+</code></pre></div><div id="md-src4" hidden><pre><code># ============================================================
+# main.tf — 애플리케이션 배포 파이프라인
+#   앱 코드 push → docker build → ECR push → EKS 배포
+#   소스 = GitHub dev 브랜치 (10_cicd의 connection 공용) — 역할·버킷도 remote_state로
+# ============================================================
+
+# ---------- 이미지 저장소 ----------
+# ECR — 앱 이미지 저장소
+resource &quot;aws_ecr_repository&quot; &quot;app&quot; {
+  name         = var.app_name
+  force_delete = true # 실습용 — 이미지 있어도 삭제 가능
+}
+
+# ---------- CodeBuild: docker build ----------
+# CodeBuild — plan/apply 실행 환경
+resource &quot;aws_codebuild_project&quot; &quot;app_build&quot; {
+  name         = &quot;${var.project_name}-app-build&quot;
+  service_role = local.codebuild_role_arn # 10_cicd의 공용 역할
+
+  source {
+    type      = &quot;CODEPIPELINE&quot;
+    buildspec = &quot;11_app_pipeline/buildspec-app-build.yml&quot;
+  }
+  artifacts { type = &quot;CODEPIPELINE&quot; }
+
+  environment {
+    compute_type    = &quot;BUILD_GENERAL1_SMALL&quot;
+    image           = &quot;aws/codebuild/standard:7.0&quot;
+    type            = &quot;LINUX_CONTAINER&quot;
+    privileged_mode = true # docker 데몬 사용에 필수
+
+    environment_variable {
+      name  = &quot;ECR_URI&quot;
+      value = aws_ecr_repository.app.repository_url
+    }
+    environment_variable {
+      name  = &quot;APP_DIR&quot;
+      value = &quot;11_app_pipeline/app&quot;
+    }
+  }
+}
+
+# ---------- CodeBuild: EKS deploy ----------
+# CodeBuild — plan/apply 실행 환경
+resource &quot;aws_codebuild_project&quot; &quot;app_deploy&quot; {
+  name         = &quot;${var.project_name}-app-deploy&quot;
+  service_role = local.codebuild_role_arn
+
+  source {
+    type      = &quot;CODEPIPELINE&quot;
+    buildspec = &quot;11_app_pipeline/buildspec-app-deploy.yml&quot;
+  }
+  artifacts { type = &quot;CODEPIPELINE&quot; }
+
+  environment {
+    compute_type = &quot;BUILD_GENERAL1_SMALL&quot;
+    image        = &quot;aws/codebuild/standard:7.0&quot;
+    type         = &quot;LINUX_CONTAINER&quot;
+
+    environment_variable {
+      name  = &quot;EKS_CLUSTER_NAME&quot;
+      value = var.eks_cluster_name
+    }
+    environment_variable {
+      name  = &quot;APP_NAME&quot;
+      value = var.app_name
+    }
+  }
+}
+
+# ---------- CodePipeline: 앱 배포 ----------
+# CodePipeline — 단계 오케스트레이션
+resource &quot;aws_codepipeline&quot; &quot;app&quot; {
+  name     = &quot;${var.project_name}-app-pipeline&quot;
+  role_arn = local.pipeline_role_arn # 10_cicd의 공용 역할
+
+  artifact_store {
+    location = local.artifacts_bucket
+    type     = &quot;S3&quot;
+  }
+
+  stage {
+    name = &quot;Source&quot;
+    action {
+      name             = &quot;AppSource&quot;
+      category         = &quot;Source&quot;
+      owner            = &quot;AWS&quot;
+      provider         = &quot;CodeStarSourceConnection&quot;
+      version          = &quot;1&quot;
+      output_artifacts = [&quot;app_source&quot;]
+      configuration = {
+        ConnectionArn        = local.connection_arn
+        FullRepositoryId     = var.github_repo
+        BranchName           = var.repo_branch
+        OutputArtifactFormat = &quot;CODE_ZIP&quot;
+        DetectChanges        = &quot;true&quot;
+      }
+    }
+  }
+
+  stage {
+    name = &quot;Build&quot;
+    action {
+      name             = &quot;DockerBuild&quot;
+      category         = &quot;Build&quot;
+      owner            = &quot;AWS&quot;
+      provider         = &quot;CodeBuild&quot;
+      version          = &quot;1&quot;
+      input_artifacts  = [&quot;app_source&quot;]
+      output_artifacts = [&quot;image_out&quot;] # imageDetail.json — 다음 단계가 읽을 이미지 태그
+      configuration = {
+        ProjectName = aws_codebuild_project.app_build.name
+      }
+    }
+  }
+
+  stage {
+    name = &quot;Deploy&quot;
+    action {
+      name            = &quot;DeployEKS&quot;
+      category        = &quot;Build&quot;
+      owner           = &quot;AWS&quot;
+      provider        = &quot;CodeBuild&quot;
+      version         = &quot;1&quot;
+      input_artifacts = [&quot;image_out&quot;]
+      configuration = {
+        ProjectName = aws_codebuild_project.app_deploy.name
+      }
+    }
+  }
+}
+</code></pre></div><div id="md-src5" hidden><pre><code>output &quot;app_ecr_url&quot; {
+  description = &quot;앱 이미지 ECR 리포지토리 URL&quot;
+  value       = aws_ecr_repository.app.repository_url
+}
+
+output &quot;app_pipeline_name&quot; {
+  description = &quot;앱 배포 CodePipeline 이름&quot;
+  value       = aws_codepipeline.app.name
+}
+</code></pre></div><div id="md-src6" hidden><pre><code>variable &quot;aws_region&quot; {
+  description = &quot;AWS 리전&quot;
+  type        = string
+  default     = &quot;ap-northeast-2&quot;
+}
+
+variable &quot;project_name&quot; {
+  description = &quot;리소스 이름 접두사 (10_cicd와 같은 값이어야 함)&quot;
+  type        = string
+  default     = &quot;aws-tf-cicd&quot;
+}
+
+variable &quot;app_name&quot; {
+  description = &quot;배포할 앱 이름 — ECR 리포·k8s deployment 이름&quot;
+  type        = string
+  default     = &quot;sample-app&quot;
+}
+
+variable &quot;github_repo&quot; {
+  description = &quot;앱 소스 GitHub 리포 — owner/repo 형식 (인프라와 같은 리포, 브랜치로 분리)&quot;
+  type        = string
+  default     = &quot;yundo-main/aws-terraform&quot;
+}
+
+variable &quot;repo_branch&quot; {
+  description = &quot;앱 파이프라인이 감지할 브랜치 — 개발(dev), 운영(main)과 분리&quot;
+  type        = string
+  default     = &quot;dev&quot;
+}
+
+variable &quot;eks_cluster_name&quot; {
+  description = &quot;배포 대상 EKS 클러스터 (03_real의 클러스터)&quot;
+  type        = string
+  default     = &quot;terraform-eks-cluster&quot;
+}
+</code></pre></div><div id="md-src7" hidden><pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: sample-app }
+  template:
+    metadata:
+      labels: { app: sample-app }
+    spec:
+      containers:
+        - name: sample-app
+          image: IMAGE_PLACEHOLDER   # deploy 단계가 set image로 교체
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sample-app
+spec:
+  type: ClusterIP
+  selector: { app: sample-app }
+  ports:
+    - port: 80
+      targetPort: 80
+</code></pre></div>
+<div id="viewer" hidden><div class="vbox"><div class="vhead"><span id="vtitle"></span><span style="display:flex;gap:.8rem;align-items:center"><a id="vopen" href="#" target="_blank">새 탭에서 열기</a><button class="dgbtn" id="vclose">✕ 닫기</button></span></div><div class="vbody" id="vbody"></div><button class="vside" id="vsprev" hidden title="이전 슬라이드">‹</button><button class="vside" id="vsnext" hidden title="다음 슬라이드">›</button></div></div>
+<script>
+// ===== 탭 전환 (해시 동기화 + 활성 표시) =====
+const tabs=[...document.querySelectorAll('.ltab')];
+const navs=[...document.querySelectorAll('.topnav a[href^="#tab-"]')];
+function show(id){
+  const t=id&&document.getElementById(id)?id:'tab-overview';
+  tabs.forEach(x=>{x.classList.toggle('on',x.id===t);x.hidden=x.id!==t;});
+  navs.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+t));
+  if(location.hash!=='#'+t)history.replaceState(null,'','#'+t);
+}
+navs.forEach(a=>a.onclick=e=>{e.preventDefault();show(a.getAttribute('href').slice(1))});
+window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+show(location.hash.slice(1));
+
+// ===== 팝업 뷰어 =====
+const MD={'00-remote-state.tf':'md-src0','01-provider.tf':'md-src1','buildspec-app-build.yml':'md-src2','buildspec-app-deploy.yml':'md-src3','main.tf':'md-src4','outputs.tf':'md-src5','variables.tf':'md-src6','app/deployment.yaml':'md-src7'};
+const $=id=>document.getElementById(id);
+let cur=null;
+function openViewer(href,title){
+  cur=href;
+  $('vtitle').textContent=title||href.split('/').pop();
+  $('vopen').href=href;
+  const body=$('vbody');body.innerHTML='';
+  const key=Object.keys(MD).sort((a,b)=>b.length-a.length).find(k=>href===k||href.endsWith('/'+k)||href.endsWith(k));
+  if(key){body.innerHTML='<div class="mdview">'+document.getElementById(MD[key]).innerHTML+'</div>';}
+  else{const im=new Image();im.src=href;im.style.maxWidth='100%';body.appendChild(im);}
+  // 슬라이드 목록 내 이전/다음
+  const slides=[...document.querySelectorAll('.dgi img')].map(i=>i.getAttribute('src'));
+  const idx=slides.indexOf(href);
+  $('vsprev').hidden=$('vsnext').hidden=idx<0;
+  if(idx>=0){
+    $('vsprev').onclick=()=>go(idx-1);$('vsnext').onclick=()=>go(idx+1);
+    window._slideIdx=idx;
+  }
+  $('viewer').hidden=false;
+}
+function go(i){
+  const slides=[...document.querySelectorAll('.dgi img')].map(x=>x.getAttribute('src'));
+  if(!slides.length)return;
+  const idx=((i%slides.length)+slides.length)%slides.length;
+  const src=slides[idx];
+  openViewer(src,src.split('/').pop());
+  window._slideIdx=idx;
+}
+function closeViewer(){$('viewer').hidden=true;cur=null}
+$('vclose').onclick=closeViewer;
+$('viewer').onclick=e=>{if(e.target===$('viewer'))closeViewer()};
+document.addEventListener('keydown',e=>{
+  if($('viewer').hidden)return;
+  if(e.key==='Escape')closeViewer();
+  if(e.key==='ArrowLeft')go((window._slideIdx||0)-1);
+  if(e.key==='ArrowRight')go((window._slideIdx||0)+1);
+});
+// SVG 이미지/링크 클릭 → 뷰어
+document.querySelectorAll('.dgi img').forEach(im=>im.onclick=()=>openViewer(im.getAttribute('src'),im.closest('.dgi').querySelector('.dgi-t')?.textContent||im.getAttribute('src').split('/').pop()));
+document.querySelectorAll('a[href$=".svg"],a[href$=".md"],a[href$=".tf"],a[href$=".sh"],a[href$=".txt"],a[href$=".json"],a[href$=".tfvars"],a[href$=".yml"],a[href$=".yaml"],a[href$=".hcl"]').forEach(a=>a.onclick=e=>{
+  const href=a.getAttribute('href');
+  if(href.startsWith('http'))return;
+  e.preventDefault();openViewer(href,href.split('/').pop());
+});
+// 뷰어 내부 링크도 재귀 처리
+document.addEventListener('click',e=>{
+  const a=e.target.closest&&e.target.closest('#vbody a');
+  if(!a)return;
+  const href=a.getAttribute('href');
+  if(!href||href.startsWith('http')||href.startsWith('#'))return;
+  e.preventDefault();openViewer(href,href.split('/').pop());
+});
+// ===== 명령어 복사 =====
+/* TODO: copy_cmd_js — copyCmd 버튼 핸들러 */
+
+const COPY_CMD='terraform init';$('copyCmd').onclick=()=>{navigator.clipboard.writeText(COPY_CMD).then(()=>{$('copyMsg').textContent='복사됨 — 터미널에 붙여넣기 (⌘V)'}).catch(()=>{$('copyMsg').textContent='복사 실패 — 직접 입력'})};</script>
+</body></html>

@@ -46,15 +46,11 @@ aws-tf/
 │   ├── versions.tf / providers.tf / variables.tf
 │   ├── main.tf            # remote_state + ACM + 443 규칙 + HTTPS 리스너
 │   └── outputs.tf         # 인증서 ARN + https_url
-├── 10_backend/            # 단계 10 — 저장소 계층 (tfstate·lock·artifact 버킷)
+├── 10_cicd/               # 단계 10 — GitHub 인프라 파이프라인 (main 브랜치)
 │   ├── index.html         # 단계 포털
 │   ├── readme.md
-│   └── *.tf               # S3 버킷×2 + DynamoDB — 파이프라인 공용 기반
-├── 11_infra_pipeline/     # 단계 11 — GitHub 인프라 파이프라인 (main 브랜치)
-│   ├── index.html         # 단계 포털
-│   ├── readme.md
-│   └── *.tf + buildspec   # CodeConnections→CodeBuild(plan)→승인→apply
-├── 12_app_pipeline/       # 단계 12 — 앱 배포 파이프라인 (dev 브랜치)
+│   └── *.tf + buildspec   # 저장소 계층+파이프라인 — push→plan→승인→apply
+├── 11_app_pipeline/       # 단계 11 — 앱 배포 파이프라인 (dev 브랜치)
 │   ├── index.html         # 단계 포털
 │   ├── readme.md
 │   ├── app/               # 샘플 앱 — dev 브랜치 push로 배포
