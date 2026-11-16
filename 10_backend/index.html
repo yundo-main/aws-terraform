@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>저장소 계층 — state·lock·artifact</title>
+<style>
+:root{--bg:#f1f5f9;--card:#fff;--ink:#111827;--muted:#6b7280;--line:#e2e8f0;--accent:#2563eb;--accent2:#7c3aed}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.7}
+.wrap{max-width:1080px;margin:0 auto;padding:1.4rem 1.2rem 3rem}
+.topnav{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin-bottom:.9rem;padding:.55rem .8rem;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.topnav .brand{font-weight:800;margin-right:.8rem;background:linear-gradient(120deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.topnav a{color:var(--muted);text-decoration:none;font-size:.85rem;font-weight:600;padding:.35rem .75rem;border-radius:8px;transition:all .15s}
+.topnav a:hover{background:#eff6ff;color:var(--accent)}
+.topnav a.on{background:linear-gradient(120deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 2px 6px rgba(37,99,235,.3)}
+.hero{position:relative;overflow:hidden;border-radius:20px;padding:2.6rem 2.2rem;margin-bottom:1.5rem;color:#fff;background:linear-gradient(120deg,#0b1e3a 0%,#144a8a 50%,#6d28d9 100%);box-shadow:0 8px 24px rgba(15,23,42,.18)}
+.hero::before,.hero::after{content:'';position:absolute;border-radius:50%;background:rgba(255,255,255,.09)}
+.hero::before{width:380px;height:380px;right:-100px;top:-140px}
+.hero::after{width:240px;height:240px;left:-70px;bottom:-110px}
+.hero::before,.hero::after{animation:float 9s ease-in-out infinite}
+.hero::after{animation-delay:-4s}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(18px,-14px)}}
+.hero>*{position:relative}
+.eyebrow{font-size:.72rem;letter-spacing:.18em;font-weight:800;opacity:.85;margin-bottom:.55rem;text-transform:uppercase}
+.hero h1{margin:0 0 .65rem;font-size:2.05rem;letter-spacing:-.01em}
+.hero .sub{margin:0 0 1.2rem;max-width:680px;font-size:.88rem;font-weight:500;line-height:1.6;color:rgba(255,255,255,.92);text-shadow:0 1px 4px rgba(0,0,0,.35)}
+.steps{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.4rem}
+.steps span{font-size:.74rem;font-weight:600;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);padding:.32rem .8rem;border-radius:999px;backdrop-filter:blur(4px)}
+.ltab{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.5rem 1.6rem;margin-bottom:1.2rem;display:none;box-shadow:0 1px 3px rgba(15,23,42,.04)}
+.ltab.on{display:block;animation:fadein .25s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ltitle{font-size:1.15rem;font-weight:800;margin-bottom:1rem;padding-bottom:.55rem;border-bottom:2px solid var(--accent);display:inline-block;letter-spacing:-.01em}
+h3{font-size:1rem;margin:1.25rem 0 .5rem}
+p{margin:.45rem 0}
+ul,ol{margin:.45rem 0 .65rem;padding-left:1.3rem}
+li{margin:.28rem 0}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:.85rem;margin:.7rem 0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+th,td{border-bottom:1px solid var(--line);padding:.5rem .75rem;text-align:left;vertical-align:top}
+th{background:linear-gradient(180deg,#f1f5f9,#e8eef5);font-weight:700;font-size:.8rem;letter-spacing:.02em}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#f8fafc}
+code{background:#eef2f7;padding:.12em .38em;border-radius:5px;font-size:.85em;font-family:ui-monospace,Menlo,monospace;color:#be185d}
+pre{background:linear-gradient(180deg,#f8fafc,#f1f5f9);border:1px solid var(--line);border-radius:10px;padding:.95rem 1.05rem;overflow:auto;font-size:.82rem;line-height:1.55}
+pre code{background:none;padding:0;color:inherit}
+.sub{color:var(--muted);font-size:.85rem}
+.dtree{font-family:ui-monospace,Menlo,monospace;font-size:.8rem;background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:.95rem 1.15rem;overflow:auto}
+.dtn{font-weight:700;margin-bottom:.3rem;color:var(--ink)}
+.dt{margin:.15rem 0}
+.dt summary{cursor:pointer;color:var(--accent);font-weight:600}
+.dt-kids{margin-left:1.1rem;border-left:2px solid var(--line);padding-left:.9rem}
+.dtl{color:var(--muted);padding:.1rem 0}
+.dt-note{color:var(--muted);font-weight:400;font-size:.75rem}
+.dgi{border:1px solid var(--line);border-radius:14px;padding:.9rem;margin-bottom:1.1rem;background:#fff;box-shadow:0 1px 3px rgba(15,23,42,.04);transition:box-shadow .2s}
+.dgi:hover{box-shadow:0 4px 14px rgba(15,23,42,.08)}
+.dgi-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;font-size:.85rem;font-weight:700}
+.dgi-head .badge{font-size:.68rem;font-weight:800;color:#fff;background:linear-gradient(120deg,var(--accent),var(--accent2));padding:.18rem .6rem;border-radius:999px;letter-spacing:.03em}
+.dgi img{width:100%;border:1px solid var(--line);border-radius:10px;cursor:zoom-in;background:#fff;transition:transform .2s}
+.dgi img:hover{transform:scale(1.005)}
+.codebox{position:relative;margin:.6rem 0}
+.codebox pre{margin:0;padding-right:4.5rem}
+.copybtn{position:absolute;top:.5rem;right:.5rem;font-size:.72rem;font-weight:700;color:var(--accent);background:#fff;border:1px solid var(--line);border-radius:6px;padding:.28rem .65rem;cursor:pointer;transition:all .15s}
+.copybtn:hover{border-color:var(--accent);background:#eff6ff;box-shadow:0 1px 4px rgba(37,99,235,.15)}
+.dgbtn{display:inline-block;font-size:.85rem;font-weight:700;color:#fff;background:linear-gradient(120deg,var(--accent),var(--accent2));border:none;border-radius:9px;padding:.55rem 1.1rem;cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(37,99,235,.3);transition:transform .15s,box-shadow .15s}
+.dgbtn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,.4)}
+footer{color:var(--muted);font-size:.78rem;text-align:center;margin-top:1.6rem}
+#viewer{position:fixed;inset:0;background:rgba(15,23,42,.72);display:flex;align-items:center;justify-content:center;z-index:50}
+#viewer[hidden]{display:none}
+.vbox{background:#fff;border-radius:14px;width:94vw;height:92vh;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.vhead{display:flex;justify-content:space-between;align-items:center;padding:.7rem 1.1rem;border-bottom:1px solid var(--line);font-weight:600;font-size:.9rem}
+.vhead a{color:var(--accent);font-size:.78rem;text-decoration:none}
+.vhead button{font-size:.8rem}
+.vbody{flex:1;overflow:auto;padding:1.2rem;display:flex;align-items:flex-start;justify-content:center}
+.vbody img{max-width:100%;max-height:100%;object-fit:contain}
+.vbody .mdview{width:100%;max-width:860px;margin:0 auto;font-size:.9rem}
+.vbody .mdview h1{font-size:1.4rem}.vbody .mdview h2{font-size:1.15rem}.vbody .mdview h3{font-size:1rem}
+.vbody .mdview table{font-size:.82rem}
+.vside{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:72px;border:none;border-radius:10px;background:rgba(15,23,42,.55);color:#fff;font-size:1.8rem;cursor:pointer;z-index:5}
+.vside:hover{background:var(--accent)}
+#vsprev{left:12px}#vsnext{right:12px}
+.vside[hidden]{display:none}
+.gidx{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:1rem;position:sticky;top:0;background:var(--card);padding:.5rem 0;z-index:10;border-bottom:1px solid var(--line)}
+.gidx a{display:inline-block;min-width:1.7rem;text-align:center;font-size:.78rem;font-weight:700;color:var(--muted);text-decoration:none;padding:.25rem .4rem;border-radius:6px}
+.gidx a:hover{background:#eff6ff;color:var(--accent)}
+.gidx a.on{background:var(--accent);color:#fff}
+.gidx-off{display:inline-block;min-width:1.7rem;text-align:center;font-size:.78rem;font-weight:700;color:#d1d5db;padding:.25rem .4rem;border-radius:6px}
+.stepidx{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem}
+.stepidx .lbl{font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.05em;margin-right:.2rem}
+.stepidx a{display:inline-block;min-width:2rem;text-align:center;font-size:.8rem;font-weight:700;color:var(--muted);text-decoration:none;padding:.35rem .55rem;border-radius:8px;border:1px solid var(--line);background:#fff}
+.stepidx a:hover{border-color:var(--accent);color:var(--accent)}
+.stepidx a.cur{background:var(--accent);border-color:var(--accent);color:#fff}
+.ggroup{margin:1rem 0 .4rem;font-size:.95rem;font-weight:700;color:var(--accent)}
+[hidden]{display:none!important}
+</style></head><body>
+<div class="wrap">
+<nav class="topnav">
+<a class="brand" href="#top">📘 10_backend</a>
+<a href="#tab-overview">개요</a><a href="#tab-slides">슬라이드</a><a href="#tab-practice">실습</a><a href="#tab-help">도움말</a>
+</nav>
+<div class="stepidx"><span class="lbl">단계</span><a href="../index.html">⌂</a><a href="../00_intro/index.html">0</a><a href="../01_terraform/index.html">1</a><a href="../02_practice/index.html">2</a><a href="../03_real/index.html">3</a><a href="../04_https/index.html">4</a></div>
+<div class="hero" id="top">
+<div class="eyebrow">STEP 10 · S3 BACKEND · LOCK</div>
+<h1>저장소 계층 — state·lock·artifact</h1>
+<p class="sub"></p>
+<div class="steps">
+<span>단계 1</span><span>단계 2</span>
+</div>
+</div>
+<section class="ltab on" id="tab-overview">
+<div class="ltitle">개요 — STEP 10 학습 내용</div>
+<h3>만드는 리소스 (6개)</h3><table><tr><th>리소스</th><th>역할</th></tr><tr><td><code>aws_s3_bucket.tfstate</code> + 버저닝·암호화·public차단</td><td>Terraform state를 원격 저장 — <code>prevent_destroy</code>로 보호</td></tr><tr><td><code>aws_dynamodb_table.tf_lock</code></td><td>state 동시 수정 방지 잠금</td></tr><tr><td><code>aws_s3_bucket.artifacts</code> + public차단</td><td>파이프라인 단계 간 산출물(코드·tfplan) 전달 통로</td></tr></table>
+<h3>실행</h3><pre><code>terraform init
+terraform apply
+terraform output    # 11_infra_pipeline·12_app_pipeline이 remote_state로 읽는 값 확인</code></pre>
+<h3>확인</h3><pre><code>aws s3 ls | grep aws-tf-cicd            # 버킷 2개
+aws dynamodb list-tables                # lock 테이블</code></pre>
+<h3>핵심 포인트</h3><ul><li>이 단계의 <code>terraform.tfstate</code>는 <b>로컬</b>에 있습니다 — 이 단계 자체는 로컬 state.</li></ul>
+<p>파이프라인이 쓸 S3 backend는 이 단계가 &quot;만드는 리소스&quot;입니다.</p>
+<ul><li><code>outputs.tf</code>의 값을 11_infra_pipeline·12_app_pipeline이 <code>terraform_remote_state</code>로 읽습니다.</li><li>tfstate 버킷은 <code>prevent_destroy</code> — 이후 단계 전부 지워도 여기는 보호됩니다.</li></ul>
+<h3>프로젝트 구조</h3>
+<div class="dtree"><div class="dtn">10_backend/</div><div class="dtl"><a href="01-provider.tf">01-provider.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="02-state.tf">02-state.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="03-outputs.tf">03-outputs.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl">index.html <span class="dt-note">— 포털 페이지</span></div><div class="dtl">readme.md <span class="dt-note">— 단계 학습 문서</span></div><div class="dtl">terraform.tfstate <span class="dt-note">— Terraform 상태 파일</span></div><div class="dtl">terraform.tfstate.backup <span class="dt-note">— state 백업</span></div><div class="dtl"><a href="variables.tf">variables.tf</a> <span class="dt-note">— Terraform 설정</span></div><details class="dt" open><summary>slides/</summary><div class="dt-kids"><div class="dtl">readme.md <span class="dt-note">— 단계 학습 문서</span></div><div class="dtl">s01-title.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s02-arch.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s03-backend.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s04-test.svg <span class="dt-note">— 슬라이드 SVG</span></div></div></details></div>
+
+
+
+</section>
+<section class="ltab" id="tab-slides" hidden>
+<div class="ltitle">슬라이드 — 발표 자료 (SVG)</div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s01-title · s01 title</span><span class="badge">SVG</span></div><img src="slides/s01-title.svg" alt="s01 title" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s02-arch · s02 arch</span><span class="badge">SVG</span></div><img src="slides/s02-arch.svg" alt="s02 arch" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s03-backend · s03 backend</span><span class="badge">SVG</span></div><img src="slides/s03-backend.svg" alt="s03 backend" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s04-test · s04 test</span><span class="badge">SVG</span></div><img src="slides/s04-test.svg" alt="s04 test" loading="lazy"></div>
+</section>
+<section class="ltab" id="tab-practice" hidden>
+<div class="ltitle">실습 — STEP 10 실행</div>
+<p>아래 명령은 <b>터미널</b>에서 프로젝트 루트(<code>aws-tf/</code>) 기준으로 실행합니다.</p>
+<h3>실행 방법</h3>
+<p class="sub">복사 버튼으로 명령을 가져간 뒤 터미널에 붙여넣기 (⌘V) 하세요.</p>
+<div class="codebox"><pre><code>terraform init</code></pre><button class="copybtn" id="copyCmd">복사</button></div>
+<p class="sub" id="copyMsg" style="margin-top:.4rem"></p>
+
+
+<h3>추가 명령</h3><div class="codebox"><pre><code>aws s3 ls | grep aws-tf-cicd            # 버킷 2개
+aws dynamodb list-tables                # lock 테이블</code></pre></div>
+<h3>소스 구조</h3><h3>파일 맵 — .tf ↔ 선언 리소스</h3><table><tr><th>파일</th><th>리소스 / 데이터 소스</th></tr><tr><td><code>01-provider.tf</code></td><td><code>aws_caller_identity.current</code></td></tr><tr><td><code>02-state.tf</code></td><td><code>aws_s3_bucket.tfstate<br>aws_s3_bucket_versioning.tfstate<br>aws_s3_bucket_server_side_encryption_configuration.tfstate<br>aws_s3_bucket_public_access_block.tfstate<br>aws_dynamodb_table.tf_lock<br>aws_s3_bucket.artifacts<br>aws_s3_bucket_public_access_block.artifacts</code></td></tr><tr><td><code>03-outputs.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr><tr><td><code>variables.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr></table>
+<p class="sub" style="margin-top:.8rem">※ 브라우저에서는 실행할 수 없습니다 — 명령을 복사해 터미널에 붙여넣으세요.</p>
+</section>
+<section class="ltab" id="tab-help" hidden>
+<div class="ltitle">도움말 — 페이지 사용법</div>
+<h3>탭 전환</h3>
+<p>상단 내비게이션을 클릭하면 해당 패널이 표시됩니다. 주소창 해시(<code>#tab-slides</code> 등)로 특정 탭에 바로 이동할 수 있습니다.</p>
+<h3>SVG 뷰어</h3>
+<ul>
+<li>슬라이드 탭의 <b>SVG 이미지를 클릭</b>하면 팝업 뷰어로 확대 표시됩니다</li>
+<li>뷰어에서 <code>‹</code> <code>›</code> 버튼 또는 <code>←</code> <code>→</code> 키로 이동합니다</li>
+<li><code>ESC</code> · <code>✕ 닫기</code> · 어두운 배경 클릭으로 닫습니다</li>
+</ul>
+
+<h3>단축키</h3>
+<table>
+<tr><th>키</th><th>동작</th></tr>
+<tr><td><code>←</code> <code>→</code></td><td>뷰어에서 이전/다음 슬라이드</td></tr>
+<tr><td><code>ESC</code></td><td>뷰어 닫기</td></tr>
+</table>
+<h3>참고</h3>
+<ul>
+<li>이 페이지는 <b>서버 없이</b> 동작합니다 — <code>index.html</code>을 브라우저로 바로 열면 됩니다</li>
+<li>탭 내용과 뷰어의 소스 코드는 생성 시점의 스냅샷입니다 — 원본이 수정되면 페이지 재생성이 필요합니다</li>
+</ul>
+</section>
+<footer>
+<span>10_backend · STEP 10 학습 자료</span>
+</footer>
+</div>
+<div id="md-src0" hidden><pre><code># ============================================================
+# 01-provider.tf — Terraform 코어·프로바이더 선언
+# ============================================================
+
+terraform {
+  required_version = &quot;&gt;= 1.6.0, &lt; 2.0.0&quot;
+
+  required_providers {
+    aws = {
+      source  = &quot;hashicorp/aws&quot;
+      version = &quot;~&gt; 5.0&quot;
+    }
+  }
+}
+
+provider &quot;aws&quot; {
+  region = var.aws_region
+
+  default_tags {
+    tags = {
+      Project   = &quot;aws-tf&quot;
+      Stage     = &quot;10_backend&quot;
+      ManagedBy = &quot;terraform&quot;
+    }
+  }
+}
+
+# 호출자 정보 — 계정 ID 참조용
+data &quot;aws_caller_identity&quot; &quot;current&quot; {}
+</code></pre></div><div id="md-src1" hidden><pre><code># ============================================================
+# 02-state.tf — 모든 CI/CD의 기반이 되는 저장소 계층
+#   tfstate 버킷 + DynamoDB lock + 파이프라인 artifact 버킷
+#   → 11_infra_pipeline·12_app_pipeline이 outputs를 remote_state로 읽어간다
+# ============================================================
+
+# ---------- Terraform state backend (03_real이 사용) ----------
+# S3 버킷 — state·artifact 저장소
+resource &quot;aws_s3_bucket&quot; &quot;tfstate&quot; {
+  bucket = &quot;${var.project_name}-tfstate-${data.aws_caller_identity.current.account_id}&quot;
+  # destroy 금지 장치: state가 들어있는 버킷은 실수로 지우면 안 됨
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+# 버저닝 — state 실수 덮어쓰기 복구용
+resource &quot;aws_s3_bucket_versioning&quot; &quot;tfstate&quot; {
+  bucket = aws_s3_bucket.tfstate.id
+  versioning_configuration { status = &quot;Enabled&quot; } # state 이력 복구용
+}
+
+# SSE — 저장 데이터 암호화
+resource &quot;aws_s3_bucket_server_side_encryption_configuration&quot; &quot;tfstate&quot; {
+  bucket = aws_s3_bucket.tfstate.id
+  rule {
+    apply_server_side_encryption_by_default { sse_algorithm = &quot;AES256&quot; }
+  }
+}
+
+# 퍼블릭 차단 — state는 절대 공개 금지
+resource &quot;aws_s3_bucket_public_access_block&quot; &quot;tfstate&quot; {
+  bucket                  = aws_s3_bucket.tfstate.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+# DynamoDB lock — 동시 apply 방지 잠금 테이블
+resource &quot;aws_dynamodb_table&quot; &quot;tf_lock&quot; {
+  name         = &quot;${var.project_name}-tf-lock&quot;
+  billing_mode = &quot;PAY_PER_REQUEST&quot; # state lock 전용 — 사용량 거의 없음
+  hash_key     = &quot;LockID&quot;
+
+  attribute {
+    name = &quot;LockID&quot;
+    type = &quot;S&quot;
+  }
+}
+
+# ---------- 파이프라인 artifact 버킷 (11_infra_pipeline·12_app_pipeline 공용) ----------
+# S3 버킷 — state·artifact 저장소
+resource &quot;aws_s3_bucket&quot; &quot;artifacts&quot; {
+  bucket        = &quot;${var.project_name}-artifacts-${data.aws_caller_identity.current.account_id}&quot;
+  force_destroy = true # 실습용 — 비우고 삭제 가능하게
+}
+
+# 퍼블릭 차단 — state는 절대 공개 금지
+resource &quot;aws_s3_bucket_public_access_block&quot; &quot;artifacts&quot; {
+  bucket                  = aws_s3_bucket.artifacts.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+</code></pre></div><div id="md-src2" hidden><pre><code># ============================================================
+# outputs.tf — 11_infra_pipeline·12_app_pipeline이 remote_state로 읽는 값
+# ============================================================
+
+output &quot;artifacts_bucket&quot; {
+  description = &quot;파이프라인 artifact 저장 버킷&quot;
+  value       = aws_s3_bucket.artifacts.bucket
+}
+
+output &quot;artifacts_bucket_arn&quot; {
+  description = &quot;파이프라인 IAM 정책에 쓸 artifact 버킷 ARN&quot;
+  value       = aws_s3_bucket.artifacts.arn
+}
+
+output &quot;tfstate_bucket&quot; {
+  description = &quot;Terraform state 저장 버킷 (backend 설정용)&quot;
+  value       = aws_s3_bucket.tfstate.bucket
+}
+
+output &quot;tf_lock_table&quot; {
+  description = &quot;state 잠금 DynamoDB 테이블&quot;
+  value       = aws_dynamodb_table.tf_lock.name
+}
+</code></pre></div><div id="md-src3" hidden><pre><code>variable &quot;aws_region&quot; {
+  description = &quot;AWS 리전&quot;
+  type        = string
+  default     = &quot;ap-northeast-2&quot;
+}
+
+variable &quot;project_name&quot; {
+  description = &quot;리소스 이름 접두사 (버킷·테이블 이름에 사용)&quot;
+  type        = string
+  default     = &quot;aws-tf-cicd&quot;
+}
+</code></pre></div>
+<div id="viewer" hidden><div class="vbox"><div class="vhead"><span id="vtitle"></span><span style="display:flex;gap:.8rem;align-items:center"><a id="vopen" href="#" target="_blank">새 탭에서 열기</a><button class="dgbtn" id="vclose">✕ 닫기</button></span></div><div class="vbody" id="vbody"></div><button class="vside" id="vsprev" hidden title="이전 슬라이드">‹</button><button class="vside" id="vsnext" hidden title="다음 슬라이드">›</button></div></div>
+<script>
+// ===== 탭 전환 (해시 동기화 + 활성 표시) =====
+const tabs=[...document.querySelectorAll('.ltab')];
+const navs=[...document.querySelectorAll('.topnav a[href^="#tab-"]')];
+function show(id){
+  const t=id&&document.getElementById(id)?id:'tab-overview';
+  tabs.forEach(x=>{x.classList.toggle('on',x.id===t);x.hidden=x.id!==t;});
+  navs.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+t));
+  if(location.hash!=='#'+t)history.replaceState(null,'','#'+t);
+}
+navs.forEach(a=>a.onclick=e=>{e.preventDefault();show(a.getAttribute('href').slice(1))});
+window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+show(location.hash.slice(1));
+
+// ===== 팝업 뷰어 =====
+const MD={'01-provider.tf':'md-src0','02-state.tf':'md-src1','03-outputs.tf':'md-src2','variables.tf':'md-src3'};
+const $=id=>document.getElementById(id);
+let cur=null;
+function openViewer(href,title){
+  cur=href;
+  $('vtitle').textContent=title||href.split('/').pop();
+  $('vopen').href=href;
+  const body=$('vbody');body.innerHTML='';
+  const key=Object.keys(MD).sort((a,b)=>b.length-a.length).find(k=>href===k||href.endsWith('/'+k)||href.endsWith(k));
+  if(key){body.innerHTML='<div class="mdview">'+document.getElementById(MD[key]).innerHTML+'</div>';}
+  else{const im=new Image();im.src=href;im.style.maxWidth='100%';body.appendChild(im);}
+  // 슬라이드 목록 내 이전/다음
+  const slides=[...document.querySelectorAll('.dgi img')].map(i=>i.getAttribute('src'));
+  const idx=slides.indexOf(href);
+  $('vsprev').hidden=$('vsnext').hidden=idx<0;
+  if(idx>=0){
+    $('vsprev').onclick=()=>go(idx-1);$('vsnext').onclick=()=>go(idx+1);
+    window._slideIdx=idx;
+  }
+  $('viewer').hidden=false;
+}
+function go(i){
+  const slides=[...document.querySelectorAll('.dgi img')].map(x=>x.getAttribute('src'));
+  if(!slides.length)return;
+  const idx=((i%slides.length)+slides.length)%slides.length;
+  const src=slides[idx];
+  openViewer(src,src.split('/').pop());
+  window._slideIdx=idx;
+}
+function closeViewer(){$('viewer').hidden=true;cur=null}
+$('vclose').onclick=closeViewer;
+$('viewer').onclick=e=>{if(e.target===$('viewer'))closeViewer()};
+document.addEventListener('keydown',e=>{
+  if($('viewer').hidden)return;
+  if(e.key==='Escape')closeViewer();
+  if(e.key==='ArrowLeft')go((window._slideIdx||0)-1);
+  if(e.key==='ArrowRight')go((window._slideIdx||0)+1);
+});
+// SVG 이미지/링크 클릭 → 뷰어
+document.querySelectorAll('.dgi img').forEach(im=>im.onclick=()=>openViewer(im.getAttribute('src'),im.closest('.dgi').querySelector('.dgi-t')?.textContent||im.getAttribute('src').split('/').pop()));
+document.querySelectorAll('a[href$=".svg"],a[href$=".md"],a[href$=".tf"],a[href$=".sh"],a[href$=".txt"],a[href$=".json"],a[href$=".tfvars"],a[href$=".yml"],a[href$=".yaml"],a[href$=".hcl"]').forEach(a=>a.onclick=e=>{
+  const href=a.getAttribute('href');
+  if(href.startsWith('http'))return;
+  e.preventDefault();openViewer(href,href.split('/').pop());
+});
+// 뷰어 내부 링크도 재귀 처리
+document.addEventListener('click',e=>{
+  const a=e.target.closest&&e.target.closest('#vbody a');
+  if(!a)return;
+  const href=a.getAttribute('href');
+  if(!href||href.startsWith('http')||href.startsWith('#'))return;
+  e.preventDefault();openViewer(href,href.split('/').pop());
+});
+// ===== 명령어 복사 =====
+/* TODO: copy_cmd_js — copyCmd 버튼 핸들러 */
+
+const COPY_CMD='terraform init';$('copyCmd').onclick=()=>{navigator.clipboard.writeText(COPY_CMD).then(()=>{$('copyMsg').textContent='복사됨 — 터미널에 붙여넣기 (⌘V)'}).catch(()=>{$('copyMsg').textContent='복사 실패 — 직접 입력'})};</script>
+</body></html>

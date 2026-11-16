@@ -58,7 +58,9 @@ aws-tf/
 ├── 02_practice/        # 네트워크+컴퓨트 실습 .tf + 슬라이드 17장 + check.sh
 ├── 03_real/            # 실전 표준 레이아웃 + 슬라이드 9장 + origin/ 비교본
 ├── 04_https/           # ACM+HTTPS 확장 — remote_state로 03 참조
-├── 10_cicd/            # AWS 네이티브 CI/CD — step1~3 분리 state
+├── 10_backend/         # 저장소 계층 — tfstate·lock·artifact 버킷
+├── 11_infra_pipeline/  # GitHub 인프라 파이프라인 — main 브랜치
+├── 12_app_pipeline/    # dev 브랜치 — 앱 배포 파이프라인
 └── .agents/            # 강사용 템플릿·생성기·로그 (학생 배포 제외)
 ```
 

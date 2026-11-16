@@ -46,12 +46,19 @@ aws-tf/
 │   ├── versions.tf / providers.tf / variables.tf
 │   ├── main.tf            # remote_state + ACM + 443 규칙 + HTTPS 리스너
 │   └── outputs.tf         # 인증서 ARN + https_url
-├── 10_cicd/               # 단계 10 — AWS 네이티브 CI/CD
+├── 10_backend/            # 단계 10 — 저장소 계층 (tfstate·lock·artifact 버킷)
 │   ├── index.html         # 단계 포털
 │   ├── readme.md
-│   ├── step1_backend/     # S3 state 버킷 + DynamoDB 잠금
-│   ├── step2_infra_pipeline/  # CodeCommit→CodeBuild(plan)→승인→apply
-│   └── step3_app_pipeline/    # 앱 빌드→ECR→EKS 배포
+│   └── *.tf               # S3 버킷×2 + DynamoDB — 파이프라인 공용 기반
+├── 11_infra_pipeline/     # 단계 11 — GitHub 인프라 파이프라인 (main 브랜치)
+│   ├── index.html         # 단계 포털
+│   ├── readme.md
+│   └── *.tf + buildspec   # CodeConnections→CodeBuild(plan)→승인→apply
+├── 12_app_pipeline/       # 단계 12 — 앱 배포 파이프라인 (dev 브랜치)
+│   ├── index.html         # 단계 포털
+│   ├── readme.md
+│   ├── app/               # 샘플 앱 — dev 브랜치 push로 배포
+│   └── *.tf + buildspec   # ECR·빌드/배포·파이프라인 (connection 공용)
 ├── .agents/               # 에이전트용 설정·템플릿 (학생 배포 제외)
 │   ├── gen/               # 포털 생성기 (ref 기반 커스터마이즈)
 │   ├── _template/         # 슬라이드·포털 재생산 템플릿

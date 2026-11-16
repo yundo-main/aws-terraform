@@ -1,0 +1,22 @@
+# CodeBuild — 앱 이미지 빌드 + ECR push
+# 출력: imageDetail.json (다음 단계가 읽을 이미지 URI)
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_URI
+      - TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION:0:8}   # 커밋 해시 앞 8자리를 이미지 태그로
+      - echo "build tag: $TAG"
+  build:
+    commands:
+      - cd "$APP_DIR"
+      - docker build -t "$ECR_URI:$TAG" .
+  post_build:
+    commands:
+      - docker push "$ECR_URI:$TAG"
+      - printf '{"image":"%s:%s"}' "$ECR_URI" "$TAG" > imageDetail.json
+artifacts:
+  files:
+    - imageDetail.json
+    - '12_app_pipeline/app/deployment.yaml'
