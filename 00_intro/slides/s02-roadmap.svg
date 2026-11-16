@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-label="전체 과정 로드맵 — 8개 단계의 진행 순서">
+  <rect width="1280" height="720" fill="#f8fafc"/>
+  <rect width="1280" height="10" fill="#1769aa"/>
+
+  <text x="60" y="90" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="40" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">전체 과정 로드맵</text>
+  <text x="60" y="134" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="22" fill="#516174" xml:space="preserve" style="white-space:pre">개념 → 실습 → 실전 → CI/CD — 번호 순서가 진행 순서입니다</text>
+
+  <!-- 1행: 기초 단계 -->
+  <g>
+    <rect x="60" y="180" width="270" height="180" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="60" y="180" width="6" height="180" rx="3" fill="#8a96a3"/>
+    <text x="86" y="224" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="15" font-weight="600" fill="#8a96a3" xml:space="preserve" style="white-space:pre">00</text>
+    <text x="86" y="254" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="20" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">00_intro</text>
+    <text x="86" y="290" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">과정 개요·IaC 개념</text>
+    <text x="86" y="316" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">전체 구조도</text>
+  </g>
+  <text x="342" y="280" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="26" fill="#8a96a3" xml:space="preserve" style="white-space:pre">→</text>
+  <g>
+    <rect x="365" y="180" width="270" height="180" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="365" y="180" width="6" height="180" rx="3" fill="#8a96a3"/>
+    <text x="391" y="224" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="15" font-weight="600" fill="#8a96a3" xml:space="preserve" style="white-space:pre">01</text>
+    <text x="391" y="254" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="20" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">01_terraform</text>
+    <text x="391" y="290" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">provider·state·HCL</text>
+    <text x="391" y="316" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">이론 (apply 없음)</text>
+  </g>
+  <text x="647" y="280" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="26" fill="#8a96a3" xml:space="preserve" style="white-space:pre">→</text>
+  <g>
+    <rect x="670" y="180" width="270" height="180" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="670" y="180" width="6" height="180" rx="3" fill="#1769aa"/>
+    <text x="696" y="224" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="15" font-weight="600" fill="#1769aa" xml:space="preserve" style="white-space:pre">02 · AWS 실습</text>
+    <text x="696" y="254" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="20" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">02_practice</text>
+    <text x="696" y="290" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">번호 순서로 apply</text>
+    <text x="696" y="316" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">VPC→EC2·RDS, 단일 state</text>
+  </g>
+  <text x="952" y="280" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="26" fill="#8a96a3" xml:space="preserve" style="white-space:pre">→</text>
+  <g>
+    <rect x="975" y="180" width="245" height="180" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="975" y="180" width="6" height="180" rx="3" fill="#1769aa"/>
+    <text x="1001" y="224" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="15" font-weight="600" fill="#1769aa" xml:space="preserve" style="white-space:pre">03 · 실전</text>
+    <text x="1001" y="254" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="20" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">03_real</text>
+    <text x="1001" y="290" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">variables·모듈 분리</text>
+    <text x="1001" y="316" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">EKS·ALB·RDS 포함</text>
+  </g>
+
+  <!-- 선택 단계 -->
+  <g>
+    <rect x="60" y="400" width="270" height="150" rx="10" fill="#fdf6ec" stroke="#e3c99a"/>
+    <rect x="60" y="400" width="6" height="150" rx="3" fill="#b86e00"/>
+    <text x="86" y="440" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="15" font-weight="600" fill="#b86e00" xml:space="preserve" style="white-space:pre">04 · 선택</text>
+    <text x="86" y="470" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="20" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">04_https</text>
+    <text x="86" y="504" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">ACM·Route53·443 리스너</text>
+    <text x="86" y="530" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">remote_state 첫 실습</text>
+  </g>
+
+  <!-- 2행: CI/CD 단계 -->
+  <g>
+    <rect x="380" y="400" width="270" height="150" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="380" y="400" width="6" height="150" rx="3" fill="#1769aa"/>
+    <text x="406" y="440" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="15" font-weight="600" fill="#1769aa" xml:space="preserve" style="white-space:pre">10 · CI/CD 기반</text>
+    <text x="406" y="470" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="20" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">10_backend</text>
+    <text x="406" y="504" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">tfstate 버킷·DynamoDB lock</text>
+    <text x="406" y="530" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">artifact 버킷 — 공용 기반</text>
+  </g>
+  <text x="662" y="485" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="26" fill="#8a96a3" xml:space="preserve" style="white-space:pre">→</text>
+  <g>
+    <rect x="685" y="400" width="270" height="150" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="685" y="400" width="6" height="150" rx="3" fill="#1769aa"/>
+    <text x="711" y="440" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="15" font-weight="600" fill="#1769aa" xml:space="preserve" style="white-space:pre">11 · 운영 (main)</text>
+    <text x="711" y="470" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="20" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">11_infra_pipeline</text>
+    <text x="711" y="504" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">GitHub push→plan→승인→apply</text>
+    <text x="711" y="530" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">인프라 GitOps + 승인 게이트</text>
+  </g>
+  <text x="967" y="485" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="26" fill="#8a96a3" xml:space="preserve" style="white-space:pre">→</text>
+  <g>
+    <rect x="990" y="400" width="230" height="150" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="990" y="400" width="6" height="150" rx="3" fill="#b86e00"/>
+    <text x="1016" y="440" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="15" font-weight="600" fill="#b86e00" xml:space="preserve" style="white-space:pre">12 · 개발 (dev)</text>
+    <text x="1016" y="470" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="20" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">12_app_pipeline</text>
+    <text x="1016" y="504" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">docker→ECR→EKS 배포</text>
+    <text x="1016" y="530" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">dev 브랜치 push가 트리거</text>
+  </g>
+
+  <!-- 하단 요약 -->
+  <rect x="60" y="590" width="1160" height="70" rx="10" fill="#e6f1fa"/>
+  <text x="640" y="632" text-anchor="middle" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="20" font-weight="600" fill="#1769aa" xml:space="preserve" style="white-space:pre">개념(00·01) → 실습(02·03) → 선택(04) → GitOps(10·11·12) — 번호 순 = apply 순서</text>
+
+  <text x="60" y="700" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">Terraform · 00 · 로드맵</text>
+  <text x="1220" y="700" text-anchor="end" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" font-weight="600" fill="#516174" xml:space="preserve" style="white-space:pre">02</text>
+</svg>

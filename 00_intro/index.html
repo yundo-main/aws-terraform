@@ -146,62 +146,19 @@ terraform destroy    # 전체 삭제</code></pre>
 <section class="ltab" id="tab-slides" hidden>
 <div class="ltitle">슬라이드 — IaC·Terraform 개요 (SVG)</div>
 <h3>SVG 슬라이드</h3>
-<table><tr><th>파일</th><th>내용</th></tr><tr><td>s01-title</td><td>타이틀</td></tr><tr><td>s02-iac</td><td>IaC 개념 (선언적 vs 명령적)</td></tr><tr><td>s03-provisioning</td><td>프로비저닝 대상 자원</td></tr><tr><td>s04-terraform</td><td>Terraform 소개 + HCL 예시</td></tr><tr><td>s05-workflow</td><td>init → apply 워크플로우</td></tr><tr><td>s06-benefits</td><td>장점 5가지</td></tr><tr><td>s07-vs-ansible</td><td>Ansible 비교 표</td></tr><tr><td>s08-summary</td><td>정리</td></tr></table>
+<table><tr><th>파일</th><th>내용</th></tr><tr><td>s01-title</td><td>타이틀</td></tr><tr><td>s02-roadmap</td><td>전체 과정 로드맵 — 8개 단계</td></tr><tr><td>s03-structure</td><td>프로젝트 구조 — 디렉터리·state 경계</td></tr><tr><td>s04-target-arch</td><td>최종 아키텍처 — GitOps 완성 모습</td></tr><tr><td>s05-iac</td><td>IaC 개념 (선언적 vs 명령적)</td></tr><tr><td>s06-provisioning</td><td>프로비저닝 대상 자원</td></tr><tr><td>s07-terraform</td><td>Terraform 소개 + HCL 예시</td></tr><tr><td>s08-workflow</td><td>init → apply 워크플로우</td></tr><tr><td>s09-benefits</td><td>장점 5가지</td></tr><tr><td>s10-vs-ansible</td><td>Ansible 비교 표</td></tr><tr><td>s11-summary</td><td>정리</td></tr></table>
 <p class="sub">이미지를 클릭하면 뷰어가 열리고 <b>‹ ›</b> 버튼 또는 <b>← →</b> 키로 슬라이드 간 이동합니다.</p>
 <div class="dgi"><div class="dgi-head"><span class="dgi-t">s01-title · s01-title</span><span class="badge">SVG</span></div><img src="slides/s01-title.svg" alt="s01-title" loading="lazy"></div>
-<div class="dgi"><div class="dgi-head"><span class="dgi-t">s02-iac · s02-iac</span><span class="badge">SVG</span></div><img src="slides/s02-iac.svg" alt="s02-iac" loading="lazy"></div>
-<div class="dgi"><div class="dgi-head"><span class="dgi-t">s03-provisioning · s03-provisioning</span><span class="badge">SVG</span></div><img src="slides/s03-provisioning.svg" alt="s03-provisioning" loading="lazy"></div>
-<div class="dgi"><div class="dgi-head"><span class="dgi-t">s04-terraform · s04-terraform</span><span class="badge">SVG</span></div><img src="slides/s04-terraform.svg" alt="s04-terraform" loading="lazy"></div>
-<div class="dgi"><div class="dgi-head"><span class="dgi-t">s05-workflow · s05-workflow</span><span class="badge">SVG</span></div><img src="slides/s05-workflow.svg" alt="s05-workflow" loading="lazy"></div>
-<div class="dgi"><div class="dgi-head"><span class="dgi-t">s06-benefits · s06-benefits</span><span class="badge">SVG</span></div><img src="slides/s06-benefits.svg" alt="s06-benefits" loading="lazy"></div>
-<div class="dgi"><div class="dgi-head"><span class="dgi-t">s07-vs-ansible · s07-vs-ansible</span><span class="badge">SVG</span></div><img src="slides/s07-vs-ansible.svg" alt="s07-vs-ansible" loading="lazy"></div>
-<div class="dgi"><div class="dgi-head"><span class="dgi-t">s08-summary · s08-summary</span><span class="badge">SVG</span></div><img src="slides/s08-summary.svg" alt="s08-summary" loading="lazy"></div>
-</section>
-<section class="ltab" id="tab-help" hidden>
-<div class="ltitle">도움말 — SVG 규칙·메타프롬프트·페이지 사용법</div>
-
-<h3>SVG 뷰어</h3>
-<ul>
-<li>슬라이드 탭의 <b>SVG 이미지를 클릭</b>하면 팝업 뷰어로 확대 표시됩니다</li>
-<li>뷰어에서 <code>‹</code> <code>›</code> 버튼 또는 <code>←</code> <code>→</code> 키로 이전/다음 슬라이드 이동</li>
-<li><code>ESC</code> · <code>✕ 닫기</code> · 어두운 배경 클릭으로 닫습니다</li>
-</ul>
-
-<h3>참고</h3>
-<ul>
-<li>이 페이지는 <b>서버 없이</b> 동작합니다 — <code>index.html</code>을 브라우저로 바로 열면 됩니다</li>
-<li>탭 내용은 생성 시점의 스냅샷입니다 — 원본이 수정되면 페이지 재생성이 필요합니다</li>
-</ul>
-</section>
-<footer>00_intro · Terraform 학습 자료</footer>
-</div>
-
-<div id="viewer" hidden><div class="vbox"><div class="vhead"><span id="vtitle"></span><span style="display:flex;gap:.8rem;align-items:center"><a id="vopen" href="#" target="_blank">새 탭에서 열기</a><button class="dgbtn" id="vclose">✕ 닫기</button></span></div><div class="vbody" id="vbody"></div><button class="vside" id="vsprev" hidden title="이전 슬라이드">‹</button><button class="vside" id="vsnext" hidden title="다음 슬라이드">›</button></div></div>
-<script>
-// ===== 탭 전환 (해시 동기화 + 활성 표시) =====
-const tabs=[...document.querySelectorAll('.ltab')];
-const navs=[...document.querySelectorAll('.topnav a[href^="#tab-"]')];
-function show(id){
-  const t=id&&document.getElementById(id)?id:'tab-overview';
-  tabs.forEach(x=>{x.classList.toggle('on',x.id===t);x.hidden=x.id!==t;});
-  navs.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+t));
-  if(location.hash!=='#'+t)history.replaceState(null,'','#'+t);
-}
-navs.forEach(a=>a.onclick=e=>{e.preventDefault();show(a.getAttribute('href').slice(1))});
-window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
-show(location.hash.slice(1));
-
-// ===== 팝업 뷰어 =====
-const MD={};
-const $=id=>document.getElementById(id);
-let cur=null;
-function openViewer(href,title){
-  cur=href;
-  $('vtitle').textContent=title||href.split('/').pop();
-  $('vopen').href=href;
-  const body=$('vbody');body.innerHTML='';
-  const key=Object.keys(MD).sort((a,b)=>b.length-a.length).find(k=>href===k||href.endsWith('/'+k)||href.endsWith(k));
-  if(key){body.innerHTML='<div class="mdview">'+document.getElementById(MD[key]).innerHTML+'</div>';}
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s02-roadmap · s02-roadmap</span><span class="badge">SVG</span></div><img src="slides/s02-roadmap.svg" alt="s02-roadmap" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s03-structure · s03-structure</span><span class="badge">SVG</span></div><img src="slides/s03-structure.svg" alt="s03-structure" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s04-target-arch · s04-target-arch</span><span class="badge">SVG</span></div><img src="slides/s04-target-arch.svg" alt="s04-target-arch" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s05-iac · s05-iac</span><span class="badge">SVG</span></div><img src="slides/s05-iac.svg" alt="s05-iac" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s06-provisioning · s06-provisioning</span><span class="badge">SVG</span></div><img src="slides/s06-provisioning.svg" alt="s06-provisioning" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s07-terraform · s07-terraform</span><span class="badge">SVG</span></div><img src="slides/s07-terraform.svg" alt="s07-terraform" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s08-workflow · s08-workflow</span><span class="badge">SVG</span></div><img src="slides/s08-workflow.svg" alt="s08-workflow" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s09-benefits · s09-benefits</span><span class="badge">SVG</span></div><img src="slides/s09-benefits.svg" alt="s09-benefits" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s10-vs-ansible · s10-vs-ansible</span><span class="badge">SVG</span></div><img src="slides/s10-vs-ansible.svg" alt="s10-vs-ansible" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s11-summary · s11-summary</span><span class="badge">SVG</span></div><img src="slides/s11-summary.svg" alt="s11-summary" loading="lazy"></div>';}
   else{const im=new Image();im.src=href;im.style.maxWidth='100%';body.appendChild(im);}
   // 슬라이드 목록 내 이전/다음
   const slides=[...document.querySelectorAll('.dgi img')].map(i=>i.getAttribute('src'));

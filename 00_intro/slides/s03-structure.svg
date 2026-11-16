@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-label="프로젝트 디렉터리 구조와 각 단계의 역할·state 경계">
+  <rect width="1280" height="720" fill="#f8fafc"/>
+  <rect width="1280" height="10" fill="#1769aa"/>
+
+  <text x="60" y="90" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="40" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">프로젝트 구조 — 디렉터리 = state 경계</text>
+  <text x="60" y="134" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="22" fill="#516174" xml:space="preserve" style="white-space:pre">각 최상위 디렉터리가 독립 terraform state — 번호가 곧 실행 순서입니다</text>
+
+  <!-- 디렉터리 트리 (좌) -->
+  <rect x="60" y="170" width="620" height="480" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+  <text x="90" y="212" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="20" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">aws-terraform/ (GitHub 리포 1개)</text>
+  <g font-family="'SF Mono', Menlo, monospace" font-size="16.5" fill="#122033" xml:space="preserve" style="white-space:pre">
+    <text x="90" y="252">├── 00_intro/          과정 개요·개념 슬라이드</text>
+    <text x="90" y="284">├── 01_terraform/      provider·state 이론</text>
+    <text x="90" y="316">├── 02_practice/       입문 실습 — 단일 state</text>
+    <text x="90" y="348">├── 03_real/           실전 레이아웃 — VPC·EKS·RDS</text>
+    <text x="90" y="380" fill="#b86e00">├── 04_https/          HTTPS 확장 (선택)</text>
+    <text x="90" y="412" fill="#1769aa">├── 10_backend/        tfstate·lock·artifact 버킷</text>
+    <text x="90" y="444" fill="#1769aa">├── 11_infra_pipeline/ main 감시 → plan·승인·apply</text>
+    <text x="90" y="476" fill="#b86e00">├── 12_app_pipeline/   dev 감시 → docker→ECR→EKS</text>
+    <text x="90" y="508">└── .agents/           생성기·템플릿 (학습 범위 밖)</text>
+  </g>
+  <rect x="90" y="540" width="560" height="80" rx="8" fill="#eef1f4"/>
+  <text x="112" y="572" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">각 디렉터리: readme.md · *.tf · slides/ · index.html(포털)</text>
+  <text x="112" y="600" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">포털은 .agents/gen/gen_portal.py가 자동 생성</text>
+
+  <!-- 역할 그룹 (우) -->
+  <g>
+    <rect x="715" y="170" width="505" height="145" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="715" y="170" width="6" height="145" rx="3" fill="#8a96a3"/>
+    <text x="745" y="208" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="19" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">개념 — 00·01</text>
+    <text x="745" y="242" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">AWS 리소스를 만들지 않는 읽기 단계</text>
+    <text x="745" y="270" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">state 없음 — 슬라이드·문서만</text>
+  </g>
+  <g>
+    <rect x="715" y="330" width="505" height="145" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="715" y="330" width="6" height="145" rx="3" fill="#1769aa"/>
+    <text x="745" y="368" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="19" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">실습 — 02·03·04</text>
+    <text x="745" y="402" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">로컬 state로 실제 AWS 인프라 구축</text>
+    <text x="745" y="430" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">04는 remote_state로 03을 읽는 첫 계층 분리</text>
+  </g>
+  <g>
+    <rect x="715" y="490" width="505" height="160" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
+    <rect x="715" y="490" width="6" height="160" rx="3" fill="#b86e00"/>
+    <text x="745" y="528" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="19" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">GitOps — 10·11·12</text>
+    <text x="745" y="562" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">remote_state로 연결된 3개 독립 state</text>
+    <text x="745" y="590" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">main(운영)·dev(개발) 브랜치가 파이프라인 경계</text>
+    <text x="745" y="618" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">destroy는 역순 — 12 → 11 → 10</text>
+  </g>
+
+  <text x="60" y="700" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">Terraform · 00 · 프로젝트 구조</text>
+  <text x="1220" y="700" text-anchor="end" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" font-weight="600" fill="#516174" xml:space="preserve" style="white-space:pre">03</text>
+</svg>

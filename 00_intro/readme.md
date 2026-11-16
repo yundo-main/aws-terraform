@@ -11,17 +11,24 @@ Terraform으로 AWS 인프라를 코드로 관리하는 학습 과정의 전체 
 
 ## 단계 구성
 
-- `00_intro` — 과정 개요, IaC·Terraform 개념 슬라이드 (이 단계)
-- `01_terraform` — Provider·required_providers·버전 고정·init/Registry 이론
-- `02_practice` — step1~4 디렉터리로 단계별 apply하는 AWS 실습
-- `03_real` — variables/outputs 분리와 모듈화된 실전 레이아웃
+- `00_intro` — 과정 개요, 전체 구조도·IaC 개념 슬라이드 (이 단계)
+- `01_terraform` — Provider·state·HCL 블록·워크플로우 이론
+- `02_practice` — 번호 순서로 apply하는 입문 AWS 실습 (단일 state)
+- `03_real` — variables/outputs 분리·모듈화된 실전 레이아웃 (EKS·RDS 포함)
+- `04_https` — remote_state로 연결하는 선택 HTTPS 확장
+- `10_backend` — tfstate·lock·artifact 버킷 (CI/CD 공용 기반)
+- `11_infra_pipeline` — GitHub main 브랜치 → plan·승인·apply 인프라 GitOps
+- `12_app_pipeline` — GitHub dev 브랜치 → docker·ECR·EKS 앱 배포
+
+번호 순서가 진행 순서이며, 10→11→12는 remote_state로 연결된 독립 state입니다.
+destroy는 역순(12→11→10) — 상세 구조는 `slides/`의 구조도 슬라이드를 보세요.
 
 ## 학습 흐름
 
-1. 개념: IaC와 프로비저닝이 왜 필요한지 이해
-2. 이론: Terraform provider와 상태(state) 관리 방식
-3. 실습: 단계별 디렉터리로 네트워크→컴퓨트→EKS 순으로 구축
-4. 실전: 하드코딩된 값을 변수·모듈로 리팩터링
+1. 개념(00·01): IaC와 Terraform의 동작 원리 이해
+2. 실습(02·03): 네트워크→컴퓨트→EKS 구축, 변수·모듈로 실전 레이아웃
+3. 선택(04): 별도 state로 HTTPS 확장 — remote_state 첫 경험
+4. GitOps(10·11·12): 저장소 계층 → 인프라 파이프라인 → 앱 파이프라인
 
 ## 주요 개념
 

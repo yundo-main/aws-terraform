@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-label="과정 완료 시 최종 아키텍처 — GitHub 브랜치가 두 파이프라인을 트리거하고 AWS 인프라까지 배포">
+  <rect width="1280" height="720" fill="#f8fafc"/>
+  <rect width="1280" height="10" fill="#1769aa"/>
+
+  <text x="60" y="90" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="40" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">최종 모습 — 과정을 끝내면 무엇이 완성되는가</text>
+  <text x="60" y="134" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="22" fill="#516174" xml:space="preserve" style="white-space:pre">push 한 번으로 인프라·앱이 각각 배포되는 GitOps 구조가 완성됩니다</text>
+
+  <!-- GitHub 리포 -->
+  <rect x="340" y="165" width="600" height="90" rx="10" fill="#122033"/>
+  <text x="640" y="203" text-anchor="middle" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="22" font-weight="700" fill="#ffffff" xml:space="preserve" style="white-space:pre">GitHub — aws-terraform (리포 1개)</text>
+  <text x="640" y="235" text-anchor="middle" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="17" fill="#c9d5e1" xml:space="preserve" style="white-space:pre">main = 운영(인프라)  ·  dev = 개발(앱)  — 브랜치가 경계</text>
+
+  <!-- 연결선 -->
+  <line x1="480" y1="255" x2="240" y2="300" stroke="#8a96a3" stroke-width="2"/>
+  <line x1="800" y1="255" x2="1040" y2="300" stroke="#8a96a3" stroke-width="2"/>
+  <text x="310" y="285" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">push main</text>
+  <text x="960" y="285" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">push dev</text>
+
+  <!-- 두 파이프라인 -->
+  <g>
+    <rect x="60" y="300" width="560" height="120" rx="10" fill="#ffffff" stroke="#1769aa" stroke-width="1.5"/>
+    <rect x="60" y="300" width="6" height="120" rx="3" fill="#1769aa"/>
+    <text x="90" y="338" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="19" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">11_infra_pipeline (운영)</text>
+    <text x="90" y="370" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#122033" xml:space="preserve" style="white-space:pre">CodeConnections → CodeBuild plan → 승인 → apply</text>
+    <text x="90" y="398" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">03_real의 .tf 코드가 S3 backend state로 관리됨</text>
+  </g>
+  <g>
+    <rect x="660" y="300" width="560" height="120" rx="10" fill="#ffffff" stroke="#b86e00" stroke-width="1.5"/>
+    <rect x="660" y="300" width="6" height="120" rx="3" fill="#b86e00"/>
+    <text x="690" y="338" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="19" font-weight="700" fill="#b86e00" xml:space="preserve" style="white-space:pre">12_app_pipeline (개발)</text>
+    <text x="690" y="370" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#122033" xml:space="preserve" style="white-space:pre">docker build → ECR push → kubectl rollout</text>
+    <text x="690" y="398" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">승인 없이 자동 배포 — 개발 주기는 빠르게</text>
+  </g>
+
+  <!-- 파이프라인 → AWS -->
+  <line x1="340" y1="420" x2="340" y2="465" stroke="#8a96a3" stroke-width="2"/>
+  <line x1="940" y1="420" x2="940" y2="465" stroke="#8a96a3" stroke-width="2"/>
+  <text x="352" y="448" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">terraform apply</text>
+  <text x="860" y="448" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="15" fill="#516174" xml:space="preserve" style="white-space:pre">컨테이너 배포</text>
+
+  <!-- AWS 인프라 -->
+  <rect x="60" y="465" width="1160" height="170" rx="10" fill="#e6f1fa" stroke="#1769aa"/>
+  <text x="90" y="505" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="19" font-weight="700" fill="#1769aa" xml:space="preserve" style="white-space:pre">AWS (03_real이 만드는 인프라 — 승인된 plan만 적용)</text>
+  <g font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#122033">
+    <rect x="90" y="525" width="170" height="80" rx="8" fill="#ffffff" stroke="#c9d5e1"/>
+    <text x="175" y="558" text-anchor="middle" xml:space="preserve" style="white-space:pre">VPC·서브넷</text>
+    <text x="175" y="585" text-anchor="middle" font-size="14" fill="#516174" xml:space="preserve" style="white-space:pre">네트워크 뼈대</text>
+    <rect x="280" y="525" width="170" height="80" rx="8" fill="#ffffff" stroke="#c9d5e1"/>
+    <text x="365" y="558" text-anchor="middle" xml:space="preserve" style="white-space:pre">EKS + ECR</text>
+    <text x="365" y="585" text-anchor="middle" font-size="14" fill="#516174" xml:space="preserve" style="white-space:pre">앱 실행 환경</text>
+    <rect x="470" y="525" width="170" height="80" rx="8" fill="#ffffff" stroke="#c9d5e1"/>
+    <text x="555" y="558" text-anchor="middle" xml:space="preserve" style="white-space:pre">RDS</text>
+    <text x="555" y="585" text-anchor="middle" font-size="14" fill="#516174" xml:space="preserve" style="white-space:pre">MariaDB</text>
+    <rect x="660" y="525" width="170" height="80" rx="8" fill="#ffffff" stroke="#c9d5e1"/>
+    <text x="745" y="558" text-anchor="middle" xml:space="preserve" style="white-space:pre">ALB·Route53</text>
+    <text x="745" y="585" text-anchor="middle" font-size="14" fill="#516174" xml:space="preserve" style="white-space:pre">트래픽 진입점</text>
+    <rect x="850" y="525" width="170" height="80" rx="8" fill="#fdf6ec" stroke="#e3c99a"/>
+    <text x="935" y="558" text-anchor="middle" xml:space="preserve" style="white-space:pre">ACM (선택)</text>
+    <text x="935" y="585" text-anchor="middle" font-size="14" fill="#b86e00" xml:space="preserve" style="white-space:pre">04_https</text>
+    <rect x="1040" y="525" width="150" height="80" rx="8" fill="#ffffff" stroke="#c9d5e1"/>
+    <text x="1115" y="558" text-anchor="middle" xml:space="preserve" style="white-space:pre">Bastion</text>
+    <text x="1115" y="585" text-anchor="middle" font-size="14" fill="#516174" xml:space="preserve" style="white-space:pre">접속 경유지</text>
+  </g>
+
+  <!-- 하단 요약 -->
+  <rect x="60" y="655" width="1160" height="10" rx="5" fill="#1769aa"/>
+
+  <text x="60" y="700" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">Terraform · 00 · 최종 아키텍처</text>
+  <text x="1220" y="700" text-anchor="end" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" font-weight="600" fill="#516174" xml:space="preserve" style="white-space:pre">04</text>
+</svg>
