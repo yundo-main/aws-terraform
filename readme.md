@@ -6,12 +6,12 @@ Terraform / IaC 학습용 모듈. `index.html`을 브라우저로 열면 각 단
 
 ```
 aws-tf/
-├── index.html             # 루트 포털 — 과정 인덱스 (생성기 산출물)
+├── index.html             # 루트 포털 — 과정 인덱스
 ├── readme.md              # 이 파일 — 디렉터리·파일 역할 설명
 ├── 00_intro/              # 단계 0 — 과정 개요 (IaC·Terraform 개념)
 │   ├── index.html         # 단계 포털
 │   ├── readme.md          # 단계 문서
-│   ├── glossary.md        # 통합 용어집 (생성기 산출물)
+│   ├── glossary.md        # 통합 용어집
 │   ├── glossary/          # 용어 포털
 │   └── slides/            # SVG 슬라이드 9장 (s01~s08)
 ├── 01_terraform/          # 단계 1 — Terraform 개념·Provider
@@ -55,26 +55,9 @@ aws-tf/
 │   ├── readme.md
 │   ├── app/               # 샘플 앱 — dev 브랜치 push로 배포
 │   └── *.tf + buildspec   # ECR·빌드/배포·파이프라인 (connection 공용)
-├── .agents/               # 에이전트용 설정·템플릿 (학생 배포 제외)
-│   ├── gen/               # 포털 생성기 (ref 기반 커스터마이즈)
-│   ├── _template/         # 슬라이드·포털 재생산 템플릿
-│   ├── {NN}/GUIDE.md      # 단계별 제작 가이드
-│   ├── docs/              # 슬라이드 원본 문서
-│   └── logs/              # 작업 로그 (타임스탬프.md)
 └── .gitignore             # state·pem·캐시 커밋 방지
 ```
 
-## 포털 생성 (재생성 절차)
-
-`index.html`과 각 단계 `index.html`은 생성기 산출물이다 — readme 수정 후 재생성:
-
-```bash
-cd .agents/gen
-python3 gen_portal.py     # 01~03 단계 포털
-python3 gen_intro.py      # 00_intro 포털
-python3 gen_index.py      # 루트 포털
-python3 gen_glossary.py   # 용어집 (00_intro/glossary/)
-```
 
 ## 디렉터리·파일 역할
 
@@ -89,13 +72,9 @@ python3 gen_glossary.py   # 용어집 (00_intro/glossary/)
 | `03_real/` | 표준 레이아웃 (versions/providers/variables/main/outputs) |
 | `03_real/origin/` | 리팩터링 전 원본 — diff 비교용 |
 | `04_https/` | 03의 ALB·존을 remote_state로 읽어 ACM+HTTPS 부착 — 선택 단계 |
-| `.agents/gen/` | 포털 생성기 — `project-portal.html`이 CSS/JS 마스터 |
-| `.agents/_template/` | SVG 슬라이드 규격·프롬프트 (spec/prompts) |
-| `.agents/logs/` | 타임스탬프 작업 로그 |
 | `{단계}/slides/` | sNN-이름.svg 형식 슬라이드 + readme.md (제목 매핑) |
 
 ## 주의
 
 - `terraform.tfstate`·`*.pem`은 `.gitignore` 대상 — 커밋 금지
 - 실습 리소스(NGW·EC2·RDS)는 과금됨 — 03_real의 EKS까지 올리면 클러스터·노드 비용 추가 — 사용 후 `terraform destroy` (단일 state라 한 번에 삭제)
-- `.agents/`는 강사용 — 학생에게 배포하지 않는다

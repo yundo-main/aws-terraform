@@ -65,8 +65,7 @@ aws-tf/
 ├── 03_real/            # 실전 표준 레이아웃 + 슬라이드 9장 + origin/ 비교본
 ├── 04_https/           # ACM+HTTPS 확장 — remote_state로 03 참조
 ├── 10_cicd/            # 저장소+GitHub 인프라 파이프라인 — main 브랜치
-├── 11_app_pipeline/    # dev 브랜치 — 앱 배포 파이프라인
-└── .agents/            # 강사용 템플릿·생성기·로그 (학생 배포 제외)
+└── 11_app_pipeline/    # dev 브랜치 — 앱 배포 파이프라인
 ```
 
 ## 주의사항
