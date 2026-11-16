@@ -14,10 +14,10 @@
     <text x="90" y="316">├── 02_practice/       입문 실습 — 단일 state</text>
     <text x="90" y="348">├── 03_real/           실전 레이아웃 — VPC·EKS·RDS</text>
     <text x="90" y="380" fill="#b86e00">├── 04_https/          HTTPS 확장 (선택)</text>
-    <text x="90" y="412" fill="#1769aa">├── 10_cicd/           저장소+인프라 파이프라인</text>
+    <text x="90" y="412" fill="#1769aa">├── 10_gitops_infra/           저장소+인프라 파이프라인</text>
     <text x="90" y="444" fill="#1769aa">│   (main 감시 → plan·승인·apply)</text>
-    <text x="90" y="476" fill="#b86e00">├── 11_app_pipeline/   dev 감시 → docker→ECR→EKS</text>
-    <text x="90" y="508">└── 11_app_pipeline/app/ 샘플 앱 — dev push로 배포</text>
+    <text x="90" y="476" fill="#b86e00">├── 11_gitops_app/   dev 감시 → docker→ECR→EKS</text>
+    <text x="90" y="508">└── 11_gitops_app/app/ 샘플 앱 — dev push로 배포</text>
   </g>
   <rect x="90" y="540" width="560" height="80" rx="8" fill="#eef1f4"/>
   <text x="112" y="572" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">각 디렉터리: readme.md · *.tf · slides/ · index.html(포털)</text>

@@ -18,7 +18,7 @@ VPC부터 RDS까지 하나의 디렉터리(단일 state)로 apply하는 실습 �
 
 ## 이론적 배경
 
-단일 state에서는 모든 리소스가 하나의 의존 그래프가 됩니다 — `aws_subnet`의 `vpc_id = aws_vpc.x.id` 같은 직접 참조가 연결 고리를 만들고, Terraform이 생성 순서를 자동으로 계산합니다. 계층별 state 분리(remote_state)는 11_app_pipeline에서 다룹니다.
+단일 state에서는 모든 리소스가 하나의 의존 그래프가 됩니다 — `aws_subnet`의 `vpc_id = aws_vpc.x.id` 같은 직접 참조가 연결 고리를 만들고, Terraform이 생성 순서를 자동으로 계산합니다. 계층별 state 분리(remote_state)는 11_gitops_app에서 다룹니다.
 
 ## 실습
 

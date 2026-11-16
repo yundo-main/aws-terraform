@@ -1,0 +1,885 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CI/CD — GitHub 인프라 파이프라인</title>
+<style>
+:root{--bg:#f1f5f9;--card:#fff;--ink:#111827;--muted:#6b7280;--line:#e2e8f0;--accent:#2563eb;--accent2:#7c3aed}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.7}
+.wrap{max-width:1080px;margin:0 auto;padding:1.4rem 1.2rem 3rem}
+.topnav{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin-bottom:.9rem;padding:.55rem .8rem;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.topnav .brand{font-weight:800;margin-right:.8rem;background:linear-gradient(120deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.topnav a{color:var(--muted);text-decoration:none;font-size:.85rem;font-weight:600;padding:.35rem .75rem;border-radius:8px;transition:all .15s}
+.topnav a:hover{background:#eff6ff;color:var(--accent)}
+.topnav a.on{background:linear-gradient(120deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 2px 6px rgba(37,99,235,.3)}
+.hero{position:relative;overflow:hidden;border-radius:20px;padding:2.6rem 2.2rem;margin-bottom:1.5rem;color:#fff;background:linear-gradient(120deg,#0b1e3a 0%,#144a8a 50%,#6d28d9 100%);box-shadow:0 8px 24px rgba(15,23,42,.18)}
+.hero::before,.hero::after{content:'';position:absolute;border-radius:50%;background:rgba(255,255,255,.09)}
+.hero::before{width:380px;height:380px;right:-100px;top:-140px}
+.hero::after{width:240px;height:240px;left:-70px;bottom:-110px}
+.hero::before,.hero::after{animation:float 9s ease-in-out infinite}
+.hero::after{animation-delay:-4s}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(18px,-14px)}}
+.hero>*{position:relative}
+.eyebrow{font-size:.72rem;letter-spacing:.18em;font-weight:800;opacity:.85;margin-bottom:.55rem;text-transform:uppercase}
+.hero h1{margin:0 0 .65rem;font-size:2.05rem;letter-spacing:-.01em}
+.hero .sub{margin:0 0 1.2rem;max-width:680px;font-size:.88rem;font-weight:500;line-height:1.6;color:rgba(255,255,255,.92);text-shadow:0 1px 4px rgba(0,0,0,.35)}
+.steps{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.4rem}
+.steps span{font-size:.74rem;font-weight:600;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);padding:.32rem .8rem;border-radius:999px;backdrop-filter:blur(4px)}
+.ltab{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.5rem 1.6rem;margin-bottom:1.2rem;display:none;box-shadow:0 1px 3px rgba(15,23,42,.04)}
+.ltab.on{display:block;animation:fadein .25s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ltitle{font-size:1.15rem;font-weight:800;margin-bottom:1rem;padding-bottom:.55rem;border-bottom:2px solid var(--accent);display:inline-block;letter-spacing:-.01em}
+h3{font-size:1rem;margin:1.25rem 0 .5rem}
+p{margin:.45rem 0}
+ul,ol{margin:.45rem 0 .65rem;padding-left:1.3rem}
+li{margin:.28rem 0}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:.85rem;margin:.7rem 0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+th,td{border-bottom:1px solid var(--line);padding:.5rem .75rem;text-align:left;vertical-align:top}
+th{background:linear-gradient(180deg,#f1f5f9,#e8eef5);font-weight:700;font-size:.8rem;letter-spacing:.02em}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#f8fafc}
+code{background:#eef2f7;padding:.12em .38em;border-radius:5px;font-size:.85em;font-family:ui-monospace,Menlo,monospace;color:#be185d}
+pre{background:linear-gradient(180deg,#f8fafc,#f1f5f9);border:1px solid var(--line);border-radius:10px;padding:.95rem 1.05rem;overflow:auto;font-size:.82rem;line-height:1.55}
+pre code{background:none;padding:0;color:inherit}
+.sub{color:var(--muted);font-size:.85rem}
+.dtree{font-family:ui-monospace,Menlo,monospace;font-size:.8rem;background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:.95rem 1.15rem;overflow:auto}
+.dtn{font-weight:700;margin-bottom:.3rem;color:var(--ink)}
+.dt{margin:.15rem 0}
+.dt summary{cursor:pointer;color:var(--accent);font-weight:600}
+.dt-kids{margin-left:1.1rem;border-left:2px solid var(--line);padding-left:.9rem}
+.dtl{color:var(--muted);padding:.1rem 0}
+.dt-note{color:var(--muted);font-weight:400;font-size:.75rem}
+.dgi{border:1px solid var(--line);border-radius:14px;padding:.9rem;margin-bottom:1.1rem;background:#fff;box-shadow:0 1px 3px rgba(15,23,42,.04);transition:box-shadow .2s}
+.dgi:hover{box-shadow:0 4px 14px rgba(15,23,42,.08)}
+.dgi-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;font-size:.85rem;font-weight:700}
+.dgi-head .badge{font-size:.68rem;font-weight:800;color:#fff;background:linear-gradient(120deg,var(--accent),var(--accent2));padding:.18rem .6rem;border-radius:999px;letter-spacing:.03em}
+.dgi img{width:100%;border:1px solid var(--line);border-radius:10px;cursor:zoom-in;background:#fff;transition:transform .2s}
+.dgi img:hover{transform:scale(1.005)}
+.codebox{position:relative;margin:.6rem 0}
+.codebox pre{margin:0;padding-right:4.5rem}
+.copybtn{position:absolute;top:.5rem;right:.5rem;font-size:.72rem;font-weight:700;color:var(--accent);background:#fff;border:1px solid var(--line);border-radius:6px;padding:.28rem .65rem;cursor:pointer;transition:all .15s}
+.copybtn:hover{border-color:var(--accent);background:#eff6ff;box-shadow:0 1px 4px rgba(37,99,235,.15)}
+.dgbtn{display:inline-block;font-size:.85rem;font-weight:700;color:#fff;background:linear-gradient(120deg,var(--accent),var(--accent2));border:none;border-radius:9px;padding:.55rem 1.1rem;cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(37,99,235,.3);transition:transform .15s,box-shadow .15s}
+.dgbtn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,.4)}
+footer{color:var(--muted);font-size:.78rem;text-align:center;margin-top:1.6rem}
+#viewer{position:fixed;inset:0;background:rgba(15,23,42,.72);display:flex;align-items:center;justify-content:center;z-index:50}
+#viewer[hidden]{display:none}
+.vbox{background:#fff;border-radius:14px;width:94vw;height:92vh;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.vhead{display:flex;justify-content:space-between;align-items:center;padding:.7rem 1.1rem;border-bottom:1px solid var(--line);font-weight:600;font-size:.9rem}
+.vhead a{color:var(--accent);font-size:.78rem;text-decoration:none}
+.vhead button{font-size:.8rem}
+.vbody{flex:1;overflow:auto;padding:1.2rem;display:flex;align-items:flex-start;justify-content:center}
+.vbody img{max-width:100%;max-height:100%;object-fit:contain}
+.vbody .mdview{width:100%;max-width:860px;margin:0 auto;font-size:.9rem}
+.vbody .mdview h1{font-size:1.4rem}.vbody .mdview h2{font-size:1.15rem}.vbody .mdview h3{font-size:1rem}
+.vbody .mdview table{font-size:.82rem}
+.vside{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:72px;border:none;border-radius:10px;background:rgba(15,23,42,.55);color:#fff;font-size:1.8rem;cursor:pointer;z-index:5}
+.vside:hover{background:var(--accent)}
+#vsprev{left:12px}#vsnext{right:12px}
+.vside[hidden]{display:none}
+.gidx{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:1rem;position:sticky;top:0;background:var(--card);padding:.5rem 0;z-index:10;border-bottom:1px solid var(--line)}
+.gidx a{display:inline-block;min-width:1.7rem;text-align:center;font-size:.78rem;font-weight:700;color:var(--muted);text-decoration:none;padding:.25rem .4rem;border-radius:6px}
+.gidx a:hover{background:#eff6ff;color:var(--accent)}
+.gidx a.on{background:var(--accent);color:#fff}
+.gidx-off{display:inline-block;min-width:1.7rem;text-align:center;font-size:.78rem;font-weight:700;color:#d1d5db;padding:.25rem .4rem;border-radius:6px}
+.stepidx{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem}
+.stepidx .lbl{font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.05em;margin-right:.2rem}
+.stepidx a{display:inline-block;min-width:2rem;text-align:center;font-size:.8rem;font-weight:700;color:var(--muted);text-decoration:none;padding:.35rem .55rem;border-radius:8px;border:1px solid var(--line);background:#fff}
+.stepidx a:hover{border-color:var(--accent);color:var(--accent)}
+.stepidx a.cur{background:var(--accent);border-color:var(--accent);color:#fff}
+.ggroup{margin:1rem 0 .4rem;font-size:.95rem;font-weight:700;color:var(--accent)}
+[hidden]{display:none!important}
+</style></head><body>
+<div class="wrap">
+<nav class="topnav">
+<a class="brand" href="#top">📘 10_gitops_infra</a>
+<a href="#tab-overview">개요</a><a href="#tab-slides">슬라이드</a><a href="#tab-practice">실습</a><a href="#tab-help">도움말</a>
+</nav>
+<div class="stepidx"><span class="lbl">단계</span><a href="../index.html">⌂</a><a href="../00_intro/index.html">0</a><a href="../01_terraform/index.html">1</a><a href="../02_practice/index.html">2</a><a href="../03_real/index.html">3</a><a href="../04_https/index.html">4</a></div>
+<div class="hero" id="top">
+<div class="eyebrow">STEP 10 · CI/CD · PIPELINE</div>
+<h1>CI/CD — GitHub 인프라 파이프라인</h1>
+<p class="sub"></p>
+<div class="steps">
+<span>S3 backend + DynamoDB — CI 환경에서 필수인 원격 state·잠금</span><span>CodeConnections — GitHub을 파이프라인 소스로 연결 (push = 트리거, OAuth 승인 1회 수동)</span><span>CodeBuild — terraform 설치 → init → validate → plan → apply 실행</span><span>CodePipeline — 단계 오케스트레이션 + artifact 전달 + 수동 승인 게이트</span><span>webhook — CodeConnections가 push 감지 (EventBridge 불필요)</span>
+</div>
+</div>
+<section class="ltab on" id="tab-overview">
+<div class="ltitle">개요 — STEP 10 학습 내용</div>
+<h3>이론적 배경</h3><p>로컬 <code>terraform apply</code>는 개발자 PC에서 state를 만지지만, 팀·자동화 환경에서는 state를 <b>S3 backend</b>에 두고 DynamoDB로 잠급니다. 파이프라인의 CodeBuild는 이 S3 state를 읽어 plan→apply합니다. plan과 apply 사이에 수동 승인을 둬서 &quot;계획 확인 없이 인프라가 바뀌는&quot; 사고를 막습니다.</p>
+<h3>학습 목표</h3><ul><li>CodeConnections로 GitHub을 CodePipeline 소스로 연결하는 법을 안다</li><li>Terraform을 CI/CD에 올릴 때 필요한 S3 backend·DynamoDB lock을 설명할 수 있다</li><li>buildspec.yml의 phases 구조를 읽을 수 있다</li><li>plan→승인→apply 게이트가 왜 필요한지 설명할 수 있다</li></ul>
+<h3>핵심 내용</h3><ul><li>S3 backend + DynamoDB — CI 환경에서 필수인 원격 state·잠금</li><li>CodeConnections — GitHub을 파이프라인 소스로 연결 (push = 트리거, OAuth 승인 1회 수동)</li><li>CodeBuild — terraform 설치 → init → validate → plan → apply 실행</li><li>CodePipeline — 단계 오케스트레이션 + artifact 전달 + 수동 승인 게이트</li><li>webhook — CodeConnections가 push 감지 (EventBridge 불필요)</li></ul>
+<h3>만드는 리소스 (15개)</h3><p>저장소 계층 (02-state.tf): tfstate 버킷(+버저닝·암호화·공개차단) · DynamoDB lock · artifact 버킷 — 7개</p>
+<p>파이프라인 (main.tf):</p>
+<table><tr><th>리소스</th><th>역할</th></tr><tr><td><code>aws_codestarconnections_connection.github</code></td><td>GitHub 연결 — 소스·트리거 역할 (콘솔 승인 1회 필요)</td></tr><tr><td><code>aws_iam_role.codebuild</code> + admin</td><td>빌드 실행 역할 (11_gitops_app도 공용)</td></tr><tr><td><code>aws_codebuild_project.plan/apply</code></td><td>terraform plan / apply 실행기</td></tr><tr><td><code>aws_iam_role.pipeline</code> + 정책</td><td>파이프라인 실행 역할 (11_gitops_app도 공용)</td></tr><tr><td><code>aws_codepipeline.tf</code></td><td>Source→Plan→Approve→Apply 4단계</td></tr></table>
+<h3>실행</h3><pre><code>terraform init
+terraform apply          # 저장소 계층 + 파이프라인 한 번에 생성
+terraform output backend_snippet   # 03_real backend 설정</code></pre>
+<h3>수동 1단계 — GitHub 연결 승인</h3><p>connection은 apply 직후 <code>PENDING</code> 상태입니다 — OAuth 악수는 자동화가 불가합니다.</p>
+<ol><li>콘솔 → <b>Developer Tools → Connections</b> (또는 CodePipeline → 설정 → 연결)</li><li><code>&lt;project&gt;-github</code> 선택 → <b>Update pending connection</b> → GitHub 앱 설치·승인</li><li>상태가 <code>AVAILABLE</code>이 되면 완료 — 이 이후 push부터 파이프라인이 자동 실행</li></ol>
+<h3>사용 흐름</h3><pre><code># 1) 03_real을 S3 backend로 전환
+cd 03_real &amp;&amp; terraform init -migrate-state
+
+# 2) 평소처럼 GitHub에 push — CodeCommit·별도 리모트 없음
+git push origin main    # main 브랜치 감시 → 파이프라인 자동 실행</code></pre>
+<ul><li>CodePipeline 콘솔에서 Source→Plan→Approve→Apply 확인</li><li>Approve에서 멈추는 게 정상 — Plan 로그를 보고 승인</li></ul>
+<h3>핵심 포인트</h3><ul><li>이 단계의 state는 <b>로컬</b> — <code>terraform.tfstate</code> 파일이 버킷·파이프라인 전부를 추적합니다.</li><li>공용 IAM 역할 2개는 이 단계 소유 — <code>outputs.tf</code>로 11_gitops_app에 전달됩니다.</li><li>소스가 GitHub 리포 전체라 <code>TF_DIR</code>(기본 <code>03_real</code>)·<code>buildspec</code> 경로는 리포 안 위치와 일치해야 합니다.</li><li>앱 배포 파이프라인(dev 브랜치 기반)은 <code>11_gitops_app</code>에서 다룹니다.</li></ul>
+<h3>실습 순서 — GitHub 리포 1개로 끝</h3><p>파이프라인 소스는 <b>이 GitHub 리포</b>입니다 — <code>git push origin main</code>이 곧 트리거.</p>
+<p><code>main</code> = 인프라(운영), <code>dev</code> = 앱(개발) — 브랜치가 두 파이프라인의 경계입니다.</p>
+<h4>준비</h4>
+<ul><li><code>03_real</code> apply 완료 (EKS 포함) + 로컬에 terraform·git·aws cli·kubectl</li><li>git 명령은 전부 <b>리포 루트</b>에서 실행</li></ul>
+<h4>Step 1 — 저장소 계층</h4>
+<pre><code>cd 10_gitops_infra
+terraform init &amp;&amp; terraform apply
+terraform output backend_snippet          # 다음 단계에서 붙여넣을 블록</code></pre>
+<h4>Step 2 — 인프라 파이프라인</h4>
+<pre><code># 1) 03_real/versions.tf의 terraform {} 블록에 backend_snippet 붙여넣기
+cd 03_real &amp;&amp; terraform init -migrate-state   # state를 S3로 이동
+
+# 2) 파이프라인 생성 — GitHub connection이 함께 만들어짐
+cd 10_gitops_infra &amp;&amp; terraform init &amp;&amp; terraform apply
+
+# 3) ★ 수동 1회: 콘솔 → Developer Tools → Connections →
+#    &#x27;&lt;project&gt;-github&#x27; → &quot;Update pending connection&quot; → GitHub 앱 설치·승인 → AVAILABLE
+
+# 4) 평소처럼 GitHub에 push — 이게 트리거
+git push origin main                                # 첫 실행은 콘솔 &#x27;변경 릴리스&#x27; 또는 새 push</code></pre>
+<p>CodePipeline 콘솔에서 Source→Plan→Approve→Apply를 관찰 — Approve에서 멈추면 Plan 로그를 보고 승인.</p>
+<p>검증: <code>cd 03_real &amp;&amp; terraform plan</code> → <code>No changes</code>면 파이프라인이 S3 state를 갱신한 것.</p>
+<pre><code># 이후 실습: 03_real 코드를 조금 바꾸고 → git push origin main → plan diff 확인 → 승인</code></pre>
+<h4>Step 3 — 앱 파이프라인 → <code>11_gitops_app</code>으로 분리됨</h4>
+<p>앱 배포는 같은 리포의 <code>dev</code> 브랜치를 트리거로 쓰는 별도 단계 <code>11_gitops_app</code>에서 진행합니다 —</p>
+<p>&quot;리포는 하나, 환경은 브랜치로&quot;라는 GitOps 패턴입니다.</p>
+<h4>정리 — destroy는 역순, 로컬에서</h4>
+<pre><code>cd 11_gitops_app &amp;&amp; terraform destroy                # 사용했다면
+cd 10_gitops_infra &amp;&amp; terraform destroy  # 2
+cd 10_gitops_infra &amp;&amp; terraform destroy             # 1 — S3 버킷 비운 뒤 가능</code></pre>
+<p>remote_state로 10_gitops_infra를 참조하는 단계가 남아있으면 10_gitops_infra를 지울 수 없습니다.</p>
+<h3>이 파이프라인의 범위</h3><p>이 단계가 만드는 것은 <b>인프라 파이프라인</b>입니다 — <code>.tf</code> 코드 변경을 자동 배포합니다.</p>
+<p>애플리케이션 배포는 별도 파이프라인입니다:</p>
+<pre><code>[인프라 파이프라인]  ← 이 디렉터리가 만드는 것 (main 브랜치 소스)
+.tf push → plan → 승인 → apply   (VPC·EKS·RDS 같은 뼈대)
+
+[앱 파이프라인]      ← 11_gitops_app이 만드는 것 (dev 브랜치 소스)
+앱 코드 push → docker build → ECR push → EKS 배포</code></pre>
+<table><tr><th>앱 파이프라인 구성 요소</th><th>AWS 서비스</th></tr><tr><td>이미지 빌드 → ECR push</td><td>CodeBuild + ECR</td></tr><tr><td>EKS 배포</td><td>CodeBuild에서 <code>kubectl apply</code> (또는 helm)</td></tr><tr><td>EC2 배포</td><td>CodeDeploy (blue/green)</td></tr><tr><td>실패 복귀</td><td><code>kubectl rollout undo</code> / CodeDeploy 자동 롤백</td></tr><tr><td>결과 알림</td><td>SNS / EventBridge</td></tr></table>
+<h3>앱 배포 파이프라인 → 11_gitops_app</h3><p>앱 배포(앱 소스 push → 이미지 빌드 → EKS 배포)는 <code>dev</code> 브랜치를 감시하는</p>
+<p><code>11_gitops_app</code> 단계로 분리했습니다 — 전제(aws-auth)와 절차는 그쪽 readme를 보세요.</p>
+<h3>실습 시나리오</h3><p><b>장면</b>: 수동 <code>terraform apply</code>로 관리하던 03_real 인프라를 GitOps로 전환 — push만으로 배포되는 구조를 직접 경험합니다.</p>
+<h4>준비 — 파이프라인 인프라 생성</h4>
+<pre><code>cd 10_gitops_infra &amp;&amp; terraform init &amp;&amp; terraform apply
+cd 10_gitops_infra &amp;&amp; terraform init &amp;&amp; terraform apply
+terraform output backend_snippet    # 03_real용 backend 설정 복사</code></pre>
+<h4>장면 1 — 로컬 state → S3 backend 전환</h4>
+<ol><li><code>03_real/versions.tf</code>의 <code>terraform {}</code> 블록에 backend_snippet 붙여넣기</li><li><code>cd 03_real &amp;&amp; terraform init -migrate-state</code> → <code>yes</code></li><li><code>terraform state list</code> — S3에서 읽히는지 확인, S3 콘솔에서 state 파일 확인</li></ol>
+<blockquote style="border-left:3px solid var(--accent);margin:.6rem 0;padding:.3rem .9rem;color:var(--muted);background:#f8fafc;border-radius:0 8px 8px 0"></blockquote>
+<h4>장면 2 — 첫 파이프라인 실행</h4>
+<pre><code>git push origin main   # 평소 push 그대로 — connection 승인 후엔 이게 트리거</code></pre>
+<ul><li>CodePipeline 콘솔에서 Source → Plan 단계가 초록→파랑으로 진행</li><li>Plan 완료 후 <b>Approve에서 파이프라인이 멈춥니다</b> — 승인 없이는 인프라가 안 바뀜</li></ul>
+<h4>장면 3 — 승인 게이트 경험</h4>
+<ol><li>Plan 단계 로그(CodeBuild)에서 <code>Plan: 0 to add</code> 확인</li><li>Approve의 승인 버튼 클릭 → Apply 실행 → 완료</li></ol>
+<h4>장면 4 — 실제 변경 배포</h4>
+<ol><li><code>03_real/main.tf</code>에서 태그 하나 수정 (예: default_tags에 <code>Env = &quot;cicd&quot;</code> 추가)</li><li><code>git commit -am &quot;add env tag&quot; &amp;&amp; git push origin main</code></li><li>파이프라인이 <b>자동으로 다시 시작</b> → Plan 로그에 실제 diff 표시</li><li>로그를 읽고 승인 → apply 완료 → AWS에서 태그 확인</li></ol>
+<h4>장면 5 — 실패 경험 (의도적 오류)</h4>
+<ol><li><code>03_real</code>에 문법 오류를 넣고 push (예: 중괄호 하나 삭제)</li><li>Plan 단계가 <b>빨갛게 실패</b> — 파이프라인이 잘못된 코드를 차단</li><li>로그에서 에러 확인 → 고쳐서 push → 정상 통과 확인</li></ol>
+<blockquote style="border-left:3px solid var(--accent);margin:.6rem 0;padding:.3rem .9rem;color:var(--muted);background:#f8fafc;border-radius:0 8px 8px 0"></blockquote>
+<h4>선택 — 앱 파이프라인 (EKS 필요)</h4>
+<p><code>11_gitops_app</code> 참조 — <code>dev</code> 브랜치에 push하면 이미지 빌드→EKS 배포.</p>
+<h4>파이프라인 테스트 — &quot;CI/CD가 동작한다&quot;는 뭘 확인하는가</h4>
+<p>apply가 된 것과 파이프라인이 동작하는 것은 다른 문제입니다. 아래 항목을 순서대로 검증합니다.</p>
+<p><b>테스트 ① 트리거 — push가 파이프라인을 시작시키는가</b></p>
+<pre><code>echo &quot;# test&quot; &gt;&gt; ../../03_real/main.tf &amp;&amp; git commit -am &quot;ci test&quot; &amp;&amp; git push origin main</code></pre>
+<ul><li><b>확인</b>: CodePipeline 콘솔에서 새 실행이 시작됨 — CodeBuild를 수동 실행하지 않았는데 시작됐다면 webhook 감지 성공</li><li><b>실패 시</b>: connection이 PENDING → 콘솔에서 승인했는지 확인 / <code>github_repo</code> 변수가 실제 리포인지 확인</li></ul>
+<p><b>테스트 ② 각 단계가 순서대로 성공하는가</b></p>
+<table><tr><th>단계</th><th>확인할 것</th><th>성공 기준</th></tr><tr><td>Source</td><td>SourceArtifact가 artifact 버킷에 저장됨</td><td>단계 초록</td></tr><tr><td>Plan</td><td>CodeBuild 로그에 <code>terraform plan</code> 출력</td><td>&quot;Plan: N to add&quot; 로그</td></tr><tr><td>Approve</td><td>실행이 멈춤</td><td>콘솔에 승인 버튼 대기 — <b>파이프라인이 알아서 안 넘어감</b></td></tr><tr><td>Apply</td><td><code>terraform apply tfplan</code> 로그</td><td>plan 결과와 동일하게 적용</td></tr></table>
+<p><b>테스트 ③ 승인 게이트가 실제로 막는가</b></p>
+<ul><li>Plan까지 성공 후 <b>승인을 안 누름</b> → Apply가 실행되지 않는 걸 확인 (게이트 동작 증명)</li><li>승인 누르기 전 Plan 로그의 변경 내용 읽기 — 승인 = &quot;이 plan을 승인&quot;임을 체감</li></ul>
+<p><b>테스트 ④ 거부 — 잘못된 코드를 차단하는가</b></p>
+<pre><code># 일부러 문법 오류 넣고 push
+sed -i &#x27;&#x27; &#x27;s/cidr_block = /cidr_block == /&#x27; ../../03_real/main.tf
+git commit -am &quot;broken&quot; &amp;&amp; git push origin main
+# → Plan 단계 빨간색 → 파이프라인 멈춤 → 되돌리고 재push</code></pre>
+<ul><li><b>이게 CI/CD의 핵심 가치</b>: 로컬이었다면 에러가 &quot;내 터미널&quot;에서 끝나지만, 파이프라인에서는 &quot;배포가 차단&quot;됩니다.</li></ul>
+<p><b>테스트 ⑤ 상태 정합 — 파이프라인 apply 후 state가 갱신됐는가</b></p>
+<pre><code>cd 03_real &amp;&amp; terraform plan   # 로컬에서 확인
+# → &quot;No changes&quot;가 나와야 함 — CodeBuild가 S3 state를 갱신했기 때문
+# drift가 뜨면 state가 제대로 동기화 안 된 것</code></pre>
+<p><b>테스트 ⑥ 앱 파이프라인 (11_gitops_app — 선택)</b></p>
+<pre><code># app 코드 수정 → git push origin main:dev → Build(docker)·Deploy(kubectl) 로그 확인
+kubectl get pods -l app=sample-app -w   # 새 pod 롤링 확인
+kubectl rollout status deployment/sample-app</code></pre>
+<ul><li>이미지 태그 = 커밋 해시 앞 8자리 — <code>kubectl describe deploy</code>로 태그가 새 값인지 확인하면 &quot;내 push가 배포됐다&quot;가 증명됩니다.</li></ul>
+<h4>정리</h4>
+<pre><code>cd 11_gitops_app &amp;&amp; terraform destroy   # 사용했다면
+cd ../10_gitops_infra &amp;&amp; terraform destroy        # tfstate 버킷은 prevent_destroy로 보호됨</code></pre>
+<h3>주의사항</h3><ul><li>connection 승인(PENDING→AVAILABLE)을 안 하면 파이프라인이 Source에서 멈춥니다 — OAuth는 수동 1회</li><li>CodeBuild는 빌드 시간만큼 과금 (소액), 수동 승인 대기는 무료</li><li><code>tfstate</code> 버킷은 <code>prevent_destroy</code> — 삭제하려면 수동으로 라이프사이클 해제</li><li>CodeBuild 역할에 AdministratorAccess — <b>학습용 한정</b>, 실무는 최소권한으로 교체</li></ul>
+<h3>산출물 · 완료 기준</h3><ul><li>git push 한 번으로 plan→승인→apply가 돌아가는 파이프라인</li><li>원격 state(S3+DynamoDB) 구조 이해</li></ul><ul><li>[ ] 파이프라인 4단계(Source·Plan·Approve·Apply)의 역할을 설명할 수 있다</li><li>[ ] 로컬 state와 S3 backend의 차이를 안다</li><li>[ ] buildspec의 install/build/artifacts를 읽을 수 있다</li></ul>
+<h3>프로젝트 구조</h3>
+<div class="dtree"><div class="dtn">10_gitops_infra/</div><div class="dtl"><a href="01-provider.tf">01-provider.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="02-state.tf">02-state.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="03-outputs.tf">03-outputs.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl"><a href="buildspec-apply.yml">buildspec-apply.yml</a></div><div class="dtl"><a href="buildspec-plan.yml">buildspec-plan.yml</a></div><div class="dtl">index.html <span class="dt-note">— 포털 페이지</span></div><div class="dtl"><a href="main.tf">main.tf</a> <span class="dt-note">— Terraform 설정</span></div><div class="dtl">readme.md <span class="dt-note">— 단계 학습 문서</span></div><div class="dtl">terraform.tfstate <span class="dt-note">— Terraform 상태 파일</span></div><div class="dtl">terraform.tfstate.backup <span class="dt-note">— state 백업</span></div><div class="dtl"><a href="variables.tf">variables.tf</a> <span class="dt-note">— Terraform 설정</span></div><details class="dt" open><summary>slides/</summary><div class="dt-kids"><div class="dtl">readme.md <span class="dt-note">— 단계 학습 문서</span></div><div class="dtl">s01-title.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s02-steps.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s03-arch-all.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s04-backend.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s05-backend-arch.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s06-backend-detail.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s07-backend-test.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s08-pipeline.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s09-flow.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s10-test.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s11-pipeline-test.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s12-solutions.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s13-review-questions.svg <span class="dt-note">— 슬라이드 SVG</span></div><div class="dtl">s14-review-answers.svg <span class="dt-note">— 슬라이드 SVG</span></div></div></details></div>
+
+
+
+</section>
+<section class="ltab" id="tab-slides" hidden>
+<div class="ltitle">슬라이드 — 발표 자료 (SVG)</div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s01-title · s01 title</span><span class="badge">SVG</span></div><img src="slides/s01-title.svg" alt="s01 title" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s02-steps · s02 steps</span><span class="badge">SVG</span></div><img src="slides/s02-steps.svg" alt="s02 steps" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s03-arch-all · s03 arch all</span><span class="badge">SVG</span></div><img src="slides/s03-arch-all.svg" alt="s03 arch all" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s04-backend · s04 backend</span><span class="badge">SVG</span></div><img src="slides/s04-backend.svg" alt="s04 backend" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s05-backend-arch · s05 backend arch</span><span class="badge">SVG</span></div><img src="slides/s05-backend-arch.svg" alt="s05 backend arch" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s06-backend-detail · s06 backend detail</span><span class="badge">SVG</span></div><img src="slides/s06-backend-detail.svg" alt="s06 backend detail" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s07-backend-test · s07 backend test</span><span class="badge">SVG</span></div><img src="slides/s07-backend-test.svg" alt="s07 backend test" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s08-pipeline · s08 pipeline</span><span class="badge">SVG</span></div><img src="slides/s08-pipeline.svg" alt="s08 pipeline" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s09-flow · s09 flow</span><span class="badge">SVG</span></div><img src="slides/s09-flow.svg" alt="s09 flow" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s10-test · s10 test</span><span class="badge">SVG</span></div><img src="slides/s10-test.svg" alt="s10 test" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s11-pipeline-test · s11 pipeline test</span><span class="badge">SVG</span></div><img src="slides/s11-pipeline-test.svg" alt="s11 pipeline test" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s12-solutions · s12 solutions</span><span class="badge">SVG</span></div><img src="slides/s12-solutions.svg" alt="s12 solutions" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s13-review-questions · s13 review questions</span><span class="badge">SVG</span></div><img src="slides/s13-review-questions.svg" alt="s13 review questions" loading="lazy"></div>
+<div class="dgi"><div class="dgi-head"><span class="dgi-t">s14-review-answers · s14 review answers</span><span class="badge">SVG</span></div><img src="slides/s14-review-answers.svg" alt="s14 review answers" loading="lazy"></div>
+</section>
+<section class="ltab" id="tab-practice" hidden>
+<div class="ltitle">실습 — STEP 10 실행</div>
+<p>아래 명령은 <b>터미널</b>에서 프로젝트 루트(<code>aws-tf/</code>) 기준으로 실행합니다.</p>
+<h3>실행 방법</h3>
+<p class="sub">복사 버튼으로 명령을 가져간 뒤 터미널에 붙여넣기 (⌘V) 하세요.</p>
+<div class="codebox"><pre><code>terraform init</code></pre><button class="copybtn" id="copyCmd">복사</button></div>
+<p class="sub" id="copyMsg" style="margin-top:.4rem"></p>
+
+
+<h3>추가 명령</h3><div class="codebox"><pre><code># 1) 03_real을 S3 backend로 전환
+cd 03_real &amp;&amp; terraform init -migrate-state
+
+# 2) 평소처럼 GitHub에 push — CodeCommit·별도 리모트 없음
+git push origin main    # main 브랜치 감시 → 파이프라인 자동 실행</code></pre></div>
+<div class="codebox"><pre><code>cd 10_gitops_infra
+terraform init &amp;&amp; terraform apply
+terraform output backend_snippet          # 다음 단계에서 붙여넣을 블록</code></pre></div>
+<div class="codebox"><pre><code># 1) 03_real/versions.tf의 terraform {} 블록에 backend_snippet 붙여넣기
+cd 03_real &amp;&amp; terraform init -migrate-state   # state를 S3로 이동
+
+# 2) 파이프라인 생성 — GitHub connection이 함께 만들어짐
+cd 10_gitops_infra &amp;&amp; terraform init &amp;&amp; terraform apply
+
+# 3) ★ 수동 1회: 콘솔 → Developer Tools → Connections →
+#    &#x27;&lt;project&gt;-github&#x27; → &quot;Update pending connection&quot; → GitHub 앱 설치·승인 → AVAILABLE
+
+# 4) 평소처럼 GitHub에 push — 이게 트리거
+git push origin main                                # 첫 실행은 콘솔 &#x27;변경 릴리스&#x27; 또는 새 push</code></pre></div>
+<div class="codebox"><pre><code># 이후 실습: 03_real 코드를 조금 바꾸고 → git push origin main → plan diff 확인 → 승인</code></pre></div>
+<div class="codebox"><pre><code>cd 11_gitops_app &amp;&amp; terraform destroy                # 사용했다면
+cd 10_gitops_infra &amp;&amp; terraform destroy  # 2
+cd 10_gitops_infra &amp;&amp; terraform destroy             # 1 — S3 버킷 비운 뒤 가능</code></pre></div>
+<div class="codebox"><pre><code>cd 10_gitops_infra &amp;&amp; terraform init &amp;&amp; terraform apply
+cd 10_gitops_infra &amp;&amp; terraform init &amp;&amp; terraform apply
+terraform output backend_snippet    # 03_real용 backend 설정 복사</code></pre></div>
+<div class="codebox"><pre><code>git push origin main   # 평소 push 그대로 — connection 승인 후엔 이게 트리거</code></pre></div>
+<div class="codebox"><pre><code>echo &quot;# test&quot; &gt;&gt; ../../03_real/main.tf &amp;&amp; git commit -am &quot;ci test&quot; &amp;&amp; git push origin main</code></pre></div>
+<div class="codebox"><pre><code># 일부러 문법 오류 넣고 push
+sed -i &#x27;&#x27; &#x27;s/cidr_block = /cidr_block == /&#x27; ../../03_real/main.tf
+git commit -am &quot;broken&quot; &amp;&amp; git push origin main
+# → Plan 단계 빨간색 → 파이프라인 멈춤 → 되돌리고 재push</code></pre></div>
+<div class="codebox"><pre><code>cd 03_real &amp;&amp; terraform plan   # 로컬에서 확인
+# → &quot;No changes&quot;가 나와야 함 — CodeBuild가 S3 state를 갱신했기 때문
+# drift가 뜨면 state가 제대로 동기화 안 된 것</code></pre></div>
+<div class="codebox"><pre><code># app 코드 수정 → git push origin main:dev → Build(docker)·Deploy(kubectl) 로그 확인
+kubectl get pods -l app=sample-app -w   # 새 pod 롤링 확인
+kubectl rollout status deployment/sample-app</code></pre></div>
+<div class="codebox"><pre><code>cd 11_gitops_app &amp;&amp; terraform destroy   # 사용했다면
+cd ../10_gitops_infra &amp;&amp; terraform destroy        # tfstate 버킷은 prevent_destroy로 보호됨</code></pre></div>
+<h3>소스 구조</h3><h3>파일·디렉터리 역할</h3><table><tr><th>경로</th><th>역할</th></tr><tr><td><code>10_gitops_infra/</code></td><td>공용 저장소 — tfstate·lock·artifact 버킷</td></tr><tr><td><code>10_gitops_infra/</code></td><td>인프라 파이프라인 + 공용 CodeBuild/Pipeline 역할</td></tr><tr><td><code>11_gitops_app/</code></td><td>앱 파이프라인 — dev 브랜치 소스, 10·11 출력을 remote_state로 참조</td></tr><tr><td><code>buildspec-*.yml</code></td><td>CodeBuild 실행 명령 — phases/artifacts</td></tr></table><h3>파일 맵 — .tf ↔ 선언 리소스</h3><table><tr><th>파일</th><th>리소스 / 데이터 소스</th></tr><tr><td><code>01-provider.tf</code></td><td><code>aws_caller_identity.current</code></td></tr><tr><td><code>02-state.tf</code></td><td><code>aws_s3_bucket.tfstate<br>aws_s3_bucket_versioning.tfstate<br>aws_s3_bucket_server_side_encryption_configuration.tfstate<br>aws_s3_bucket_public_access_block.tfstate<br>aws_dynamodb_table.tf_lock<br>aws_s3_bucket.artifacts<br>aws_s3_bucket_public_access_block.artifacts</code></td></tr><tr><td><code>03-outputs.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr><tr><td><code>main.tf</code></td><td><code>aws_codestarconnections_connection.github<br>aws_iam_policy_document.codebuild_assume<br>aws_iam_role.codebuild<br>aws_iam_role_policy_attachment.codebuild_admin<br>aws_codebuild_project.plan<br>aws_codebuild_project.apply<br>aws_iam_policy_document.pipeline_assume<br>aws_iam_role.pipeline<br>aws_iam_policy_document.pipeline<br>aws_iam_role_policy.pipeline<br>aws_codepipeline.tf</code></td></tr><tr><td><code>variables.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr></table>
+<p class="sub" style="margin-top:.8rem">※ 브라우저에서는 실행할 수 없습니다 — 명령을 복사해 터미널에 붙여넣으세요.</p>
+</section>
+<section class="ltab" id="tab-help" hidden>
+<div class="ltitle">도움말 — 페이지 사용법</div>
+<h3>탭 전환</h3>
+<p>상단 내비게이션을 클릭하면 해당 패널이 표시됩니다. 주소창 해시(<code>#tab-slides</code> 등)로 특정 탭에 바로 이동할 수 있습니다.</p>
+<h3>SVG 뷰어</h3>
+<ul>
+<li>슬라이드 탭의 <b>SVG 이미지를 클릭</b>하면 팝업 뷰어로 확대 표시됩니다</li>
+<li>뷰어에서 <code>‹</code> <code>›</code> 버튼 또는 <code>←</code> <code>→</code> 키로 이동합니다</li>
+<li><code>ESC</code> · <code>✕ 닫기</code> · 어두운 배경 클릭으로 닫습니다</li>
+</ul>
+
+<h3>단축키</h3>
+<table>
+<tr><th>키</th><th>동작</th></tr>
+<tr><td><code>←</code> <code>→</code></td><td>뷰어에서 이전/다음 슬라이드</td></tr>
+<tr><td><code>ESC</code></td><td>뷰어 닫기</td></tr>
+</table>
+<h3>참고</h3>
+<ul>
+<li>이 페이지는 <b>서버 없이</b> 동작합니다 — <code>index.html</code>을 브라우저로 바로 열면 됩니다</li>
+<li>탭 내용과 뷰어의 소스 코드는 생성 시점의 스냅샷입니다 — 원본이 수정되면 페이지 재생성이 필요합니다</li>
+</ul>
+</section>
+<footer>
+<span>10_gitops_infra · STEP 10 학습 자료</span>
+</footer>
+</div>
+<div id="md-src0" hidden><pre><code># ============================================================
+# 01-provider.tf — Terraform 코어·프로바이더 선언
+# ============================================================
+
+terraform {
+  required_version = &quot;&gt;= 1.6.0, &lt; 2.0.0&quot;
+
+  required_providers {
+    aws = {
+      source  = &quot;hashicorp/aws&quot;
+      version = &quot;~&gt; 5.0&quot;
+    }
+  }
+}
+
+provider &quot;aws&quot; {
+  region = var.aws_region
+
+  default_tags {
+    tags = {
+      Project   = &quot;aws-tf&quot;
+      Stage     = &quot;10_gitops_infra&quot;
+      ManagedBy = &quot;terraform&quot;
+    }
+  }
+}
+
+# 호출자 정보 — 계정 ID 참조용
+data &quot;aws_caller_identity&quot; &quot;current&quot; {}
+</code></pre></div><div id="md-src1" hidden><pre><code># ============================================================
+# 02-state.tf — 모든 CI/CD의 기반이 되는 저장소 계층
+#   tfstate 버킷 + DynamoDB lock + 파이프라인 artifact 버킷
+#   → 11_gitops_app이 outputs를 remote_state로 읽어간다
+# ============================================================
+
+# ---------- Terraform state backend (03_real이 사용) ----------
+# S3 버킷 — state·artifact 저장소
+resource &quot;aws_s3_bucket&quot; &quot;tfstate&quot; {
+  bucket = &quot;${var.project_name}-tfstate-${data.aws_caller_identity.current.account_id}&quot;
+  # destroy 금지 장치: state가 들어있는 버킷은 실수로 지우면 안 됨
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+# 버저닝 — state 실수 덮어쓰기 복구용
+resource &quot;aws_s3_bucket_versioning&quot; &quot;tfstate&quot; {
+  bucket = aws_s3_bucket.tfstate.id
+  versioning_configuration { status = &quot;Enabled&quot; } # state 이력 복구용
+}
+
+# SSE — 저장 데이터 암호화
+resource &quot;aws_s3_bucket_server_side_encryption_configuration&quot; &quot;tfstate&quot; {
+  bucket = aws_s3_bucket.tfstate.id
+  rule {
+    apply_server_side_encryption_by_default { sse_algorithm = &quot;AES256&quot; }
+  }
+}
+
+# 퍼블릭 차단 — state는 절대 공개 금지
+resource &quot;aws_s3_bucket_public_access_block&quot; &quot;tfstate&quot; {
+  bucket                  = aws_s3_bucket.tfstate.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+# DynamoDB lock — 동시 apply 방지 잠금 테이블
+resource &quot;aws_dynamodb_table&quot; &quot;tf_lock&quot; {
+  name         = &quot;${var.project_name}-tf-lock&quot;
+  billing_mode = &quot;PAY_PER_REQUEST&quot; # state lock 전용 — 사용량 거의 없음
+  hash_key     = &quot;LockID&quot;
+
+  attribute {
+    name = &quot;LockID&quot;
+    type = &quot;S&quot;
+  }
+}
+
+# ---------- 파이프라인 artifact 버킷 (인프라·앱 파이프라인 공용) ----------
+# S3 버킷 — state·artifact 저장소
+resource &quot;aws_s3_bucket&quot; &quot;artifacts&quot; {
+  bucket        = &quot;${var.project_name}-artifacts-${data.aws_caller_identity.current.account_id}&quot;
+  force_destroy = true # 실습용 — 비우고 삭제 가능하게
+}
+
+# 퍼블릭 차단 — state는 절대 공개 금지
+resource &quot;aws_s3_bucket_public_access_block&quot; &quot;artifacts&quot; {
+  bucket                  = aws_s3_bucket.artifacts.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+</code></pre></div><div id="md-src2" hidden><pre><code># ============================================================
+# outputs.tf — 11_gitops_app이 remote_state로 읽는 값 + 사용자 정보
+# ============================================================
+
+output &quot;artifacts_bucket&quot; {
+  description = &quot;파이프라인 artifact 저장 버킷&quot;
+  value       = aws_s3_bucket.artifacts.bucket
+}
+
+output &quot;artifacts_bucket_arn&quot; {
+  description = &quot;파이프라인 IAM 정책에 쓸 artifact 버킷 ARN&quot;
+  value       = aws_s3_bucket.artifacts.arn
+}
+
+output &quot;tfstate_bucket&quot; {
+  description = &quot;Terraform state 저장 버킷 (backend 설정용)&quot;
+  value       = aws_s3_bucket.tfstate.bucket
+}
+
+output &quot;tf_lock_table&quot; {
+  description = &quot;state 잠금 DynamoDB 테이블&quot;
+  value       = aws_dynamodb_table.tf_lock.name
+}
+
+output &quot;codebuild_role_arn&quot; {
+  description = &quot;11_gitops_app 앱 빌드·배포가 공용으로 쓰는 CodeBuild 역할&quot;
+  value       = aws_iam_role.codebuild.arn
+}
+
+output &quot;pipeline_role_arn&quot; {
+  description = &quot;11_gitops_app 앱 파이프라인이 공용으로 쓰는 CodePipeline 역할&quot;
+  value       = aws_iam_role.pipeline.arn
+}
+
+output &quot;pipeline_role_name&quot; {
+  description = &quot;같은 역할의 이름 — 11_gitops_app이 소스 리포 권한 정책을 부착할 때 사용&quot;
+  value       = aws_iam_role.pipeline.name
+}
+
+output &quot;github_connection_arn&quot; {
+  description = &quot;GitHub 연결 ARN — 콘솔에서 AVAILABLE 승인 후 파이프라인 동작&quot;
+  value       = aws_codestarconnections_connection.github.arn
+}
+
+output &quot;pipeline_name&quot; {
+  description = &quot;인프라 CodePipeline 이름&quot;
+  value       = aws_codepipeline.tf.name
+}
+
+output &quot;backend_snippet&quot; {
+  description = &quot;03_real/versions.tf에 붙여넣을 backend 설정&quot;
+  value       = &lt;&lt;-EOT
+    backend &quot;s3&quot; {
+      bucket         = &quot;${aws_s3_bucket.tfstate.bucket}&quot;
+      key            = &quot;${var.state_key}&quot;
+      region         = &quot;${var.aws_region}&quot;
+      dynamodb_table = &quot;${aws_dynamodb_table.tf_lock.name}&quot;
+    }
+  EOT
+}
+</code></pre></div><div id="md-src3" hidden><pre><code># ============================================================
+# buildspec-apply.yml — CodeBuild &quot;apply&quot; 단계 실행 스크립트
+#
+# plan 단계 artifact(리포 전체 + tfplan)를 입력으로 받는다.
+# 수동 승인이 끝난 뒤 실행되므로, 여기서 적용되는 계획은
+# 사람이 검토·승인한 바로 그 tfplan이다.
+#
+# 환경변수는 plan 단계와 동일하게 주입된다 (TF_VERSION·TF_DIR·
+# TFSTATE_BUCKET·TFSTATE_KEY·TFLOCK_TABLE).
+# ============================================================
+version: 0.2
+
+phases:
+  install:
+    # plan과 같은 방식으로 Terraform 설치 — 각 빌드는 독립 컨테이너라 매번 설치
+    commands:
+      - yum install -y unzip
+      - curl -fsSL -o tf.zip &quot;https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip&quot;
+      - unzip tf.zip &amp;&amp; mv terraform /usr/local/bin/terraform &amp;&amp; terraform version
+  build:
+    commands:
+      # artifact 안의 동일 경로로 이동 — tfplan 파일도 여기에 있다
+      - cd &quot;$TF_DIR&quot;
+
+      # 같은 S3 backend에 연결 — state 읽기·잠금·갱신이 여기서 일어난다.
+      # apply가 끝나면 로컬 `terraform plan`이 &quot;No changes&quot;를 반환해야 정상이다
+      - terraform init -input=false -backend-config=&quot;bucket=${TFSTATE_BUCKET}&quot; -backend-config=&quot;key=${TFSTATE_KEY}&quot; -backend-config=&quot;region=${AWS_DEFAULT_REGION}&quot; -backend-config=&quot;dynamodb_table=${TFLOCK_TABLE}&quot;
+
+      # 재계산 없이 저장된 계획 파일을 그대로 적용.
+      # apply 사이에 코드가 바뀌어도 승인된 계획만 반영된다
+      - terraform apply -input=false tfplan
+</code></pre></div><div id="md-src4" hidden><pre><code># ============================================================
+# buildspec-plan.yml — CodeBuild &quot;plan&quot; 단계 실행 스크립트
+#
+# CodeBuild는 이 파일을 소스 리포 안에서 찾아 phases 순서대로 실행한다.
+# 소스 artifact = GitHub 리포 전체(zip) — 리포 루트가 작업 디렉터리다.
+#
+# 주입되는 환경변수 (10_gitops_infra/main.tf의 aws_codebuild_project.plan 참조):
+#   TF_VERSION      설치할 Terraform 버전
+#   TF_DIR          terraform을 실행할 리포 내 디렉터리 (기본 03_real)
+#   TFSTATE_BUCKET  state를 저장할 S3 버킷 (10_gitops_infra가 생성)
+#   TFSTATE_KEY     버킷 안 state 파일 경로 (기본 03_real/terraform.tfstate)
+#   TFLOCK_TABLE    state 잠금 DynamoDB 테이블
+#   AWS_DEFAULT_REGION  CodeBuild 기본 제공 변수
+# ============================================================
+version: 0.2
+
+phases:
+  install:
+    # Terraform 바이너리 설치 — CodeBuild 표준 이미지에는 없어서 매번 내려받는다
+    commands:
+      - yum install -y unzip
+      - curl -fsSL -o tf.zip &quot;https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip&quot;
+      - unzip tf.zip &amp;&amp; mv terraform /usr/local/bin/terraform &amp;&amp; terraform version
+  build:
+    commands:
+      # 리포 루트 → 실제 배포 대상 .tf 코드가 있는 디렉터리로 이동
+      - cd &quot;$TF_DIR&quot;
+
+      # CI에서는 버전 관리된 코드만 있으므로 backend 설정을 명령행으로 주입한다.
+      # -input=false: 대화형 입력 금지 (CI에서 멈춤 방지)
+      # 로컬에서 versions.tf에 backend 블록을 써두는 것과 같은 효과
+      - terraform init -input=false -backend-config=&quot;bucket=${TFSTATE_BUCKET}&quot; -backend-config=&quot;key=${TFSTATE_KEY}&quot; -backend-config=&quot;region=${AWS_DEFAULT_REGION}&quot; -backend-config=&quot;dynamodb_table=${TFLOCK_TABLE}&quot;
+
+      # 문법·참조 검증 — 깨진 코드가 push되면 여기서 파이프라인이 멈춘다
+      - terraform validate
+
+      # 계획을 파일로 저장 — Apply 단계가 이 파일을 &quot;그대로&quot; 적용한다.
+      # 승인한 내용과 적용되는 내용이 일치함을 보장하는 장치
+      - terraform plan -input=false -out=tfplan
+
+artifacts:
+  # 리포 전체 + tfplan을 다음 단계(승인 → apply)로 전달한다.
+  # apply buildspec은 이 artifact 안의 tfplan을 찾아 적용한다.
+  files:
+    - &#x27;**/*&#x27;
+</code></pre></div><div id="md-src5" hidden><pre><code># ============================================================
+# main.tf — 인프라 GitOps 파이프라인
+#   .tf push → CodeBuild(plan) → 수동승인 → CodeBuild(apply)
+#   artifact 버킷·저장소 리소스는 같은 디렉터리의 02-state.tf
+# ============================================================
+
+# ---------- 소스: GitHub (CodeConnections) ----------
+# GitHub 연결 — apply 후 콘솔에서 PENDING → AVAILABLE 승인이 수동 1회 필요 (OAuth)
+resource &quot;aws_codestarconnections_connection&quot; &quot;github&quot; {
+  name          = &quot;${var.project_name}-github&quot;
+  provider_type = &quot;GitHub&quot;
+}
+
+# ---------- IAM: CodeBuild 역할 (11_gitops_app의 앱 빌드/배포도 공용) ----------
+# 정책 문서 — 역할 신뢰·권한 JSON 생성
+data &quot;aws_iam_policy_document&quot; &quot;codebuild_assume&quot; {
+  statement {
+    actions = [&quot;sts:AssumeRole&quot;]
+    principals {
+      type        = &quot;Service&quot;
+      identifiers = [&quot;codebuild.amazonaws.com&quot;]
+    }
+  }
+}
+
+# IAM 역할 — 파이프라인·빌드 실행 주체
+resource &quot;aws_iam_role&quot; &quot;codebuild&quot; {
+  name               = &quot;${var.project_name}-codebuild&quot;
+  assume_role_policy = data.aws_iam_policy_document.codebuild_assume.json
+}
+
+# 학습용 — terraform이 모든 리소스를 만들 수 있어야 하므로 관리형 정책 부여
+# 실무에서는 필요한 서비스만 추린 최소권한 정책을 작성한다
+# 역할↔관리형 정책 부착
+resource &quot;aws_iam_role_policy_attachment&quot; &quot;codebuild_admin&quot; {
+  role       = aws_iam_role.codebuild.name
+  policy_arn = &quot;arn:aws:iam::aws:policy/AdministratorAccess&quot;
+}
+
+# ---------- CodeBuild 프로젝트 ×2 ----------
+locals {
+  build_env = [
+    { name = &quot;TF_VERSION&quot;, value = var.tf_version },
+    { name = &quot;TF_DIR&quot;, value = var.tf_dir },
+    { name = &quot;TFSTATE_BUCKET&quot;, value = aws_s3_bucket.tfstate.bucket },
+    { name = &quot;TFSTATE_KEY&quot;, value = var.state_key },
+    { name = &quot;TFLOCK_TABLE&quot;, value = aws_dynamodb_table.tf_lock.name },
+  ]
+}
+
+# CodeBuild — plan/apply 실행 환경
+resource &quot;aws_codebuild_project&quot; &quot;plan&quot; {
+  name         = &quot;${var.project_name}-plan&quot;
+  service_role = aws_iam_role.codebuild.arn
+
+  source {
+    type      = &quot;CODEPIPELINE&quot; # 파이프라인이 소스를 전달
+    buildspec = &quot;10_gitops_infra/buildspec-plan.yml&quot;
+  }
+  artifacts { type = &quot;CODEPIPELINE&quot; }
+
+  environment {
+    compute_type = &quot;BUILD_GENERAL1_SMALL&quot;
+    image        = &quot;aws/codebuild/standard:7.0&quot;
+    type         = &quot;LINUX_CONTAINER&quot;
+
+    dynamic &quot;environment_variable&quot; {
+      for_each = local.build_env
+      content {
+        name  = environment_variable.value.name
+        value = environment_variable.value.value
+      }
+    }
+  }
+}
+
+# CodeBuild — plan/apply 실행 환경
+resource &quot;aws_codebuild_project&quot; &quot;apply&quot; {
+  name         = &quot;${var.project_name}-apply&quot;
+  service_role = aws_iam_role.codebuild.arn
+
+  source {
+    type      = &quot;CODEPIPELINE&quot;
+    buildspec = &quot;10_gitops_infra/buildspec-apply.yml&quot;
+  }
+  artifacts { type = &quot;CODEPIPELINE&quot; }
+
+  environment {
+    compute_type = &quot;BUILD_GENERAL1_SMALL&quot;
+    image        = &quot;aws/codebuild/standard:7.0&quot;
+    type         = &quot;LINUX_CONTAINER&quot;
+
+    dynamic &quot;environment_variable&quot; {
+      for_each = local.build_env
+      content {
+        name  = environment_variable.value.name
+        value = environment_variable.value.value
+      }
+    }
+  }
+}
+
+# ---------- IAM: CodePipeline 역할 (11_gitops_app 앱 파이프라인도 공용) ----------
+# 정책 문서 — 역할 신뢰·권한 JSON 생성
+data &quot;aws_iam_policy_document&quot; &quot;pipeline_assume&quot; {
+  statement {
+    actions = [&quot;sts:AssumeRole&quot;]
+    principals {
+      type        = &quot;Service&quot;
+      identifiers = [&quot;codepipeline.amazonaws.com&quot;]
+    }
+  }
+}
+
+# IAM 역할 — 파이프라인·빌드 실행 주체
+resource &quot;aws_iam_role&quot; &quot;pipeline&quot; {
+  name               = &quot;${var.project_name}-pipeline&quot;
+  assume_role_policy = data.aws_iam_policy_document.pipeline_assume.json
+}
+
+# 정책 문서 — 역할 신뢰·권한 JSON 생성
+data &quot;aws_iam_policy_document&quot; &quot;pipeline&quot; {
+  statement { # artifact 버킷 읽기/쓰기
+    actions   = [&quot;s3:Get*&quot;, &quot;s3:Put*&quot;, &quot;s3:ListBucket&quot;]
+    resources = [aws_s3_bucket.artifacts.arn, &quot;${aws_s3_bucket.artifacts.arn}/*&quot;]
+  }
+  statement { # GitHub 연결 사용
+    actions   = [&quot;codestar-connections:UseConnection&quot;]
+    resources = [aws_codestarconnections_connection.github.arn]
+  }
+  statement { # CodeBuild 실행·조회 — 인프라·앱 모든 프로젝트
+    actions   = [&quot;codebuild:StartBuild&quot;, &quot;codebuild:BatchGetBuilds&quot;, &quot;codebuild:StopBuild&quot;]
+    resources = [&quot;arn:aws:codebuild:${var.aws_region}:${data.aws_caller_identity.current.account_id}:project/${var.project_name}-*&quot;]
+  }
+}
+
+# 인라인 정책 — 역할의 구체 권한
+resource &quot;aws_iam_role_policy&quot; &quot;pipeline&quot; {
+  name   = &quot;${var.project_name}-pipeline&quot;
+  role   = aws_iam_role.pipeline.id
+  policy = data.aws_iam_policy_document.pipeline.json
+}
+
+# ---------- CodePipeline ----------
+# CodePipeline — 단계 오케스트레이션
+resource &quot;aws_codepipeline&quot; &quot;tf&quot; {
+  name     = &quot;${var.project_name}-pipeline&quot;
+  role_arn = aws_iam_role.pipeline.arn
+
+  artifact_store {
+    location = aws_s3_bucket.artifacts.bucket
+    type     = &quot;S3&quot;
+  }
+
+  stage {
+    name = &quot;Source&quot;
+    action {
+      name             = &quot;Source&quot;
+      category         = &quot;Source&quot;
+      owner            = &quot;AWS&quot;
+      provider         = &quot;CodeStarSourceConnection&quot;
+      version          = &quot;1&quot;
+      output_artifacts = [&quot;source_out&quot;]
+      configuration = {
+        ConnectionArn        = aws_codestarconnections_connection.github.arn
+        FullRepositoryId     = var.github_repo
+        BranchName           = var.repo_branch
+        OutputArtifactFormat = &quot;CODE_ZIP&quot;
+        DetectChanges        = &quot;true&quot; # webhook — push 감지 자동 실행
+      }
+    }
+  }
+
+  stage {
+    name = &quot;Plan&quot;
+    action {
+      name             = &quot;TerraformPlan&quot;
+      category         = &quot;Build&quot;
+      owner            = &quot;AWS&quot;
+      provider         = &quot;CodeBuild&quot;
+      version          = &quot;1&quot;
+      input_artifacts  = [&quot;source_out&quot;]
+      output_artifacts = [&quot;plan_out&quot;] # tfplan 파일을 다음 단계로 전달
+      configuration = {
+        ProjectName = aws_codebuild_project.plan.name
+      }
+    }
+  }
+
+  stage {
+    name = &quot;Approve&quot;
+    action {
+      name      = &quot;ManualApproval&quot;
+      category  = &quot;Approval&quot;
+      owner     = &quot;AWS&quot;
+      provider  = &quot;Manual&quot;
+      version   = &quot;1&quot;
+      run_order = 1
+      # 콘솔에서 plan 로그 확인 후 승인 버튼
+      configuration = {
+        CustomData = &quot;Plan 로그를 확인한 뒤 승인하세요&quot;
+      }
+    }
+  }
+
+  stage {
+    name = &quot;Apply&quot;
+    action {
+      name            = &quot;TerraformApply&quot;
+      category        = &quot;Build&quot;
+      owner           = &quot;AWS&quot;
+      provider        = &quot;CodeBuild&quot;
+      version         = &quot;1&quot;
+      input_artifacts = [&quot;plan_out&quot;] # plan 결과물 그대로 적용
+      configuration = {
+        ProjectName = aws_codebuild_project.apply.name
+      }
+    }
+  }
+}
+</code></pre></div><div id="md-src6" hidden><pre><code>variable &quot;aws_region&quot; {
+  description = &quot;AWS 리전&quot;
+  type        = string
+  default     = &quot;ap-northeast-2&quot;
+}
+
+variable &quot;project_name&quot; {
+  description = &quot;리소스 이름 접두사 (버킷·테이블·파이프라인 이름에 사용)&quot;
+  type        = string
+  default     = &quot;aws-tf-cicd&quot;
+}
+
+variable &quot;github_repo&quot; {
+  description = &quot;파이프라인 소스 GitHub 리포 — owner/repo 형식&quot;
+  type        = string
+  default     = &quot;yundo-main/aws-terraform&quot;
+}
+
+variable &quot;repo_branch&quot; {
+  description = &quot;파이프라인이 감지할 브랜치&quot;
+  type        = string
+  default     = &quot;main&quot;
+}
+
+variable &quot;tf_dir&quot; {
+  description = &quot;리포 안에서 terraform을 실행할 디렉터리 (배포 대상 코드 위치)&quot;
+  type        = string
+  default     = &quot;03_real&quot;
+}
+
+variable &quot;tf_version&quot; {
+  description = &quot;CodeBuild에 설치할 Terraform 버전&quot;
+  type        = string
+  default     = &quot;1.9.8&quot;
+}
+
+variable &quot;state_key&quot; {
+  description = &quot;S3 backend에 저장할 state 경로&quot;
+  type        = string
+  default     = &quot;03_real/terraform.tfstate&quot;
+}
+</code></pre></div>
+<div id="viewer" hidden><div class="vbox"><div class="vhead"><span id="vtitle"></span><span style="display:flex;gap:.8rem;align-items:center"><a id="vopen" href="#" target="_blank">새 탭에서 열기</a><button class="dgbtn" id="vclose">✕ 닫기</button></span></div><div class="vbody" id="vbody"></div><button class="vside" id="vsprev" hidden title="이전 슬라이드">‹</button><button class="vside" id="vsnext" hidden title="다음 슬라이드">›</button></div></div>
+<script>
+// ===== 탭 전환 (해시 동기화 + 활성 표시) =====
+const tabs=[...document.querySelectorAll('.ltab')];
+const navs=[...document.querySelectorAll('.topnav a[href^="#tab-"]')];
+function show(id){
+  const t=id&&document.getElementById(id)?id:'tab-overview';
+  tabs.forEach(x=>{x.classList.toggle('on',x.id===t);x.hidden=x.id!==t;});
+  navs.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+t));
+  if(location.hash!=='#'+t)history.replaceState(null,'','#'+t);
+}
+navs.forEach(a=>a.onclick=e=>{e.preventDefault();show(a.getAttribute('href').slice(1))});
+window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+show(location.hash.slice(1));
+
+// ===== 팝업 뷰어 =====
+const MD={'01-provider.tf':'md-src0','02-state.tf':'md-src1','03-outputs.tf':'md-src2','buildspec-apply.yml':'md-src3','buildspec-plan.yml':'md-src4','main.tf':'md-src5','variables.tf':'md-src6'};
+const $=id=>document.getElementById(id);
+let cur=null;
+function openViewer(href,title){
+  cur=href;
+  $('vtitle').textContent=title||href.split('/').pop();
+  $('vopen').href=href;
+  const body=$('vbody');body.innerHTML='';
+  const key=Object.keys(MD).sort((a,b)=>b.length-a.length).find(k=>href===k||href.endsWith('/'+k)||href.endsWith(k));
+  if(key){body.innerHTML='<div class="mdview">'+document.getElementById(MD[key]).innerHTML+'</div>';}
+  else{const im=new Image();im.src=href;im.style.maxWidth='100%';body.appendChild(im);}
+  // 슬라이드 목록 내 이전/다음
+  const slides=[...document.querySelectorAll('.dgi img')].map(i=>i.getAttribute('src'));
+  const idx=slides.indexOf(href);
+  $('vsprev').hidden=$('vsnext').hidden=idx<0;
+  if(idx>=0){
+    $('vsprev').onclick=()=>go(idx-1);$('vsnext').onclick=()=>go(idx+1);
+    window._slideIdx=idx;
+  }
+  $('viewer').hidden=false;
+}
+function go(i){
+  const slides=[...document.querySelectorAll('.dgi img')].map(x=>x.getAttribute('src'));
+  if(!slides.length)return;
+  const idx=((i%slides.length)+slides.length)%slides.length;
+  const src=slides[idx];
+  openViewer(src,src.split('/').pop());
+  window._slideIdx=idx;
+}
+function closeViewer(){$('viewer').hidden=true;cur=null}
+$('vclose').onclick=closeViewer;
+$('viewer').onclick=e=>{if(e.target===$('viewer'))closeViewer()};
+document.addEventListener('keydown',e=>{
+  if($('viewer').hidden)return;
+  if(e.key==='Escape')closeViewer();
+  if(e.key==='ArrowLeft')go((window._slideIdx||0)-1);
+  if(e.key==='ArrowRight')go((window._slideIdx||0)+1);
+});
+// SVG 이미지/링크 클릭 → 뷰어
+document.querySelectorAll('.dgi img').forEach(im=>im.onclick=()=>openViewer(im.getAttribute('src'),im.closest('.dgi').querySelector('.dgi-t')?.textContent||im.getAttribute('src').split('/').pop()));
+document.querySelectorAll('a[href$=".svg"],a[href$=".md"],a[href$=".tf"],a[href$=".sh"],a[href$=".txt"],a[href$=".json"],a[href$=".tfvars"],a[href$=".yml"],a[href$=".yaml"],a[href$=".hcl"]').forEach(a=>a.onclick=e=>{
+  const href=a.getAttribute('href');
+  if(href.startsWith('http'))return;
+  e.preventDefault();openViewer(href,href.split('/').pop());
+});
+// 뷰어 내부 링크도 재귀 처리
+document.addEventListener('click',e=>{
+  const a=e.target.closest&&e.target.closest('#vbody a');
+  if(!a)return;
+  const href=a.getAttribute('href');
+  if(!href||href.startsWith('http')||href.startsWith('#'))return;
+  e.preventDefault();openViewer(href,href.split('/').pop());
+});
+// ===== 명령어 복사 =====
+/* TODO: copy_cmd_js — copyCmd 버튼 핸들러 */
+
+const COPY_CMD='terraform init';$('copyCmd').onclick=()=>{navigator.clipboard.writeText(COPY_CMD).then(()=>{$('copyMsg').textContent='복사됨 — 터미널에 붙여넣기 (⌘V)'}).catch(()=>{$('copyMsg').textContent='복사 실패 — 직접 입력'})};</script>
+</body></html>

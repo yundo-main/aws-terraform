@@ -69,7 +69,7 @@
 | terraform_remote_state | 다른 state의 outputs를 읽는 데이터 소스 |
 | 고아 리소스 | state 없이 AWS에만 남은 리소스 — import 또는 삭제 필요 |
 | 노드그룹 | EKS 워커 EC2 묶음 — 오토스케일링 범위 설정 |
-| 단계별 디렉터리 | state를 나눈 실행 구조 — 10_cicd·11_app_pipeline이 사례 |
+| 단계별 디렉터리 | state를 나눈 실행 구조 — 10_gitops_infra·11_gitops_app이 사례 |
 | 라우팅 테이블 | 서브넷 트래픽의 목적지 규칙 |
 | 리소스 이름 | 코드 식별자 — 언더스코어 권장 (태그와 별개) |
 | 배스천 | 프라이빗망 진입용 경유 서버 |

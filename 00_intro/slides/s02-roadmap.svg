@@ -57,7 +57,7 @@
     <rect x="380" y="400" width="270" height="150" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
     <rect x="380" y="400" width="6" height="150" rx="3" fill="#1769aa"/>
     <text x="406" y="440" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="15" font-weight="600" fill="#1769aa" xml:space="preserve" style="white-space:pre">10 · CI/CD</text>
-    <text x="406" y="470" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="20" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">10_cicd</text>
+    <text x="406" y="470" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="20" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">10_gitops_infra</text>
     <text x="406" y="504" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">저장소 계층 + 인프라 파이프라인</text>
     <text x="406" y="530" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">main push → plan·승인·apply</text>
   </g>
@@ -66,7 +66,7 @@
     <rect x="685" y="400" width="270" height="150" rx="10" fill="#ffffff" stroke="#c9d5e1"/>
     <rect x="685" y="400" width="6" height="150" rx="3" fill="#1769aa"/>
     <text x="711" y="440" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="15" font-weight="600" fill="#1769aa" xml:space="preserve" style="white-space:pre">11 · 개발 (dev)</text>
-    <text x="711" y="470" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="20" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">11_app_pipeline</text>
+    <text x="711" y="470" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="20" font-weight="700" fill="#122033" xml:space="preserve" style="white-space:pre">11_gitops_app</text>
     <text x="711" y="504" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">docker build→ECR→EKS 배포</text>
     <text x="711" y="530" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif" font-size="16" fill="#516174" xml:space="preserve" style="white-space:pre">개발=자동 배포</text>
   </g>

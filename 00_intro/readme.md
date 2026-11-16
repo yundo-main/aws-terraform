@@ -16,8 +16,8 @@ Terraform으로 AWS 인프라를 코드로 관리하는 학습 과정의 전체 
 - `02_practice` — 번호 순서로 apply하는 입문 AWS 실습 (단일 state)
 - `03_real` — variables/outputs 분리·모듈화된 실전 레이아웃 (EKS·RDS 포함)
 - `04_https` — remote_state로 연결하는 선택 HTTPS 확장
-- `10_cicd` — 저장소 계층+GitHub 인프라 파이프라인 (main → plan·승인·apply)
-- `11_app_pipeline` — GitHub dev 브랜치 → docker·ECR·EKS 앱 배포
+- `10_gitops_infra` — 저장소 계층+GitHub 인프라 파이프라인 (main → plan·승인·apply)
+- `11_gitops_app` — GitHub dev 브랜치 → docker·ECR·EKS 앱 배포
 
 번호 순서가 진행 순서이며, 11은 10의 출력을 remote_state로 읽습니다.
 destroy는 역순(11→10) — 상세 구조는 `slides/`의 구조도 슬라이드를 보세요.
@@ -64,8 +64,8 @@ aws-tf/
 ├── 02_practice/        # 네트워크+컴퓨트 실습 .tf + 슬라이드 17장 + check.sh
 ├── 03_real/            # 실전 표준 레이아웃 + 슬라이드 9장 + origin/ 비교본
 ├── 04_https/           # ACM+HTTPS 확장 — remote_state로 03 참조
-├── 10_cicd/            # 저장소+GitHub 인프라 파이프라인 — main 브랜치
-└── 11_app_pipeline/    # dev 브랜치 — 앱 배포 파이프라인
+├── 10_gitops_infra/            # 저장소+GitHub 인프라 파이프라인 — main 브랜치
+└── 11_gitops_app/    # dev 브랜치 — 앱 배포 파이프라인
 ```
 
 ## 주의사항
