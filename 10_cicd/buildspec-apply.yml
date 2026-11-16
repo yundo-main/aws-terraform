@@ -1,15 +1,31 @@
-# CodeBuild — Terraform apply 단계
-# plan 단계가 만든 tfplan 파일을 그대로 적용
+# ============================================================
+# buildspec-apply.yml — CodeBuild "apply" 단계 실행 스크립트
+#
+# plan 단계 artifact(리포 전체 + tfplan)를 입력으로 받는다.
+# 수동 승인이 끝난 뒤 실행되므로, 여기서 적용되는 계획은
+# 사람이 검토·승인한 바로 그 tfplan이다.
+#
+# 환경변수는 plan 단계와 동일하게 주입된다 (TF_VERSION·TF_DIR·
+# TFSTATE_BUCKET·TFSTATE_KEY·TFLOCK_TABLE).
+# ============================================================
 version: 0.2
 
 phases:
   install:
+    # plan과 같은 방식으로 Terraform 설치 — 각 빌드는 독립 컨테이너라 매번 설치
     commands:
       - yum install -y unzip
       - curl -fsSL -o tf.zip "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip"
       - unzip tf.zip && mv terraform /usr/local/bin/terraform && terraform version
   build:
     commands:
+      # artifact 안의 동일 경로로 이동 — tfplan 파일도 여기에 있다
       - cd "$TF_DIR"
+
+      # 같은 S3 backend에 연결 — state 읽기·잠금·갱신이 여기서 일어난다.
+      # apply가 끝나면 로컬 `terraform plan`이 "No changes"를 반환해야 정상이다
       - terraform init -input=false -backend-config="bucket=${TFSTATE_BUCKET}" -backend-config="key=${TFSTATE_KEY}" -backend-config="region=${AWS_DEFAULT_REGION}" -backend-config="dynamodb_table=${TFLOCK_TABLE}"
+
+      # 재계산 없이 저장된 계획 파일을 그대로 적용.
+      # apply 사이에 코드가 바뀌어도 승인된 계획만 반영된다
       - terraform apply -input=false tfplan
