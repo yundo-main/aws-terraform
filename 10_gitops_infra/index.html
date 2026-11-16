@@ -128,22 +128,19 @@ git push origin main    # main 브랜치 감시 → 파이프라인 자동 실�
 <p><code>main</code> = 인프라(운영), <code>dev</code> = 앱(개발) — 브랜치가 두 파이프라인의 경계입니다.</p>
 <h4>준비</h4>
 <ul><li><code>03_real</code> apply 완료 (EKS 포함) + 로컬에 terraform·git·aws cli·kubectl</li><li>git 명령은 전부 <b>리포 루트</b>에서 실행</li></ul>
-<h4>Step 1 — 저장소 계층</h4>
+<h4>Step 1 — 저장소 계층 + 파이프라인 (한 번에)</h4>
 <pre><code>cd 10_gitops_infra
-terraform init &amp;&amp; terraform apply
-terraform output backend_snippet          # 다음 단계에서 붙여넣을 블록</code></pre>
-<h4>Step 2 — 인프라 파이프라인</h4>
+terraform init &amp;&amp; terraform apply        # 버킷·lock + connection·빌드·파이프라인 전부
+terraform output backend_snippet         # 다음 단계에서 붙여넣을 블록
+
+# ★ 수동 1회: 콘솔 → Developer Tools → Connections →
+#    &#x27;&lt;project&gt;-github&#x27; → &quot;Update pending connection&quot; → GitHub 앱 설치·승인 → AVAILABLE</code></pre>
+<h4>Step 2 — 03_real을 S3 backend로 전환 + 첫 실행</h4>
 <pre><code># 1) 03_real/versions.tf의 terraform {} 블록에 backend_snippet 붙여넣기
 cd 03_real &amp;&amp; terraform init -migrate-state   # state를 S3로 이동
 
-# 2) 파이프라인 생성 — GitHub connection이 함께 만들어짐
-cd 10_gitops_infra &amp;&amp; terraform init &amp;&amp; terraform apply
-
-# 3) ★ 수동 1회: 콘솔 → Developer Tools → Connections →
-#    &#x27;&lt;project&gt;-github&#x27; → &quot;Update pending connection&quot; → GitHub 앱 설치·승인 → AVAILABLE
-
-# 4) 평소처럼 GitHub에 push — 이게 트리거
-git push origin main                                # 첫 실행은 콘솔 &#x27;변경 릴리스&#x27; 또는 새 push</code></pre>
+# 2) 평소처럼 GitHub에 push — 이게 트리거
+git push origin main                          # 첫 실행은 콘솔 &#x27;변경 릴리스&#x27; 또는 새 push</code></pre>
 <p>CodePipeline 콘솔에서 Source→Plan→Approve→Apply를 관찰 — Approve에서 멈추면 Plan 로그를 보고 승인.</p>
 <p>검증: <code>cd 03_real &amp;&amp; terraform plan</code> → <code>No changes</code>면 파이프라인이 S3 state를 갱신한 것.</p>
 <pre><code># 이후 실습: 03_real 코드를 조금 바꾸고 → git push origin main → plan diff 확인 → 승인</code></pre>
@@ -151,9 +148,8 @@ git push origin main                                # 첫 실행은 콘솔 &#x27
 <p>앱 배포는 같은 리포의 <code>dev</code> 브랜치를 트리거로 쓰는 별도 단계 <code>11_gitops_app</code>에서 진행합니다 —</p>
 <p>&quot;리포는 하나, 환경은 브랜치로&quot;라는 GitOps 패턴입니다.</p>
 <h4>정리 — destroy는 역순, 로컬에서</h4>
-<pre><code>cd 11_gitops_app &amp;&amp; terraform destroy                # 사용했다면
-cd 10_gitops_infra &amp;&amp; terraform destroy  # 2
-cd 10_gitops_infra &amp;&amp; terraform destroy             # 1 — S3 버킷 비운 뒤 가능</code></pre>
+<pre><code>cd 11_gitops_app &amp;&amp; terraform destroy   # 사용했다면
+cd ../10_gitops_infra &amp;&amp; terraform destroy   # 버킷은 prevent_destroy — 수동 비우기 후 가능</code></pre>
 <p>remote_state로 10_gitops_infra를 참조하는 단계가 남아있으면 10_gitops_infra를 지울 수 없습니다.</p>
 <h3>이 파이프라인의 범위</h3><p>이 단계가 만드는 것은 <b>인프라 파이프라인</b>입니다 — <code>.tf</code> 코드 변경을 자동 배포합니다.</p>
 <p>애플리케이션 배포는 별도 파이프라인입니다:</p>
@@ -168,7 +164,6 @@ cd 10_gitops_infra &amp;&amp; terraform destroy             # 1 — S3 버킷 �
 <h3>실습 시나리오</h3><p><b>장면</b>: 수동 <code>terraform apply</code>로 관리하던 03_real 인프라를 GitOps로 전환 — push만으로 배포되는 구조를 직접 경험합니다.</p>
 <h4>준비 — 파이프라인 인프라 생성</h4>
 <pre><code>cd 10_gitops_infra &amp;&amp; terraform init &amp;&amp; terraform apply
-cd 10_gitops_infra &amp;&amp; terraform init &amp;&amp; terraform apply
 terraform output backend_snippet    # 03_real용 backend 설정 복사</code></pre>
 <h4>장면 1 — 로컬 state → S3 backend 전환</h4>
 <ol><li><code>03_real/versions.tf</code>의 <code>terraform {}</code> 블록에 backend_snippet 붙여넣기</li><li><code>cd 03_real &amp;&amp; terraform init -migrate-state</code> → <code>yes</code></li><li><code>terraform state list</code> — S3에서 읽히는지 확인, S3 콘솔에서 state 파일 확인</li></ol>
@@ -188,7 +183,7 @@ terraform output backend_snippet    # 03_real용 backend 설정 복사</code></p
 <h4>파이프라인 테스트 — &quot;CI/CD가 동작한다&quot;는 뭘 확인하는가</h4>
 <p>apply가 된 것과 파이프라인이 동작하는 것은 다른 문제입니다. 아래 항목을 순서대로 검증합니다.</p>
 <p><b>테스트 ① 트리거 — push가 파이프라인을 시작시키는가</b></p>
-<pre><code>echo &quot;# test&quot; &gt;&gt; ../../03_real/main.tf &amp;&amp; git commit -am &quot;ci test&quot; &amp;&amp; git push origin main</code></pre>
+<pre><code>echo &quot;# test&quot; &gt;&gt; 03_real/main.tf &amp;&amp; git commit -am &quot;ci test&quot; &amp;&amp; git push origin main</code></pre>
 <ul><li><b>확인</b>: CodePipeline 콘솔에서 새 실행이 시작됨 — CodeBuild를 수동 실행하지 않았는데 시작됐다면 webhook 감지 성공</li><li><b>실패 시</b>: connection이 PENDING → 콘솔에서 승인했는지 확인 / <code>github_repo</code> 변수가 실제 리포인지 확인</li></ul>
 <p><b>테스트 ② 각 단계가 순서대로 성공하는가</b></p>
 <table><tr><th>단계</th><th>확인할 것</th><th>성공 기준</th></tr><tr><td>Source</td><td>SourceArtifact가 artifact 버킷에 저장됨</td><td>단계 초록</td></tr><tr><td>Plan</td><td>CodeBuild 로그에 <code>terraform plan</code> 출력</td><td>&quot;Plan: N to add&quot; 로그</td></tr><tr><td>Approve</td><td>실행이 멈춤</td><td>콘솔에 승인 버튼 대기 — <b>파이프라인이 알아서 안 넘어감</b></td></tr><tr><td>Apply</td><td><code>terraform apply tfplan</code> 로그</td><td>plan 결과와 동일하게 적용</td></tr></table>
@@ -196,7 +191,7 @@ terraform output backend_snippet    # 03_real용 backend 설정 복사</code></p
 <ul><li>Plan까지 성공 후 <b>승인을 안 누름</b> → Apply가 실행되지 않는 걸 확인 (게이트 동작 증명)</li><li>승인 누르기 전 Plan 로그의 변경 내용 읽기 — 승인 = &quot;이 plan을 승인&quot;임을 체감</li></ul>
 <p><b>테스트 ④ 거부 — 잘못된 코드를 차단하는가</b></p>
 <pre><code># 일부러 문법 오류 넣고 push
-sed -i &#x27;&#x27; &#x27;s/cidr_block = /cidr_block == /&#x27; ../../03_real/main.tf
+sed -i &#x27;&#x27; &#x27;s/cidr_block = /cidr_block == /&#x27; 03_real/main.tf
 git commit -am &quot;broken&quot; &amp;&amp; git push origin main
 # → Plan 단계 빨간색 → 파이프라인 멈춤 → 되돌리고 재push</code></pre>
 <ul><li><b>이게 CI/CD의 핵심 가치</b>: 로컬이었다면 에러가 &quot;내 터미널&quot;에서 끝나지만, 파이프라인에서는 &quot;배포가 차단&quot;됩니다.</li></ul>
@@ -210,8 +205,8 @@ kubectl get pods -l app=sample-app -w   # 새 pod 롤링 확인
 kubectl rollout status deployment/sample-app</code></pre>
 <ul><li>이미지 태그 = 커밋 해시 앞 8자리 — <code>kubectl describe deploy</code>로 태그가 새 값인지 확인하면 &quot;내 push가 배포됐다&quot;가 증명됩니다.</li></ul>
 <h4>정리</h4>
-<pre><code>cd 11_gitops_app &amp;&amp; terraform destroy   # 사용했다면
-cd ../10_gitops_infra &amp;&amp; terraform destroy        # tfstate 버킷은 prevent_destroy로 보호됨</code></pre>
+<pre><code>cd 11_gitops_app &amp;&amp; terraform destroy      # 사용했다면
+cd ../10_gitops_infra &amp;&amp; terraform destroy   # tfstate 버킷은 prevent_destroy로 보호됨</code></pre>
 <h3>주의사항</h3><ul><li>connection 승인(PENDING→AVAILABLE)을 안 하면 파이프라인이 Source에서 멈춥니다 — OAuth는 수동 1회</li><li>CodeBuild는 빌드 시간만큼 과금 (소액), 수동 승인 대기는 무료</li><li><code>tfstate</code> 버킷은 <code>prevent_destroy</code> — 삭제하려면 수동으로 라이프사이클 해제</li><li>CodeBuild 역할에 AdministratorAccess — <b>학습용 한정</b>, 실무는 최소권한으로 교체</li></ul>
 <h3>산출물 · 완료 기준</h3><ul><li>git push 한 번으로 plan→승인→apply가 돌아가는 파이프라인</li><li>원격 state(S3+DynamoDB) 구조 이해</li></ul><ul><li>[ ] 파이프라인 4단계(Source·Plan·Approve·Apply)의 역할을 설명할 수 있다</li><li>[ ] 로컬 state와 S3 backend의 차이를 안다</li><li>[ ] buildspec의 install/build/artifacts를 읽을 수 있다</li></ul>
 <h3>프로젝트 구조</h3>
@@ -252,30 +247,25 @@ cd 03_real &amp;&amp; terraform init -migrate-state
 # 2) 평소처럼 GitHub에 push — CodeCommit·별도 리모트 없음
 git push origin main    # main 브랜치 감시 → 파이프라인 자동 실행</code></pre></div>
 <div class="codebox"><pre><code>cd 10_gitops_infra
-terraform init &amp;&amp; terraform apply
-terraform output backend_snippet          # 다음 단계에서 붙여넣을 블록</code></pre></div>
+terraform init &amp;&amp; terraform apply        # 버킷·lock + connection·빌드·파이프라인 전부
+terraform output backend_snippet         # 다음 단계에서 붙여넣을 블록
+
+# ★ 수동 1회: 콘솔 → Developer Tools → Connections →
+#    &#x27;&lt;project&gt;-github&#x27; → &quot;Update pending connection&quot; → GitHub 앱 설치·승인 → AVAILABLE</code></pre></div>
 <div class="codebox"><pre><code># 1) 03_real/versions.tf의 terraform {} 블록에 backend_snippet 붙여넣기
 cd 03_real &amp;&amp; terraform init -migrate-state   # state를 S3로 이동
 
-# 2) 파이프라인 생성 — GitHub connection이 함께 만들어짐
-cd 10_gitops_infra &amp;&amp; terraform init &amp;&amp; terraform apply
-
-# 3) ★ 수동 1회: 콘솔 → Developer Tools → Connections →
-#    &#x27;&lt;project&gt;-github&#x27; → &quot;Update pending connection&quot; → GitHub 앱 설치·승인 → AVAILABLE
-
-# 4) 평소처럼 GitHub에 push — 이게 트리거
-git push origin main                                # 첫 실행은 콘솔 &#x27;변경 릴리스&#x27; 또는 새 push</code></pre></div>
+# 2) 평소처럼 GitHub에 push — 이게 트리거
+git push origin main                          # 첫 실행은 콘솔 &#x27;변경 릴리스&#x27; 또는 새 push</code></pre></div>
 <div class="codebox"><pre><code># 이후 실습: 03_real 코드를 조금 바꾸고 → git push origin main → plan diff 확인 → 승인</code></pre></div>
-<div class="codebox"><pre><code>cd 11_gitops_app &amp;&amp; terraform destroy                # 사용했다면
-cd 10_gitops_infra &amp;&amp; terraform destroy  # 2
-cd 10_gitops_infra &amp;&amp; terraform destroy             # 1 — S3 버킷 비운 뒤 가능</code></pre></div>
+<div class="codebox"><pre><code>cd 11_gitops_app &amp;&amp; terraform destroy   # 사용했다면
+cd ../10_gitops_infra &amp;&amp; terraform destroy   # 버킷은 prevent_destroy — 수동 비우기 후 가능</code></pre></div>
 <div class="codebox"><pre><code>cd 10_gitops_infra &amp;&amp; terraform init &amp;&amp; terraform apply
-cd 10_gitops_infra &amp;&amp; terraform init &amp;&amp; terraform apply
 terraform output backend_snippet    # 03_real용 backend 설정 복사</code></pre></div>
 <div class="codebox"><pre><code>git push origin main   # 평소 push 그대로 — connection 승인 후엔 이게 트리거</code></pre></div>
-<div class="codebox"><pre><code>echo &quot;# test&quot; &gt;&gt; ../../03_real/main.tf &amp;&amp; git commit -am &quot;ci test&quot; &amp;&amp; git push origin main</code></pre></div>
+<div class="codebox"><pre><code>echo &quot;# test&quot; &gt;&gt; 03_real/main.tf &amp;&amp; git commit -am &quot;ci test&quot; &amp;&amp; git push origin main</code></pre></div>
 <div class="codebox"><pre><code># 일부러 문법 오류 넣고 push
-sed -i &#x27;&#x27; &#x27;s/cidr_block = /cidr_block == /&#x27; ../../03_real/main.tf
+sed -i &#x27;&#x27; &#x27;s/cidr_block = /cidr_block == /&#x27; 03_real/main.tf
 git commit -am &quot;broken&quot; &amp;&amp; git push origin main
 # → Plan 단계 빨간색 → 파이프라인 멈춤 → 되돌리고 재push</code></pre></div>
 <div class="codebox"><pre><code>cd 03_real &amp;&amp; terraform plan   # 로컬에서 확인
@@ -284,8 +274,8 @@ git commit -am &quot;broken&quot; &amp;&amp; git push origin main
 <div class="codebox"><pre><code># app 코드 수정 → git push origin main:dev → Build(docker)·Deploy(kubectl) 로그 확인
 kubectl get pods -l app=sample-app -w   # 새 pod 롤링 확인
 kubectl rollout status deployment/sample-app</code></pre></div>
-<div class="codebox"><pre><code>cd 11_gitops_app &amp;&amp; terraform destroy   # 사용했다면
-cd ../10_gitops_infra &amp;&amp; terraform destroy        # tfstate 버킷은 prevent_destroy로 보호됨</code></pre></div>
+<div class="codebox"><pre><code>cd 11_gitops_app &amp;&amp; terraform destroy      # 사용했다면
+cd ../10_gitops_infra &amp;&amp; terraform destroy   # tfstate 버킷은 prevent_destroy로 보호됨</code></pre></div>
 <h3>소스 구조</h3><h3>파일·디렉터리 역할</h3><table><tr><th>경로</th><th>역할</th></tr><tr><td><code>10_gitops_infra/</code></td><td>공용 저장소 — tfstate·lock·artifact 버킷</td></tr><tr><td><code>10_gitops_infra/</code></td><td>인프라 파이프라인 + 공용 CodeBuild/Pipeline 역할</td></tr><tr><td><code>11_gitops_app/</code></td><td>앱 파이프라인 — dev 브랜치 소스, 10·11 출력을 remote_state로 참조</td></tr><tr><td><code>buildspec-*.yml</code></td><td>CodeBuild 실행 명령 — phases/artifacts</td></tr></table><h3>파일 맵 — .tf ↔ 선언 리소스</h3><table><tr><th>파일</th><th>리소스 / 데이터 소스</th></tr><tr><td><code>01-provider.tf</code></td><td><code>aws_caller_identity.current</code></td></tr><tr><td><code>02-state.tf</code></td><td><code>aws_s3_bucket.tfstate<br>aws_s3_bucket_versioning.tfstate<br>aws_s3_bucket_server_side_encryption_configuration.tfstate<br>aws_s3_bucket_public_access_block.tfstate<br>aws_dynamodb_table.tf_lock<br>aws_s3_bucket.artifacts<br>aws_s3_bucket_public_access_block.artifacts</code></td></tr><tr><td><code>03-outputs.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr><tr><td><code>main.tf</code></td><td><code>aws_codestarconnections_connection.github<br>aws_iam_policy_document.codebuild_assume<br>aws_iam_role.codebuild<br>aws_iam_role_policy_attachment.codebuild_admin<br>aws_codebuild_project.plan<br>aws_codebuild_project.apply<br>aws_iam_policy_document.pipeline_assume<br>aws_iam_role.pipeline<br>aws_iam_policy_document.pipeline<br>aws_iam_role_policy.pipeline<br>aws_codepipeline.tf</code></td></tr><tr><td><code>variables.tf</code></td><td><code><span class="sub">(선언 없음)</span></code></td></tr></table>
 <p class="sub" style="margin-top:.8rem">※ 브라우저에서는 실행할 수 없습니다 — 명령을 복사해 터미널에 붙여넣으세요.</p>
 </section>

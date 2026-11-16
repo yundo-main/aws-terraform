@@ -75,28 +75,25 @@ git push origin main    # main 브랜치 감시 → 파이프라인 자동 실�
 - `03_real` apply 완료 (EKS 포함) + 로컬에 terraform·git·aws cli·kubectl
 - git 명령은 전부 **리포 루트**에서 실행
 
-### Step 1 — 저장소 계층
+### Step 1 — 저장소 계층 + 파이프라인 (한 번에)
 
 ```bash
 cd 10_gitops_infra
-terraform init && terraform apply
-terraform output backend_snippet          # 다음 단계에서 붙여넣을 블록
+terraform init && terraform apply        # 버킷·lock + connection·빌드·파이프라인 전부
+terraform output backend_snippet         # 다음 단계에서 붙여넣을 블록
+
+# ★ 수동 1회: 콘솔 → Developer Tools → Connections →
+#    '<project>-github' → "Update pending connection" → GitHub 앱 설치·승인 → AVAILABLE
 ```
 
-### Step 2 — 인프라 파이프라인
+### Step 2 — 03_real을 S3 backend로 전환 + 첫 실행
 
 ```bash
 # 1) 03_real/versions.tf의 terraform {} 블록에 backend_snippet 붙여넣기
 cd 03_real && terraform init -migrate-state   # state를 S3로 이동
 
-# 2) 파이프라인 생성 — GitHub connection이 함께 만들어짐
-cd 10_gitops_infra && terraform init && terraform apply
-
-# 3) ★ 수동 1회: 콘솔 → Developer Tools → Connections →
-#    '<project>-github' → "Update pending connection" → GitHub 앱 설치·승인 → AVAILABLE
-
-# 4) 평소처럼 GitHub에 push — 이게 트리거
-git push origin main                                # 첫 실행은 콘솔 '변경 릴리스' 또는 새 push
+# 2) 평소처럼 GitHub에 push — 이게 트리거
+git push origin main                          # 첫 실행은 콘솔 '변경 릴리스' 또는 새 push
 ```
 
 CodePipeline 콘솔에서 Source→Plan→Approve→Apply를 관찰 — Approve에서 멈추면 Plan 로그를 보고 승인.
@@ -114,9 +111,8 @@ CodePipeline 콘솔에서 Source→Plan→Approve→Apply를 관찰 — Approve�
 ### 정리 — destroy는 역순, 로컬에서
 
 ```bash
-cd 11_gitops_app && terraform destroy                # 사용했다면
-cd 10_gitops_infra && terraform destroy  # 2
-cd 10_gitops_infra && terraform destroy             # 1 — S3 버킷 비운 뒤 가능
+cd 11_gitops_app && terraform destroy   # 사용했다면
+cd ../10_gitops_infra && terraform destroy   # 버킷은 prevent_destroy — 수동 비우기 후 가능
 ```
 
 remote_state로 10_gitops_infra를 참조하는 단계가 남아있으면 10_gitops_infra를 지울 수 없습니다.
@@ -166,7 +162,6 @@ remote_state로 10_gitops_infra를 참조하는 단계가 남아있으면 10_git
 ### 준비 — 파이프라인 인프라 생성
 
 ```bash
-cd 10_gitops_infra && terraform init && terraform apply
 cd 10_gitops_infra && terraform init && terraform apply
 terraform output backend_snippet    # 03_real용 backend 설정 복사
 ```
@@ -219,7 +214,7 @@ apply가 된 것과 파이프라인이 동작하는 것은 다른 문제입니�
 **테스트 ① 트리거 — push가 파이프라인을 시작시키는가**
 
 ```bash
-echo "# test" >> ../../03_real/main.tf && git commit -am "ci test" && git push origin main
+echo "# test" >> 03_real/main.tf && git commit -am "ci test" && git push origin main
 ```
 
 - **확인**: CodePipeline 콘솔에서 새 실행이 시작됨 — CodeBuild를 수동 실행하지 않았는데 시작됐다면 webhook 감지 성공
@@ -243,7 +238,7 @@ echo "# test" >> ../../03_real/main.tf && git commit -am "ci test" && git push o
 
 ```bash
 # 일부러 문법 오류 넣고 push
-sed -i '' 's/cidr_block = /cidr_block == /' ../../03_real/main.tf
+sed -i '' 's/cidr_block = /cidr_block == /' 03_real/main.tf
 git commit -am "broken" && git push origin main
 # → Plan 단계 빨간색 → 파이프라인 멈춤 → 되돌리고 재push
 ```
@@ -271,15 +266,14 @@ kubectl rollout status deployment/sample-app
 ### 정리
 
 ```bash
-cd 11_gitops_app && terraform destroy   # 사용했다면
-cd ../10_gitops_infra && terraform destroy        # tfstate 버킷은 prevent_destroy로 보호됨
+cd 11_gitops_app && terraform destroy      # 사용했다면
+cd ../10_gitops_infra && terraform destroy   # tfstate 버킷은 prevent_destroy로 보호됨
 ```
 
 ## 소스 구조
 
 ```text
-10_gitops_infra/                  # 저장소 계층 — state·artifact 버킷
-10_gitops_infra/           # 인프라 파이프라인 — main 브랜치 소스
+10_gitops_infra/           # 저장소 계층 + 인프라 파이프라인 (main 소스)
 11_gitops_app/             # 앱 파이프라인 — dev 브랜치 소스
 ```
 
@@ -289,15 +283,15 @@ cd ../10_gitops_infra && terraform destroy        # tfstate 버킷은 prevent_de
 
 | 경로 | 역할 |
 | --- | --- |
-| `10_gitops_infra/` | 공용 저장소 — tfstate·lock·artifact 버킷 |
-| `10_gitops_infra/` | 인프라 파이프라인 + 공용 CodeBuild/Pipeline 역할 |
-| `11_gitops_app/` | 앱 파이프라인 — dev 브랜치 소스, 10·11 출력을 remote_state로 참조 |
+| `10_gitops_infra/02-state.tf` | 공용 저장소 — tfstate·lock·artifact 버킷 |
+| `10_gitops_infra/main.tf` | 인프라 파이프라인 + 공용 CodeBuild/Pipeline 역할 |
+| `11_gitops_app/` | 앱 파이프라인 — dev 브랜치 소스, 10의 출력을 remote_state로 참조 |
 | `buildspec-*.yml` | CodeBuild 실행 명령 — phases/artifacts |
 
 ## 단계 간 연결
 
 - `03_real`이 배포 대상 — pipeline이 그 .tf 코드를 plan/apply
-- state는 10_gitops_infra가 만든 S3 bucket + DynamoDB로 이동 (`-migrate-state`)
+- 03_real의 state가 이 디렉터리가 만든 S3 bucket + DynamoDB로 이동 (`-migrate-state`)
 - remote_state는 `04_https`·`11_gitops_app`에서 사용 — 수명주기가 다른 계층을 분리할 때 의미가 있음
 
 ## 주의사항
